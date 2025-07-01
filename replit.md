@@ -115,6 +115,13 @@ jarvis/
 - **Containerized Deployment**: Docker support for isolated environments
 
 ## Changelog
+- July 01, 2025: Fixed deployment configuration and health endpoints
+  - Configured proper run command: `python main.py` for deployment
+  - Added HEAD request support to both root (/) and /health endpoints
+  - Verified all health checks return HTTP 200 status codes
+  - Application runs on correct host (0.0.0.0) and port (5000) for Cloud Run
+  - Confirmed FastAPI application responds properly to all health checks
+  - Fixed workflow configuration for reliable deployment startup
 - July 01, 2025: Fixed OpenAPI specification and deployment configuration
   - Resolved required vs nullable field contradictions in API schemas
   - Added comprehensive JSON schema examples and documentation

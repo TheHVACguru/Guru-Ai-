@@ -259,6 +259,7 @@ async def root():
     return html_content
 
 @app.get("/health")
+@app.head("/health")
 async def health_check():
     """Health check endpoint - returns 200 OK for deployment health checks."""
     return {"status": "healthy", "service": "voice-assistant-api", "version": "1.0.0", "ready": True}
