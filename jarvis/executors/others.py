@@ -482,7 +482,7 @@ def photo(*args) -> str:
             if models.settings.os != enums.SupportedPlatforms.windows:
                 subprocess.call(["open", filename])
             else:
-                os.system(f"start {filename}")
+                subprocess.call(["cmd", "/c", "start", "", filename])
         speaker.speak(text=f"A photo has been captured {models.env.title}!")
         return filename
     else:

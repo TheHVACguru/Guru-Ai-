@@ -115,6 +115,12 @@ jarvis/
 - **Containerized Deployment**: Docker support for isolated environments
 
 ## Changelog
+- July 01, 2025: Fixed critical command injection security vulnerability in others.py (photo function)
+  - Replaced unsafe os.system() call with secure subprocess.call() implementation at line 485
+  - Fixed vulnerability in photo capture function that allowed command injection via filename manipulation
+  - Changed from os.system(f"start {filename}") to subprocess.call(["cmd", "/c", "start", "", filename])
+  - Vulnerability allowed potential arbitrary command execution on Windows systems through malicious filenames
+  - Added empty string parameter to prevent filename interpretation as window title in start command
 - July 01, 2025: Fixed critical command injection security vulnerability in installer.py
   - Replaced unsafe subprocess.Popen() call with shell=True to use shell=False implementation
   - Fixed vulnerability in jarvis/lib/installer.py line 271 that allowed command injection via malicious command strings
