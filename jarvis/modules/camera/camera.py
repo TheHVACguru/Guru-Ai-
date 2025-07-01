@@ -11,11 +11,11 @@ from typing import Dict, List
 from jarvis.modules.exceptions import CameraError
 from jarvis.modules.models import enums, models
 
-Windows = (
-    """wmic path CIM_LogicalDevice where "Description like 'USB Video%'" get /value"""
-)
-Darwin = "system_profiler SPCameraDataType"
-Linux = "v4l2-ctl --list-devices"
+Windows = [
+    "wmic", "path", "CIM_LogicalDevice", "where", "Description like 'USB Video%'", "get", "/value"
+]
+Darwin = ["system_profiler", "SPCameraDataType"]
+Linux = ["v4l2-ctl", "--list-devices"]
 
 
 def list_splitter(original_list: List[str], delimiter: str) -> List[List[str]]:
@@ -79,7 +79,7 @@ class Camera:
 
         self.output, err = subprocess.Popen(
             cmd,
-            shell=True,
+            shell=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         ).communicate()
