@@ -43,15 +43,14 @@ def kill_port_pid(port: int, protocol: str = "tcp") -> bool | None:
         Flag to indicate whether the process was terminated successfully.
     """
     try:
-        # Validate protocol to prevent command injection
-        if not protocol.isalnum():
-            logger.error("Invalid protocol format: %s", protocol)
+        # Validate protocol to prevent command injection - only allow tcp or udp
+        if protocol.lower() not in ("tcp", "udp"):
+            logger.error("Invalid protocol format: %s. Only 'tcp' and 'udp' are allowed.", protocol)
             return False
         
-        # Use shlex.quote to safely escape the command arguments
-        command = f"lsof -i {shlex.quote(protocol)}:{port}"
+        # Use parameterized command execution to prevent injection
         active_sessions = (
-            subprocess.check_output(command, shell=True)
+            subprocess.check_output(["lsof", "-i", f"{protocol.lower()}:{port}"])
             .decode("utf-8")
             .splitlines()
         )
