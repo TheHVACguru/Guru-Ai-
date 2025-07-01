@@ -222,10 +222,11 @@ async def stock_monitor_api(
         )
 
     try:
+        # Verify JWT signature to prevent token tampering
         decoded = jwt.decode(
             jwt=input_data.token,
-            options={"verify_signature": False},
-            algorithms="HS256",
+            key=models.env.jwt_secret_key,  # Use environment variable for JWT secret
+            algorithms=["HS256"],
         )
     except jwt.DecodeError as error:
         logger.error(error)
