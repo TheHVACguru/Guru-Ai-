@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arc Reactor Interface - Mark 52</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: 'Courier New', monospace;
+        background: #000;
+        color: #00d4ff;
+        overflow: hidden;
+        height: 100vh;
+        position: relative;
+    }
+
+    /* Main interface container */
+    .interface-container {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        background: 
+            radial-gradient(ellipse at 30% 20%, rgba(0, 150, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 80%, rgba(255, 165, 0, 0.05) 0%, transparent 50%),
+            linear-gradient(135deg, #001122 0%, #000000 100%);
+    }
+
+    /* Top status bar */
+    .top-status-bar {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        height: 60px;
+        background: rgba(0, 50, 100, 0.2);
+        border: 1px solid #00aaff;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+        backdrop-filter: blur(10px);
+    }
+
+    .temperature-display {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .temp-icon {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #ff9900;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+        color: #ff9900;
+    }
+
+    .temp-text {
+        font-size: 18px;
+        color: #00d4ff;
+        font-weight: bold;
+    }
+
+    .system-grid {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 400px;
+        height: 200px;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: 3px;
+    }
+
+    .grid-cell {
+        background: rgba(0, 170, 255, 0.1);
+        border: 1px solid #0099cc;
+        border-radius: 3px;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .grid-cell:hover {
+        background: rgba(0, 170, 255, 0.3);
+        box-shadow: 0 0 10px #00aaff;
+    }
+
+    /* Central arc reactor display */
+    .arc-reactor {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 350px;
+        height: 350px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .reactor-outer-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 3px solid #00aaff;
+        border-radius: 50%;
+        opacity: 0.6;
+    }
+
+    .reactor-middle-ring {
+        position: absolute;
+        width: 85%;
+        height: 85%;
+        border: 2px solid #0099dd;
+        border-radius: 50%;
+        opacity: 0.8;
+    }
+
+    .reactor-segments {
+        position: absolute;
+        width: 90%;
+        height: 90%;
+        border-radius: 50%;
+    }
+
+    /* Energy level segments using conic gradient */
+    .energy-segments {
+        position: absolute;
+        width: 95%;
+        height: 95%;
+        border-radius: 50%;
+        background: conic-gradient(
+            from 0deg,
+            #ff9900 0deg 45deg,
+            #ffcc00 45deg 90deg,
+            #00aaff 90deg 180deg,
+            rgba(0, 170, 255, 0.3) 180deg 360deg
+        );
+        mask: radial-gradient(circle, transparent 70%, black 75%, black 85%, transparent 90%);
+        animation: rotateEnergy 8s linear infinite;
+    }
+
+    @keyframes rotateEnergy {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* Reactor core center */
+    .reactor-core {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, #00aaff 0%, #0066aa  50%, #003366 100%);
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 
+            0 0 30px #00aaff,
+            inset 0 0 20px rgba(0, 170, 255, 0.3);
+        animation: corePulse 3s ease-in-out infinite;
+    }
+
+    @keyframes corePulse {
+        0%, 100% { 
+            box-shadow: 0 0 30px #00aaff, inset 0 0 20px rgba(0, 170, 255, 0.3);
+            transform: scale(1);
+        }
+        50% { 
+            box-shadow: 0 0 50px #00aaff, inset 0 0 30px rgba(0, 170, 255, 0.5);
+            transform: scale(1.05);
+        }
+    }
+
+    .time-display {
+        font-size: 18px;
+        font-weight: bold;
+        color: #ffcc00;
+        margin-bottom: 5px;
+    }
+
+    .date-display {
+        font-size: 12px;
+        color: #00aaff;
+        opacity: 0.8;
+    }
+
+    /* Scale markings around reactor */
+    .scale-marking {
+        position: absolute;
+        color: #00aaff;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .scale-5 { top: 10px; right: 120px; }
+    .scale-15 { right: 10px; top: 120px; }
+    .scale-25 { bottom: 10px; right: 120px; }
+    .scale-75 { left: 10px; top: 120px; }
+
+    .energy-label {
+        position: absolute;
+        bottom: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 16px;
+        color: #00aaff;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    /* Communication panel */
+    .comm-panel {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        height: 120px;
+        background: rgba(0, 50, 100, 0.15);
+        border: 1px solid #00aaff;
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+        padding: 20px;
+    }
+
+    .comm-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .comm-title {
+        font-size: 14px;
+        color: #00aaff;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    .comm-status {
+        display: flex;
+        gap: 20px;
+    }
+
+    .status-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 15px;
+        background: rgba(0, 170, 255, 0.1);
+        border: 1px solid #0099cc;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .status-item:hover {
+        background: rgba(0, 170, 255, 0.2);
+        box-shadow: 0 0 15px rgba(0, 170, 255, 0.3);
+    }
+
+    .status-label {
+        font-size: 12px;
+        color: #00aaff;
+    }
+
+    .status-count {
+        background: #ff9900;
+        color: #000;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: bold;
+        min-width: 20px;
+        text-align: center;
+    }
+
+    /* Access control panel */
+    .access-panel {
+        position: absolute;
+        bottom: 160px;
+        right: 20px;
+        width: 200px;
+        background: rgba(0, 50, 100, 0.15);
+        border: 1px solid #00aaff;
+        border-radius: 8px;
+        padding: 15px;
+        backdrop-filter: blur(10px);
+    }
+
+    .access-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .access-icon {
+        width: 30px;
+        height: 30px;
+        background: conic-gradient(from 0deg, #ff9900, #ffcc00, #ff9900);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: rotate 4s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .access-text {
+        font-size: 12px;
+        color: #ff9900;
+        font-weight: bold;
+    }
+
+    .extend-button {
+        width: 100%;
+        background: linear-gradient(45deg, #ff9900, #ffcc00);
+        border: none;
+        color: #000;
+        padding: 8px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .extend-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 153, 0, 0.4);
+    }
+
+    /* Technical readouts */
+    .tech-readout {
+        position: absolute;
+        top: 100px;
+        left: 20px;
+        width: 250px;
+        background: rgba(0, 50, 100, 0.1);
+        border: 1px solid #00aaff;
+        border-radius: 8px;
+        padding: 15px;
+        backdrop-filter: blur(10px);
+    }
+
+    .readout-line {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 11px;
+        color: #00aaff;
+    }
+
+    .readout-value {
+        color: #ffcc00;
+        font-weight: bold;
+    }
+
+    /* Animated scan lines */
+    .scan-line {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00aaff, transparent);
+        animation: scanMove 3s linear infinite;
+        opacity: 0.6;
+    }
+
+    @keyframes scanMove {
+        0% { top: 0%; opacity: 0; }
+        50% { opacity: 0.6; }
+        100% { top: 100%; opacity: 0; }
+    }
+
+    /* Power level indicators */
+    .power-bars {
+        position: absolute;
+        top: 50%;
+        left: 100px;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .power-bar {
+        width: 60px;
+        height: 8px;
+        background: rgba(0, 170, 255, 0.2);
+        border: 1px solid #00aaff;
+        border-radius: 2px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .power-bar.active::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        background: linear-gradient(90deg, #00aaff, #00ffaa);
+        animation: powerFlow 2s ease-in-out infinite;
+    }
+
+    .power-bar:nth-child(1).active::after { width: 90%; animation-delay: 0s; }
+    .power-bar:nth-child(2).active::after { width: 85%; animation-delay: 0.2s; }
+    .power-bar:nth-child(3).active::after { width: 92%; animation-delay: 0.4s; }
+    .power-bar:nth-child(4).active::after { width: 78%; animation-delay: 0.6s; }
+    .power-bar:nth-child(5).active::after { width: 88%; animation-delay: 0.8s; }
+
+    @keyframes powerFlow {
+        0%, 100% { opacity: 0.7; }
+        50% { opacity: 1; }
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="interface-container">
+        <!-- Animated scan line -->
+        <div class="scan-line"></div>
+
+```
+    <!-- Top status bar -->
+    <div class="top-status-bar">
+        <div class="temperature-display">
+            <div class="temp-icon">65°</div>
+            <div class="temp-text">TEMPERATURE</div>
+        </div>
+        
+        <!-- System grid display -->
+        <div class="system-grid">
+            <!-- Grid cells will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Technical readouts -->
+    <div class="tech-readout">
+        <div class="readout-line">
+            <span>CORE TEMP</span>
+            <span class="readout-value">2847°K</span>
+        </div>
+        <div class="readout-line">
+            <span>POWER OUTPUT</span>
+            <span class="readout-value">12.7 GW</span>
+        </div>
+        <div class="readout-line">
+            <span>EFFICIENCY</span>
+            <span class="readout-value">97.3%</span>
+        </div>
+        <div class="readout-line">
+            <span>RADIATION</span>
+            <span class="readout-value">NOMINAL</span>
+        </div>
+        <div class="readout-line">
+            <span>CONTAINMENT</span>
+            <span class="readout-value">STABLE</span>
+        </div>
+        <div class="readout-line">
+            <span>MAGNETIC FIELD</span>
+            <span class="readout-value">8.4 T</span>
+        </div>
+    </div>
+
+    <!-- Power level bars -->
+    <div class="power-bars">
+        <div class="power-bar active"></div>
+        <div class="power-bar active"></div>
+        <div class="power-bar active"></div>
+        <div class="power-bar active"></div>
+        <div class="power-bar active"></div>
+    </div>
+
+    <!-- Central arc reactor -->
+    <div class="arc-reactor">
+        <div class="reactor-outer-ring"></div>
+        <div class="reactor-middle-ring"></div>
+        <div class="energy-segments"></div>
+        
+        <div class="reactor-core">
+            <div class="time-display" id="currentTime">12:12</div>
+            <div class="date-display" id="currentDate">02/25/14</div>
+        </div>
+        
+        <!-- Scale markings -->
+        <div class="scale-marking scale-5">5</div>
+        <div class="scale-marking scale-15">15</div>
+        <div class="scale-marking scale-25">25</div>
+        <div class="scale-marking scale-75">75</div>
+        
+        <div class="energy-label">ENERGY LEVEL</div>
+    </div>
+
+    <!-- Access panel -->
+    <div class="access-panel">
+        <div class="access-header">
+            <div class="access-icon">⚡</div>
+            <div class="access-text">ACCESS<br>ALL APP</div>
+        </div>
+        <button class="extend-button" onclick="extendSystems()">EXTEND</button>
+    </div>
+
+    <!-- Communication panel -->
+    <div class="comm-panel">
+        <div class="comm-header">
+            <div class="comm-title">COMMUNICATION</div>
+        </div>
+        <div class="comm-status">
+            <div class="status-item" onclick="handleCall()">
+                <span class="status-label">CALL</span>
+                <span class="status-count">0</span>
+            </div>
+            <div class="status-item" onclick="handleMessages()">
+                <span class="status-label">MESSAGES</span>
+                <span class="status-count">0</span>
+            </div>
+            <div class="status-item" onclick="handleEmail()">
+                <span class="status-label">E-MAIL</span>
+                <span class="status-count">8</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize the interface when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeInterface();
+        updateTimeDisplay();
+        populateSystemGrid();
+        
+        // Update time every second to keep it current
+        setInterval(updateTimeDisplay, 1000);
+        
+        // Simulate system activity with periodic updates
+        setInterval(simulateSystemActivity, 2000);
+    });
+
+    // Update the time and date display in the reactor core
+    function updateTimeDisplay() {
+        const now = new Date();
+        const timeElement = document.getElementById('currentTime');
+        const dateElement = document.getElementById('currentDate');
+        
+        // Format time as HH:MM for that authentic tech interface look
+        const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                          now.getMinutes().toString().padStart(2, '0');
+        
+        // Format date as MM/DD/YY to match the reference image
+        const dateString = (now.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                          now.getDate().toString().padStart(2, '0') + '/' +
+                          now.getFullYear().toString().substr(-2);
+        
+        timeElement.textContent = timeString;
+        dateElement.textContent = dateString;
+    }
+
+    // Create the system grid with realistic technical labels
+    function populateSystemGrid() {
+        const systemGrid = document.querySelector('.system-grid');
+        const gridLabels = [
+            'PWR', 'SYS', 'NAV', 'COM', 'WPN', 'SHD',
+            'THR', 'STB', 'GYR', 'ALT', 'VEL', 'TMP',
+            'O2', 'CO2', 'H2O', 'FUL', 'BAT', 'GEN',
+            'RAD', 'MAG', 'GRV', 'IRT', 'OPT', 'AUD'
+        ];
+        
+        // Create each grid cell with a technical system abbreviation
+        gridLabels.forEach(label => {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            cell.textContent = label;
+            
+            // Add some cells that appear "active" with different styling
+            if (Math.random() > 0.7) {
+                cell.style.background = 'rgba(255, 153, 0, 0.2)';
+                cell.style.color = '#ffcc00';
+            }
+            
+            systemGrid.appendChild(cell);
+        });
+    }
+
+    // Simulate realistic system activity by updating various interface elements
+    function simulateSystemActivity() {
+        // Randomly update some grid cells to show system changes
+        const gridCells = document.querySelectorAll('.grid-cell');
+        gridCells.forEach(cell => {
+            if (Math.random() > 0.9) {
+                // Briefly highlight cell to show activity
+                cell.style.background = 'rgba(0, 255, 170, 0.4)';
+                cell.style.boxShadow = '0 0 10px #00ffaa';
+                
+                setTimeout(() => {
+                    cell.style.background = 'rgba(0, 170, 255, 0.1)';
+                    cell.style.boxShadow = 'none';
+                }, 500);
+            }
+        });
+        
+        // Update technical readouts with slight variations to show live data
+        updateTechnicalReadouts();
+    }
+
+    // Update the technical readout values to simulate live system monitoring
+    function updateTechnicalReadouts() {
+        const readoutValues = document.querySelectorAll('.readout-value');
+        const baseValues = ['2847°K', '12.7 GW', '97.3%', 'NOMINAL', 'STABLE', '8.4 T'];
+        
+        readoutValues.forEach((element, index) => {
+            if (index < 3 && Math.random() > 0.8) {
+                // Occasionally update numeric values with small variations
+                const currentText = element.textContent;
+                const variation = (Math.random() - 0.5) * 0.2;
+                
+                if (index === 0) { // Temperature
+                    const temp = 2847 + Math.floor(variation * 10);
+                    element.textContent = temp + '°K';
+                } else if (index === 1) { // Power
+                    const power = (12.7 + variation).toFixed(1);
+                    element.textContent = power + ' GW';
+                } else if (index === 2) { // Efficiency
+                    const eff = (97.3 + variation).toFixed(1);
+                    element.textContent = eff + '%';
+                }
+                
+                // Reset to base value after brief change
+                setTimeout(() => {
+                    element.textContent = baseValues[index];
+                }, 1500);
+            }
+        });
+    }
+
+    // Handle communication panel interactions
+    function handleCall() {
+        showSystemMessage('Initiating secure communication channel...');
+    }
+
+    function handleMessages() {
+        showSystemMessage('Accessing encrypted message database...');
+    }
+
+    function handleEmail() {
+        showSystemMessage('Connecting to Stark Industries mail server...');
+    }
+
+    // Handle access panel extend button
+    function extendSystems() {
+        showSystemMessage('Extending all secondary systems... Mark 52 protocols active.');
+        
+        // Visual feedback: briefly enhance the reactor glow
+        const reactorCore = document.querySelector('.reactor-core');
+        reactorCore.style.boxShadow = '0 0 60px #00aaff, inset 0 0 40px rgba(0, 170, 255, 0.6)';
+        
+        setTimeout(() => {
+            reactorCore.style.boxShadow = '0 0 30px #00aaff, inset 0 0 20px rgba(0, 170, 255, 0.3)';
+        }, 2000);
+    }
+
+    // Display system messages (in a real implementation, this might be a notification system)
+    function showSystemMessage(message) {
+        // For this demo, we'll use a simple alert, but in production you'd want a proper notification overlay
+        console.log('JARVIS SYSTEM:', message);
+        
+        // You could create a temporary notification element here
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 170, 255, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 3000);
+    }
+
+    // Initialize any startup animations or effects
+    function initializeInterface() {
+        console.log('Arc Reactor Interface Online - Mark 52 Systems Activated');
+        
+        // Start with a system initialization message
+        setTimeout(() => {
+            showSystemMessage('All systems online. Arc reactor at optimal efficiency.');
+        }, 1000);
+    }
+</script>
+```
+
+</body>
+</html>

@@ -164,103 +164,200 @@ async def root():
     """Root endpoint with a modern voice assistant interface."""
     html_content = """
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-        <title>Jarvis - Voice Assistant</title>
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>JARVIS - Arc Reactor Interface</title>
         <style>
             * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
             }
-            
+
             body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
+                font-family: 'Courier New', monospace;
+                background: #000;
+                color: #00d4ff;
+                overflow: hidden;
+                height: 100vh;
+                position: relative;
+            }
+
+            /* Main interface container */
+            .interface-container {
+                position: relative;
+                width: 100%;
+                height: 100vh;
+                background: 
+                    radial-gradient(ellipse at 30% 20%, rgba(0, 150, 255, 0.1) 0%, transparent 50%),
+                    radial-gradient(ellipse at 70% 80%, rgba(255, 165, 0, 0.05) 0%, transparent 50%),
+                    linear-gradient(135deg, #001122 0%, #000000 100%);
+            }
+
+            /* Top status bar */
+            .top-status-bar {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                right: 20px;
+                height: 60px;
+                background: rgba(0, 50, 100, 0.2);
+                border: 1px solid #00aaff;
+                border-radius: 8px;
                 display: flex;
-                flex-direction: column;
+                align-items: center;
+                padding: 0 30px;
+                backdrop-filter: blur(10px);
+            }
+
+            .status-display {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .status-icon {
+                width: 40px;
+                height: 40px;
+                border: 2px solid #00aaff;
+                border-radius: 50%;
+                display: flex;
                 align-items: center;
                 justify-content: center;
-                color: white;
-                overflow-x: hidden;
+                font-size: 14px;
+                font-weight: bold;
+                color: #00aaff;
             }
 
-            .container {
-                text-align: center;
-                max-width: 500px;
-                width: 90%;
-                padding: 20px;
+            .status-icon.listening {
+                border-color: #ff6b6b;
+                color: #ff6b6b;
+                animation: pulse 1.5s infinite;
             }
 
-            .title {
-                font-size: 2.5rem;
-                font-weight: 300;
-                margin-bottom: 10px;
-                background: linear-gradient(45deg, #fff, #e0e0e0);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
+            .status-icon.processing {
+                border-color: #4ecdc4;
+                color: #4ecdc4;
+                animation: spin 2s linear infinite;
             }
 
-            .subtitle {
-                font-size: 1.1rem;
-                opacity: 0.8;
-                margin-bottom: 60px;
-                font-weight: 300;
+            .status-text {
+                font-size: 18px;
+                color: #00d4ff;
+                font-weight: bold;
             }
 
-            .voice-container {
-                position: relative;
-                margin: 40px 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .talk-button {
-                width: 200px;
+            .system-grid {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                width: 400px;
                 height: 200px;
-                border-radius: 50%;
-                background: linear-gradient(145deg, #ffffff, #f0f0f0);
-                border: none;
-                cursor: pointer;
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                grid-template-rows: repeat(4, 1fr);
+                gap: 3px;
+            }
+
+            .grid-cell {
+                background: rgba(0, 170, 255, 0.1);
+                border: 1px solid #0099cc;
+                border-radius: 3px;
+                font-size: 10px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 transition: all 0.3s ease;
-                box-shadow: 
-                    0 20px 40px rgba(0,0,0,0.1),
-                    inset 0 -5px 10px rgba(0,0,0,0.1),
-                    inset 0 5px 10px rgba(255,255,255,0.8);
-                position: relative;
-                overflow: hidden;
             }
 
-            .talk-button:hover {
-                transform: translateY(-5px);
-                box-shadow: 
-                    0 25px 50px rgba(0,0,0,0.15),
-                    inset 0 -5px 10px rgba(0,0,0,0.1),
-                    inset 0 5px 10px rgba(255,255,255,0.8);
+            .grid-cell:hover {
+                background: rgba(0, 170, 255, 0.3);
+                box-shadow: 0 0 10px #00aaff;
             }
 
-            .talk-button:active {
-                transform: translateY(-2px);
-                box-shadow: 
-                    0 15px 30px rgba(0,0,0,0.2),
-                    inset 0 5px 15px rgba(0,0,0,0.2);
+            /* Central arc reactor display */
+            .arc-reactor {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 350px;
+                height: 350px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
             }
 
-            .talk-button.listening {
-                background: linear-gradient(145deg, #ff6b6b, #ee5a52);
-                animation: pulse 1.5s infinite;
+            .reactor-outer-ring {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border: 3px solid #00aaff;
+                border-radius: 50%;
+                opacity: 0.6;
             }
 
-            .talk-button.processing {
-                background: linear-gradient(145deg, #4ecdc4, #44a08d);
-                animation: spin 2s linear infinite;
+            .reactor-middle-ring {
+                position: absolute;
+                width: 85%;
+                height: 85%;
+                border: 2px solid #0099dd;
+                border-radius: 50%;
+                opacity: 0.8;
+            }
+
+            .reactor-segments {
+                position: absolute;
+                width: 90%;
+                height: 90%;
+                border-radius: 50%;
+            }
+
+            /* Energy level segments using conic gradient */
+            .energy-segments {
+                position: absolute;
+                width: 95%;
+                height: 95%;
+                border-radius: 50%;
+                background: conic-gradient(
+                    from 0deg,
+                    #ff9900 0deg 45deg,
+                    #ffcc00 45deg 90deg,
+                    #00aaff 90deg 180deg,
+                    rgba(0, 170, 255, 0.3) 180deg 360deg
+                );
+                mask: radial-gradient(circle, transparent 70%, black 75%, black 85%, transparent 90%);
+                animation: rotateEnergy 8s linear infinite;
+            }
+
+            .energy-segments.listening {
+                background: conic-gradient(
+                    from 0deg,
+                    #ff6b6b 0deg 90deg,
+                    #ff9900 90deg 180deg,
+                    #ffcc00 180deg 270deg,
+                    #ff6b6b 270deg 360deg
+                );
+                animation: rotateEnergy 3s linear infinite;
+            }
+
+            .energy-segments.processing {
+                background: conic-gradient(
+                    from 0deg,
+                    #4ecdc4 0deg 90deg,
+                    #00aaff 90deg 180deg,
+                    #4ecdc4 180deg 270deg,
+                    #00aaff 270deg 360deg
+                );
+                animation: rotateEnergy 1s linear infinite;
+            }
+
+            @keyframes rotateEnergy {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
             }
 
             @keyframes pulse {
@@ -273,149 +370,387 @@ async def root():
                 100% { transform: rotate(360deg); }
             }
 
-            .microphone-icon {
-                font-size: 3rem;
-                color: #667eea;
-                transition: color 0.3s ease;
+            /* Reactor core center */
+            .reactor-core {
+                position: relative;
+                width: 120px;
+                height: 120px;
+                background: radial-gradient(circle, #00aaff 0%, #0066aa  50%, #003366 100%);
+                border-radius: 50%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 
+                    0 0 30px #00aaff,
+                    inset 0 0 20px rgba(0, 170, 255, 0.3);
+                animation: corePulse 3s ease-in-out infinite;
+                transition: all 0.3s ease;
             }
 
-            .talk-button.listening .microphone-icon {
-                color: white;
+            .reactor-core.listening {
+                background: radial-gradient(circle, #ff6b6b 0%, #cc4444 50%, #993333 100%);
+                box-shadow: 
+                    0 0 50px #ff6b6b,
+                    inset 0 0 30px rgba(255, 107, 107, 0.5);
             }
 
-            .talk-button.processing .microphone-icon {
-                color: white;
+            .reactor-core.processing {
+                background: radial-gradient(circle, #4ecdc4 0%, #44a08d 50%, #336666 100%);
+                box-shadow: 
+                    0 0 50px #4ecdc4,
+                    inset 0 0 30px rgba(78, 205, 196, 0.5);
             }
 
-            .status-text {
-                margin-top: 30px;
-                font-size: 1.2rem;
-                font-weight: 300;
-                opacity: 0.9;
-                min-height: 30px;
+            @keyframes corePulse {
+                0%, 100% { 
+                    box-shadow: 0 0 30px #00aaff, inset 0 0 20px rgba(0, 170, 255, 0.3);
+                    transform: scale(1);
+                }
+                50% { 
+                    box-shadow: 0 0 50px #00aaff, inset 0 0 30px rgba(0, 170, 255, 0.5);
+                    transform: scale(1.05);
+                }
             }
 
-            .text-input-container {
-                margin: 40px 0;
-                width: 100%;
+            .voice-status {
+                font-size: 14px;
+                font-weight: bold;
+                color: #ffcc00;
+                margin-bottom: 5px;
+                min-height: 20px;
+            }
+
+            .voice-command {
+                font-size: 10px;
+                color: #00aaff;
+                opacity: 0.8;
+                text-align: center;
+                max-width: 100px;
+                line-height: 1.2;
+            }
+
+            /* Scale markings around reactor */
+            .scale-marking {
+                position: absolute;
+                color: #00aaff;
+                font-size: 14px;
+                font-weight: bold;
+            }
+
+            .scale-5 { top: 10px; right: 120px; }
+            .scale-15 { right: 10px; top: 120px; }
+            .scale-25 { bottom: 10px; right: 120px; }
+            .scale-75 { left: 10px; top: 120px; }
+
+            .energy-label {
+                position: absolute;
+                bottom: -40px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 16px;
+                color: #00aaff;
+                font-weight: bold;
+                letter-spacing: 2px;
+            }
+
+            /* Technical readouts */
+            .tech-readout {
+                position: absolute;
+                top: 100px;
+                left: 20px;
+                width: 250px;
+                background: rgba(0, 50, 100, 0.1);
+                border: 1px solid #00aaff;
+                border-radius: 8px;
+                padding: 15px;
+                backdrop-filter: blur(10px);
+            }
+
+            .readout-line {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 8px;
+                font-size: 11px;
+                color: #00aaff;
+            }
+
+            .readout-value {
+                color: #ffcc00;
+                font-weight: bold;
+            }
+
+            /* Communication panel */
+            .comm-panel {
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                height: 120px;
+                background: rgba(0, 50, 100, 0.15);
+                border: 1px solid #00aaff;
+                border-radius: 8px;
+                backdrop-filter: blur(10px);
+                padding: 20px;
+            }
+
+            .comm-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+
+            .comm-title {
+                font-size: 14px;
+                color: #00aaff;
+                font-weight: bold;
+                letter-spacing: 1px;
             }
 
             .text-input {
                 width: 100%;
-                padding: 15px 20px;
-                border: 2px solid rgba(255,255,255,0.3);
-                border-radius: 25px;
-                background: rgba(255,255,255,0.1);
-                color: white;
-                font-size: 1rem;
+                background: rgba(0, 50, 100, 0.2);
+                border: 1px solid #00aaff;
+                border-radius: 20px;
+                padding: 10px 20px;
+                color: #00d4ff;
+                font-family: 'Courier New', monospace;
+                font-size: 14px;
                 outline: none;
                 transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
             }
 
             .text-input::placeholder {
-                color: rgba(255,255,255,0.7);
+                color: rgba(0, 212, 255, 0.5);
             }
 
             .text-input:focus {
-                border-color: rgba(255,255,255,0.6);
-                background: rgba(255,255,255,0.15);
+                border-color: #00ffaa;
+                box-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
             }
 
             .send-button {
-                margin-top: 15px;
-                padding: 12px 30px;
-                background: rgba(255,255,255,0.2);
-                border: 2px solid rgba(255,255,255,0.3);
-                border-radius: 25px;
-                color: white;
-                font-size: 1rem;
+                margin-top: 10px;
+                padding: 8px 20px;
+                background: linear-gradient(45deg, #ff9900, #ffcc00);
+                border: none;
+                color: #000;
+                border-radius: 15px;
+                font-size: 12px;
+                font-weight: bold;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
             }
 
             .send-button:hover {
-                background: rgba(255,255,255,0.3);
-                border-color: rgba(255,255,255,0.5);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255, 153, 0, 0.4);
             }
 
+            /* Response display */
             .response-container {
-                margin-top: 30px;
+                position: absolute;
+                top: 50%;
+                right: 20px;
+                transform: translateY(-50%);
+                width: 300px;
+                max-height: 400px;
+                background: rgba(0, 50, 100, 0.15);
+                border: 1px solid #00aaff;
+                border-radius: 8px;
                 padding: 20px;
-                background: rgba(255,255,255,0.1);
-                border-radius: 15px;
                 backdrop-filter: blur(10px);
-                border: 1px solid rgba(255,255,255,0.2);
-                max-width: 100%;
-                word-wrap: break-word;
                 display: none;
+                overflow-y: auto;
+            }
+
+            .response-header {
+                font-size: 12px;
+                color: #ff9900;
+                font-weight: bold;
+                margin-bottom: 10px;
+                letter-spacing: 1px;
             }
 
             .response-text {
-                font-size: 1.1rem;
+                font-size: 12px;
+                color: #00d4ff;
                 line-height: 1.6;
-                color: white;
+                word-wrap: break-word;
             }
 
-            .api-link {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                color: rgba(255,255,255,0.8);
-                text-decoration: none;
-                font-size: 0.9rem;
-                padding: 8px 15px;
-                border: 1px solid rgba(255,255,255,0.3);
-                border-radius: 20px;
-                transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
+            /* Animated scan lines */
+            .scan-line {
+                position: absolute;
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, #00aaff, transparent);
+                animation: scanMove 3s linear infinite;
+                opacity: 0.6;
             }
 
-            .api-link:hover {
-                color: white;
-                border-color: rgba(255,255,255,0.6);
-                background: rgba(255,255,255,0.1);
+            @keyframes scanMove {
+                0% { top: 0%; opacity: 0; }
+                50% { opacity: 0.6; }
+                100% { top: 100%; opacity: 0; }
             }
 
-            @media (max-width: 600px) {
-                .title {
-                    font-size: 2rem;
+            /* Power level indicators */
+            .power-bars {
+                position: absolute;
+                top: 50%;
+                left: 100px;
+                transform: translateY(-50%);
+                display: flex;
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            .power-bar {
+                width: 60px;
+                height: 8px;
+                background: rgba(0, 170, 255, 0.2);
+                border: 1px solid #00aaff;
+                border-radius: 2px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .power-bar.active::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                background: linear-gradient(90deg, #00aaff, #00ffaa);
+                animation: powerFlow 2s ease-in-out infinite;
+            }
+
+            .power-bar:nth-child(1).active::after { width: 90%; animation-delay: 0s; }
+            .power-bar:nth-child(2).active::after { width: 85%; animation-delay: 0.2s; }
+            .power-bar:nth-child(3).active::after { width: 92%; animation-delay: 0.4s; }
+            .power-bar:nth-child(4).active::after { width: 78%; animation-delay: 0.6s; }
+            .power-bar:nth-child(5).active::after { width: 88%; animation-delay: 0.8s; }
+
+            @keyframes powerFlow {
+                0%, 100% { opacity: 0.7; }
+                50% { opacity: 1; }
+            }
+
+            @media (max-width: 768px) {
+                .system-grid { display: none; }
+                .tech-readout { display: none; }
+                .power-bars { display: none; }
+                .response-container { 
+                    position: fixed;
+                    bottom: 160px;
+                    left: 20px;
+                    right: 20px;
+                    width: auto;
+                    transform: none;
                 }
-                
-                .talk-button {
-                    width: 150px;
-                    height: 150px;
+                .arc-reactor {
+                    width: 280px;
+                    height: 280px;
                 }
-                
-                .microphone-icon {
-                    font-size: 2.5rem;
+                .reactor-core {
+                    width: 100px;
+                    height: 100px;
                 }
             }
         </style>
     </head>
     <body>
-        <a href="/docs" class="api-link">API Docs</a>
-        
-        <div class="container">
-            <h1 class="title">Jarvis</h1>
-            <p class="subtitle">Your AI Voice Assistant</p>
-            
-            <div class="voice-container">
-                <button class="talk-button" id="talkButton" onclick="toggleListening()">
-                    <div class="microphone-icon">🎤</div>
-                </button>
-                <div class="status-text" id="statusText">Press to talk</div>
+        <div class="interface-container">
+            <!-- Animated scan line -->
+            <div class="scan-line"></div>
+
+            <!-- Top status bar -->
+            <div class="top-status-bar">
+                <div class="status-display">
+                    <div class="status-icon" id="statusIcon">🎤</div>
+                    <div class="status-text" id="statusText">JARVIS READY</div>
+                </div>
+                
+                <!-- System grid display -->
+                <div class="system-grid" id="systemGrid">
+                    <!-- Grid cells will be populated by JavaScript -->
+                </div>
             </div>
 
-            <div class="text-input-container">
+            <!-- Technical readouts -->
+            <div class="tech-readout">
+                <div class="readout-line">
+                    <span>VOICE ENGINE</span>
+                    <span class="readout-value" id="voiceStatus">ONLINE</span>
+                </div>
+                <div class="readout-line">
+                    <span>SPEECH REC</span>
+                    <span class="readout-value" id="speechStatus">READY</span>
+                </div>
+                <div class="readout-line">
+                    <span>API STATUS</span>
+                    <span class="readout-value" id="apiStatus">CONNECTED</span>
+                </div>
+                <div class="readout-line">
+                    <span>COMMANDS</span>
+                    <span class="readout-value" id="commandCount">0</span>
+                </div>
+                <div class="readout-line">
+                    <span>UPTIME</span>
+                    <span class="readout-value" id="uptime">00:00:00</span>
+                </div>
+            </div>
+
+            <!-- Power level bars -->
+            <div class="power-bars">
+                <div class="power-bar active"></div>
+                <div class="power-bar active"></div>
+                <div class="power-bar active"></div>
+                <div class="power-bar active"></div>
+                <div class="power-bar active"></div>
+            </div>
+
+            <!-- Central arc reactor -->
+            <div class="arc-reactor" id="arcReactor" onclick="toggleListening()">
+                <div class="reactor-outer-ring"></div>
+                <div class="reactor-middle-ring"></div>
+                <div class="energy-segments" id="energySegments"></div>
+                
+                <div class="reactor-core" id="reactorCore">
+                    <div class="voice-status" id="voiceStatusText">PRESS TO TALK</div>
+                    <div class="voice-command" id="voiceCommand">Touch reactor core</div>
+                </div>
+                
+                <!-- Scale markings -->
+                <div class="scale-marking scale-5">5</div>
+                <div class="scale-marking scale-15">15</div>
+                <div class="scale-marking scale-25">25</div>
+                <div class="scale-marking scale-75">75</div>
+                
+                <div class="energy-label">VOICE INTERFACE</div>
+            </div>
+
+            <!-- Communication panel -->
+            <div class="comm-panel">
+                <div class="comm-header">
+                    <div class="comm-title">VOICE COMMAND INPUT</div>
+                </div>
                 <input type="text" 
                        class="text-input" 
                        id="commandInput" 
-                       placeholder="Or type your command here..."
+                       placeholder="Type command here or use voice..."
                        onkeypress="handleKeyPress(event)">
-                <button class="send-button" onclick="sendTextCommand()">Send</button>
+                <button class="send-button" onclick="sendTextCommand()">EXECUTE</button>
             </div>
+
+            <!-- Response display -->
+            <div class="response-container" id="responseContainer">
+                <div class="response-header">JARVIS RESPONSE</div>
+                <div class="response-text" id="responseText"></div>
+            </div>
+        </div>
 
             <div class="response-container" id="responseContainer">
                 <div class="response-text" id="responseText"></div>
@@ -424,26 +759,79 @@ async def root():
 
         <script>
             let isListening = false;
-            let mediaRecorder = null;
-            let audioChunks = [];
+            let commandCount = 0;
+            let startTime = Date.now();
 
-            // Initialize the interface
+            // Initialize the interface when page loads
             document.addEventListener('DOMContentLoaded', function() {
-                updateStatus('Press to talk');
+                initializeInterface();
+                populateSystemGrid();
+                
+                // Update time every second to keep it current
+                setInterval(updateSystemReadouts, 1000);
+                
+                // Simulate system activity with periodic updates
+                setInterval(simulateSystemActivity, 2000);
             });
+
+            function initializeInterface() {
+                updateStatus('JARVIS READY');
+                updateVoiceStatus('PRESS TO TALK');
+                updateReadoutValue('voiceStatus', 'ONLINE');
+                updateReadoutValue('speechStatus', 'READY');
+                updateReadoutValue('apiStatus', 'CONNECTED');
+                updateReadoutValue('commandCount', '0');
+                
+                console.log('Arc Reactor Interface Online - JARVIS Systems Activated');
+                
+                // Start with a system initialization message
+                setTimeout(() => {
+                    showSystemMessage('All systems online. Voice interface ready.');
+                }, 1000);
+            }
 
             function updateStatus(message) {
                 document.getElementById('statusText').textContent = message;
             }
 
-            function updateTalkButton(state) {
-                const button = document.getElementById('talkButton');
-                button.className = 'talk-button';
+            function updateVoiceStatus(message) {
+                document.getElementById('voiceStatusText').textContent = message;
+            }
+
+            function updateReadoutValue(elementId, value) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.textContent = value;
+                }
+            }
+
+            function updateSystemReadouts() {
+                // Update uptime
+                const uptime = Math.floor((Date.now() - startTime) / 1000);
+                const hours = Math.floor(uptime / 3600).toString().padStart(2, '0');
+                const minutes = Math.floor((uptime % 3600) / 60).toString().padStart(2, '0');
+                const seconds = (uptime % 60).toString().padStart(2, '0');
+                updateReadoutValue('uptime', `${hours}:${minutes}:${seconds}`);
+            }
+
+            function updateReactorState(state) {
+                const reactorCore = document.getElementById('reactorCore');
+                const energySegments = document.getElementById('energySegments');
+                const statusIcon = document.getElementById('statusIcon');
+                
+                // Reset classes
+                reactorCore.className = 'reactor-core';
+                energySegments.className = 'energy-segments';
+                statusIcon.className = 'status-icon';
                 
                 if (state === 'listening') {
-                    button.classList.add('listening');
+                    reactorCore.classList.add('listening');
+                    energySegments.classList.add('listening');
+                    statusIcon.classList.add('listening');
                 } else if (state === 'processing') {
-                    button.classList.add('processing');
+                    reactorCore.classList.add('processing');
+                    energySegments.classList.add('processing');
+                    statusIcon.classList.add('processing');
                 }
             }
 
@@ -459,7 +847,9 @@ async def root():
                 try {
                     // Check if browser supports speech recognition
                     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                        updateStatus('Speech recognition not supported in this browser');
+                        updateStatus('SPEECH RECOGNITION NOT SUPPORTED');
+                        updateVoiceStatus('BROWSER ERROR');
+                        showSystemMessage('Speech recognition not supported in this browser');
                         return;
                     }
 
@@ -471,30 +861,41 @@ async def root():
                     recognition.lang = 'en-US';
 
                     isListening = true;
-                    updateTalkButton('listening');
-                    updateStatus('Listening...');
+                    updateReactorState('listening');
+                    updateStatus('LISTENING');
+                    updateVoiceStatus('LISTENING...');
+                    updateReadoutValue('speechStatus', 'ACTIVE');
 
                     recognition.onresult = function(event) {
                         const transcript = event.results[0][0].transcript;
                         document.getElementById('commandInput').value = transcript;
+                        updateVoiceStatus('PROCESSING');
                         sendCommand(transcript);
                     };
 
                     recognition.onerror = function(event) {
                         console.error('Speech recognition error:', event.error);
-                        updateStatus('Error: ' + event.error);
+                        updateStatus('SPEECH ERROR: ' + event.error.toUpperCase());
+                        updateVoiceStatus('ERROR');
+                        updateReadoutValue('speechStatus', 'ERROR');
+                        showSystemMessage('Speech recognition error: ' + event.error);
                         resetInterface();
                     };
 
                     recognition.onend = function() {
-                        resetInterface();
+                        if (isListening && !document.getElementById('commandInput').value) {
+                            resetInterface();
+                        }
                     };
 
                     recognition.start();
 
                 } catch (error) {
                     console.error('Error starting speech recognition:', error);
-                    updateStatus('Error starting voice recognition');
+                    updateStatus('VOICE ERROR');
+                    updateVoiceStatus('SYSTEM ERROR');
+                    updateReadoutValue('speechStatus', 'OFFLINE');
+                    showSystemMessage('Error starting voice recognition: ' + error.message);
                     resetInterface();
                 }
             }
@@ -506,20 +907,25 @@ async def root():
 
             function resetInterface() {
                 isListening = false;
-                updateTalkButton('default');
-                updateStatus('Press to talk');
+                updateReactorState('default');
+                updateStatus('JARVIS READY');
+                updateVoiceStatus('PRESS TO TALK');
+                updateReadoutValue('speechStatus', 'READY');
             }
 
             async function sendCommand(commandText) {
                 const command = commandText || document.getElementById('commandInput').value.trim();
                 
                 if (!command) {
-                    updateStatus('Please enter a command');
+                    updateStatus('NO COMMAND ENTERED');
+                    updateVoiceStatus('WAITING');
                     return;
                 }
 
-                updateTalkButton('processing');
-                updateStatus('Processing...');
+                updateReactorState('processing');
+                updateStatus('PROCESSING COMMAND');
+                updateVoiceStatus('ANALYZING...');
+                updateReadoutValue('apiStatus', 'TRANSMITTING');
                 
                 try {
                     const response = await fetch('/command', {
@@ -529,7 +935,7 @@ async def root():
                         },
                         body: JSON.stringify({
                             command: command,
-                            source: 'web_interface'
+                            source: 'arc_reactor_interface'
                         })
                     });
                     
@@ -539,31 +945,58 @@ async def root():
                     
                     const data = await response.json();
                     
+                    // Update command count
+                    commandCount++;
+                    updateReadoutValue('commandCount', commandCount.toString());
+                    
                     // Display the response
                     const responseContainer = document.getElementById('responseContainer');
                     const responseText = document.getElementById('responseText');
                     
                     if (data.success) {
                         responseText.textContent = data.response;
-                        updateStatus('Response received');
+                        updateStatus('COMMAND EXECUTED');
+                        updateVoiceStatus('COMPLETE');
+                        updateReadoutValue('apiStatus', 'SUCCESS');
+                        showSystemMessage('Command executed successfully');
                     } else {
-                        responseText.textContent = 'Error: ' + (data.response || 'Unknown error');
-                        updateStatus('Error processing command');
+                        responseText.textContent = 'JARVIS ERROR: ' + (data.response || 'Unknown system error');
+                        updateStatus('EXECUTION FAILED');
+                        updateVoiceStatus('ERROR');
+                        updateReadoutValue('apiStatus', 'FAILED');
+                        showSystemMessage('Command execution failed');
                     }
                     
                     responseContainer.style.display = 'block';
+                    
+                    // Auto-hide response after 10 seconds
+                    setTimeout(() => {
+                        responseContainer.style.display = 'none';
+                    }, 10000);
                     
                 } catch (error) {
                     console.error('Error sending command:', error);
                     const responseContainer = document.getElementById('responseContainer');
                     const responseText = document.getElementById('responseText');
                     
-                    responseText.textContent = 'Connection error: ' + error.message;
+                    responseText.textContent = 'NETWORK ERROR: ' + error.message;
                     responseContainer.style.display = 'block';
-                    updateStatus('Connection error');
+                    updateStatus('CONNECTION FAILED');
+                    updateVoiceStatus('OFFLINE');
+                    updateReadoutValue('apiStatus', 'DISCONNECTED');
+                    showSystemMessage('Network connection error');
+                    
+                    // Auto-hide error after 10 seconds
+                    setTimeout(() => {
+                        responseContainer.style.display = 'none';
+                    }, 10000);
                 }
                 
-                resetInterface();
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    resetInterface();
+                    updateReadoutValue('apiStatus', 'CONNECTED');
+                }, 2000);
             }
 
             function sendTextCommand() {
@@ -576,11 +1009,87 @@ async def root():
                 }
             }
 
+            // Create the system grid with realistic technical labels
+            function populateSystemGrid() {
+                const systemGrid = document.getElementById('systemGrid');
+                const gridLabels = [
+                    'PWR', 'SYS', 'NAV', 'COM', 'WPN', 'SHD',
+                    'THR', 'STB', 'GYR', 'ALT', 'VEL', 'TMP',
+                    'O2', 'CO2', 'H2O', 'FUL', 'BAT', 'GEN',
+                    'RAD', 'MAG', 'GRV', 'IRT', 'OPT', 'AUD'
+                ];
+                
+                // Create each grid cell with a technical system abbreviation
+                gridLabels.forEach(label => {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.textContent = label;
+                    
+                    // Add some cells that appear "active" with different styling
+                    if (Math.random() > 0.7) {
+                        cell.style.background = 'rgba(255, 153, 0, 0.2)';
+                        cell.style.color = '#ffcc00';
+                    }
+                    
+                    systemGrid.appendChild(cell);
+                });
+            }
+
+            // Simulate realistic system activity by updating various interface elements
+            function simulateSystemActivity() {
+                // Randomly update some grid cells to show system changes
+                const gridCells = document.querySelectorAll('.grid-cell');
+                gridCells.forEach(cell => {
+                    if (Math.random() > 0.95) {
+                        // Briefly highlight cell to show activity
+                        cell.style.background = 'rgba(0, 255, 170, 0.4)';
+                        cell.style.boxShadow = '0 0 10px #00ffaa';
+                        
+                        setTimeout(() => {
+                            cell.style.background = 'rgba(0, 170, 255, 0.1)';
+                            cell.style.boxShadow = 'none';
+                        }, 500);
+                    }
+                });
+            }
+
+            // Display system messages
+            function showSystemMessage(message) {
+                console.log('JARVIS SYSTEM:', message);
+                
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0, 170, 255, 0.9);
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    font-size: 12px;
+                    font-family: 'Courier New', monospace;
+                    z-index: 1000;
+                    backdrop-filter: blur(10px);
+                    border: 1px solid #00aaff;
+                `;
+                notification.textContent = `JARVIS: ${message}`;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 3000);
+            }
+
             // Hide response when starting new input
-            document.getElementById('commandInput').addEventListener('focus', function() {
-                const responseContainer = document.getElementById('responseContainer');
-                if (responseContainer.style.display === 'block') {
-                    responseContainer.style.display = 'none';
+            document.addEventListener('click', function(event) {
+                if (event.target.id === 'commandInput') {
+                    const responseContainer = document.getElementById('responseContainer');
+                    if (responseContainer.style.display === 'block') {
+                        responseContainer.style.display = 'none';
+                    }
                 }
             });
         </script>
