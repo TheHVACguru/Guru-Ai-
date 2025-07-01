@@ -758,7 +758,6 @@ async def root():
         </div>
 
         <script>
-            let isListening = false;
             let commandCount = 0;
             let startTime = Date.now();
 
@@ -776,42 +775,20 @@ async def root():
 
             function initializeInterface() {
                 updateStatus('JARVIS READY');
-                updateVoiceStatus('PRESS TO TALK');
+                updateVoiceStatus('TEXT INPUT READY');
                 updateReadoutValue('voiceStatus', 'ONLINE');
-                updateReadoutValue('speechStatus', 'CHECKING...');
+                updateReadoutValue('speechStatus', 'TEXT MODE');
                 updateReadoutValue('apiStatus', 'CONNECTED');
                 updateReadoutValue('commandCount', '0');
                 
                 console.log('Arc Reactor Interface Online - JARVIS Systems Activated');
                 
-                // Check speech recognition availability
-                checkSpeechRecognitionAvailability();
+                // Focus on text input
+                document.getElementById('commandInput').focus();
                 
-                // Start with a system initialization message
                 setTimeout(() => {
-                    showSystemMessage('Arc Reactor interface initialized. All systems operational.');
+                    showSystemMessage('Interface ready. Type commands below.');
                 }, 1000);
-            }
-
-            function checkSpeechRecognitionAvailability() {
-                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                    updateReadoutValue('speechStatus', 'NOT SUPPORTED');
-                    updateVoiceStatus('TEXT INPUT ONLY');
-                    document.getElementById('voiceCommand').textContent = 'Speech unavailable';
-                    showSystemMessage('Speech recognition not available. Use text input below.');
-                    return false;
-                }
-                
-                if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-                    updateReadoutValue('speechStatus', 'REQUIRES HTTPS');
-                    updateVoiceStatus('TEXT INPUT ONLY');
-                    document.getElementById('voiceCommand').textContent = 'HTTPS required';
-                    showSystemMessage('Voice input requires HTTPS connection. Use text input below.');
-                    return false;
-                }
-                
-                updateReadoutValue('speechStatus', 'READY');
-                return true;
             }
 
             function updateStatus(message) {
@@ -848,150 +825,33 @@ async def root():
                 energySegments.className = 'energy-segments';
                 statusIcon.className = 'status-icon';
                 
-                if (state === 'listening') {
-                    reactorCore.classList.add('listening');
-                    energySegments.classList.add('listening');
-                    statusIcon.classList.add('listening');
-                } else if (state === 'processing') {
+                if (state === 'processing') {
                     reactorCore.classList.add('processing');
                     energySegments.classList.add('processing');
                     statusIcon.classList.add('processing');
                 }
             }
 
-            async function toggleListening() {
-                // Prevent multiple rapid clicks
-                if (document.getElementById('reactorCore').classList.contains('processing')) {
-                    return;
-                }
-                
-                if (!isListening) {
-                    startListening();
-                } else {
-                    stopListening();
-                }
-            }
-
-            async function startListening() {
-                try {
-                    // Check if browser supports speech recognition
-                    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                        handleSpeechError('Speech recognition not supported in this browser');
-                        return;
-                    }
-
-                    // Check if we're on HTTPS or localhost (required for speech recognition)
-                    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-                        handleSpeechError('Speech recognition requires HTTPS connection');
-                        return;
-                    }
-
-                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                    const recognition = new SpeechRecognition();
-                    
-                    recognition.continuous = false;
-                    recognition.interimResults = false;
-                    recognition.lang = 'en-US';
-
-                    isListening = true;
-                    updateReactorState('listening');
-                    updateStatus('LISTENING');
-                    updateVoiceStatus('LISTENING...');
-                    updateReadoutValue('speechStatus', 'ACTIVE');
-
-                    recognition.onresult = function(event) {
-                        const transcript = event.results[0][0].transcript;
-                        document.getElementById('commandInput').value = transcript;
-                        updateVoiceStatus('VOICE CAPTURED');
-                        sendCommand(transcript);
-                    };
-
-                    recognition.onerror = function(event) {
-                        console.error('Speech recognition error:', event.error);
-                        
-                        let errorMessage = '';
-                        switch(event.error) {
-                            case 'service-not-allowed':
-                                errorMessage = 'Microphone access denied. Please enable microphone permissions.';
-                                break;
-                            case 'not-allowed':
-                                errorMessage = 'Microphone permission required. Please allow microphone access.';
-                                break;
-                            case 'network':
-                                errorMessage = 'Network error. Please check your internet connection.';
-                                break;
-                            case 'no-speech':
-                                errorMessage = 'No speech detected. Please try again.';
-                                break;
-                            case 'aborted':
-                                errorMessage = 'Speech recognition aborted.';
-                                break;
-                            default:
-                                errorMessage = `Speech recognition error: ${event.error}`;
-                        }
-                        
-                        handleSpeechError(errorMessage);
-                    };
-
-                    recognition.onend = function() {
-                        if (isListening && !document.getElementById('commandInput').value) {
-                            resetInterface();
-                        }
-                    };
-
-                    recognition.start();
-
-                } catch (error) {
-                    console.error('Error starting speech recognition:', error);
-                    handleSpeechError(`Voice system error: ${error.message}`);
-                }
-            }
-
-            function handleSpeechError(message) {
-                updateStatus('VOICE INPUT UNAVAILABLE');
-                updateVoiceStatus('USE TEXT INPUT');
-                updateReadoutValue('speechStatus', 'DISABLED');
-                showSystemMessage(message);
-                
-                // Focus on text input as fallback
+            function toggleListening() {
+                // Just focus on text input instead of attempting voice
                 const textInput = document.getElementById('commandInput');
-                setTimeout(() => {
-                    textInput.focus();
-                    textInput.placeholder = 'Voice unavailable - type command here...';
-                }, 100);
-                
-                // Don't reset interface immediately to show the error state
-                setTimeout(() => {
-                    resetInterface();
-                }, 2000);
-            }
-
-            function stopListening() {
-                isListening = false;
-                resetInterface();
+                textInput.focus();
+                showSystemMessage('Use text input below to send commands');
             }
 
             function resetInterface() {
-                isListening = false;
                 updateReactorState('default');
                 updateStatus('JARVIS READY');
-                updateVoiceStatus('PRESS TO TALK');
-                updateReadoutValue('speechStatus', 'READY');
+                updateVoiceStatus('TEXT INPUT READY');
+                updateReadoutValue('speechStatus', 'TEXT MODE');
             }
 
             async function sendCommand(commandText) {
                 const command = commandText || document.getElementById('commandInput').value.trim();
                 
-                if (!command || command.length < 1) {
-                    updateStatus('NO COMMAND ENTERED');
-                    updateVoiceStatus('WAITING FOR INPUT');
-                    
-                    // Only show message if user actually tried to send empty command
-                    if (commandText === '' || document.getElementById('commandInput').value === '') {
-                        showSystemMessage('Please enter a command first');
-                        // Focus on input field
-                        document.getElementById('commandInput').focus();
-                    }
+                if (!command) {
+                    showSystemMessage('Please enter a command');
+                    document.getElementById('commandInput').focus();
                     return;
                 }
 
@@ -1010,8 +870,7 @@ async def root():
                         },
                         body: JSON.stringify({
                             command: command,
-                            source: 'arc_reactor_interface',
-                            user_id: 'jarvis_user_' + Date.now()
+                            source: 'arc_reactor_interface'
                         })
                     });
                     
@@ -1035,80 +894,61 @@ async def root():
                         responseText.innerHTML = `
                             <strong>Command:</strong> "${command}"<br>
                             <strong>Response:</strong> ${data.response}<br>
-                            <strong>Processing Time:</strong> ${processingTime}ms<br>
-                            <strong>Timestamp:</strong> ${new Date().toLocaleTimeString()}
+                            <strong>Time:</strong> ${processingTime}ms
                         `;
                         updateStatus('COMMAND EXECUTED');
                         updateVoiceStatus('OPERATION COMPLETE');
                         updateReadoutValue('apiStatus', 'SUCCESS');
-                        showSystemMessage(`Command executed in ${processingTime}ms`);
                         
                         // Clear the input field
                         document.getElementById('commandInput').value = '';
                     } else {
                         responseText.innerHTML = `
                             <strong>Command:</strong> "${command}"<br>
-                            <strong>Error:</strong> ${data.response || 'Unknown system error'}<br>
-                            <strong>Processing Time:</strong> ${processingTime}ms<br>
-                            <strong>Status:</strong> Failed
+                            <strong>Error:</strong> ${data.response || 'Unknown error'}<br>
+                            <strong>Time:</strong> ${processingTime}ms
                         `;
                         updateStatus('EXECUTION FAILED');
                         updateVoiceStatus('COMMAND ERROR');
                         updateReadoutValue('apiStatus', 'FAILED');
-                        showSystemMessage('Command execution failed');
                     }
                     
                     responseContainer.style.display = 'block';
                     
-                    // Auto-hide response after 15 seconds
+                    // Auto-hide response after 10 seconds
                     setTimeout(() => {
-                        if (responseContainer.style.display === 'block') {
-                            responseContainer.style.display = 'none';
-                        }
-                    }, 15000);
+                        responseContainer.style.display = 'none';
+                    }, 10000);
                     
                 } catch (error) {
-                    console.error('Error sending command:', error);
                     const responseContainer = document.getElementById('responseContainer');
                     const responseText = document.getElementById('responseText');
                     
                     responseText.innerHTML = `
                         <strong>Command:</strong> "${command}"<br>
-                        <strong>Network Error:</strong> ${error.message}<br>
-                        <strong>Status:</strong> Connection Failed<br>
-                        <strong>Time:</strong> ${new Date().toLocaleTimeString()}
+                        <strong>Error:</strong> ${error.message}<br>
+                        <strong>Status:</strong> Connection Failed
                     `;
                     responseContainer.style.display = 'block';
                     updateStatus('CONNECTION FAILED');
                     updateVoiceStatus('NETWORK ERROR');
                     updateReadoutValue('apiStatus', 'DISCONNECTED');
-                    showSystemMessage('Network connection error - check server status');
                     
-                    // Auto-hide error after 15 seconds
                     setTimeout(() => {
-                        if (responseContainer.style.display === 'block') {
-                            responseContainer.style.display = 'none';
-                        }
-                    }, 15000);
+                        responseContainer.style.display = 'none';
+                    }, 10000);
                 }
                 
-                // Reset interface after response is complete
+                // Reset interface
                 setTimeout(() => {
-                    if (!isListening) {
-                        resetInterface();
-                        updateReadoutValue('apiStatus', 'CONNECTED');
-                    }
-                }, 2500);
+                    resetInterface();
+                    updateReadoutValue('apiStatus', 'CONNECTED');
+                    document.getElementById('commandInput').focus();
+                }, 2000);
             }
 
             function sendTextCommand() {
-                const command = document.getElementById('commandInput').value.trim();
-                if (command) {
-                    sendCommand(command);
-                } else {
-                    showSystemMessage('Please type a command first');
-                    document.getElementById('commandInput').focus();
-                }
+                sendCommand();
             }
 
             function handleKeyPress(event) {
@@ -1128,13 +968,11 @@ async def root():
                     'RAD', 'MAG', 'GRV', 'IRT', 'OPT', 'AUD'
                 ];
                 
-                // Create each grid cell with a technical system abbreviation
                 gridLabels.forEach(label => {
                     const cell = document.createElement('div');
                     cell.className = 'grid-cell';
                     cell.textContent = label;
                     
-                    // Add some cells that appear "active" with different styling
                     if (Math.random() > 0.7) {
                         cell.style.background = 'rgba(255, 153, 0, 0.2)';
                         cell.style.color = '#ffcc00';
@@ -1144,13 +982,10 @@ async def root():
                 });
             }
 
-            // Simulate realistic system activity by updating various interface elements
             function simulateSystemActivity() {
-                // Randomly update some grid cells to show system changes
                 const gridCells = document.querySelectorAll('.grid-cell');
                 gridCells.forEach(cell => {
                     if (Math.random() > 0.95) {
-                        // Briefly highlight cell to show activity
                         cell.style.background = 'rgba(0, 255, 170, 0.4)';
                         cell.style.boxShadow = '0 0 10px #00ffaa';
                         
@@ -1162,9 +997,8 @@ async def root():
                 });
             }
 
-            // Display system messages
             function showSystemMessage(message) {
-                console.log('JARVIS SYSTEM:', message);
+                console.log('JARVIS:', message);
                 
                 const notification = document.createElement('div');
                 notification.style.cssText = `
@@ -1182,7 +1016,7 @@ async def root():
                     backdrop-filter: blur(10px);
                     border: 1px solid #00aaff;
                 `;
-                notification.textContent = `JARVIS: ${message}`;
+                notification.textContent = message;
                 document.body.appendChild(notification);
                 
                 setTimeout(() => {
@@ -1191,23 +1025,6 @@ async def root():
                     }
                 }, 3000);
             }
-
-            // Hide response when starting new input and prevent accidental empty commands
-            document.addEventListener('click', function(event) {
-                if (event.target.id === 'commandInput') {
-                    const responseContainer = document.getElementById('responseContainer');
-                    if (responseContainer.style.display === 'block') {
-                        responseContainer.style.display = 'none';
-                    }
-                }
-            });
-
-            // Add input event listener to clear any lingering status messages
-            document.getElementById('commandInput').addEventListener('input', function() {
-                if (this.value.trim().length > 0) {
-                    updateVoiceStatus('READY TO SEND');
-                }
-            });
         </script>
     </body>
     </html>
