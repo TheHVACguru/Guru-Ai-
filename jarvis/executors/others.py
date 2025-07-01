@@ -117,9 +117,15 @@ def apps(phrase: str) -> None:
     if not app_check:
         speaker.speak(text=f"I did not find the app {keyword}. Try again.")
         return
-    app_status = os.system(f"open /Applications/{keyword!r} > /dev/null 2>&1")
+    # Use subprocess for safe command execution to prevent command injection
+    try:
+        result = subprocess.run(["open", f"/Applications/{keyword}"], 
+                              capture_output=True, text=True, timeout=10)
+        app_status = result.returncode
+    except (subprocess.TimeoutExpired, subprocess.SubprocessError):
+        app_status = 1  # Indicate failure
     keyword = keyword.replace(".app", "")
-    if app_status == 256:
+    if app_status != 0:
         speaker.speak(
             text=f"I'm sorry {models.env.title}! I wasn't able to launch {keyword}. "
             "You might need to check its permissions."

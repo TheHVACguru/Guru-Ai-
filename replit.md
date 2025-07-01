@@ -115,6 +115,12 @@ jarvis/
 - **Containerized Deployment**: Docker support for isolated environments
 
 ## Changelog
+- July 01, 2025: Fixed critical command injection security vulnerability in others.py
+  - Replaced unsafe os.system() call with secure subprocess.run() implementation in apps() function
+  - Fixed vulnerability in jarvis/executors/others.py line 120 that allowed command injection via app names
+  - Changed from os.system(f-string) to subprocess.run() with list arguments for safe command execution
+  - Vulnerability allowed potential arbitrary command execution on macOS systems through malicious app names
+  - Updated error handling to check for non-zero return codes instead of specific 256 value
 - July 01, 2025: Fixed critical command injection security vulnerability in crontab.py
   - Replaced unsafe shell=True subprocess call with secure shell=False implementation
   - Fixed vulnerability in jarvis/executors/crontab.py that allowed command injection via YAML cron configurations
