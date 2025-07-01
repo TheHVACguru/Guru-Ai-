@@ -1,4 +1,5 @@
 import os
+import shlex
 import subprocess
 from collections.abc import Generator
 
@@ -30,7 +31,9 @@ def executor(statement: str, log_file: str = None, process_name: str = None) -> 
     if not process_name:
         process_name = "crontab_executor"
     process_name = "_".join(process_name.split())
-    command = f"export PROCESS_NAME={process_name} && {statement}"
+    # Escape the statement to prevent command injection
+    escaped_statement = shlex.quote(statement)
+    command = f"export PROCESS_NAME={shlex.quote(process_name)} && {escaped_statement}"
     logger.debug("Executing '%s' as '%s'", statement, command)
     with open(log_file, "a") as file:
         file.write("\n")
