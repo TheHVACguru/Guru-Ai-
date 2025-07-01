@@ -92,10 +92,15 @@ def apps(phrase: str) -> None:
             return
 
     if models.settings.os == enums.SupportedPlatforms.windows:
-        status = os.system(f"start {keyword}")
-        if status == 0:
-            speaker.speak(text=f"I have opened {keyword}")
-        else:
+        # Use subprocess with shell=False to prevent command injection
+        try:
+            result = subprocess.run(["cmd", "/c", "start", keyword], 
+                                  capture_output=True, text=True, timeout=10)
+            if result.returncode == 0:
+                speaker.speak(text=f"I have opened {keyword}")
+            else:
+                speaker.speak(text=f"I did not find the app {keyword}. Try again.")
+        except (subprocess.TimeoutExpired, subprocess.SubprocessError):
             speaker.speak(text=f"I did not find the app {keyword}. Try again.")
         return
 
