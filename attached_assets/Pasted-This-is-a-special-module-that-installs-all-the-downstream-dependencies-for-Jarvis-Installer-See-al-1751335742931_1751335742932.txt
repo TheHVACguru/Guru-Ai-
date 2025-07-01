@@ -1,0 +1,5162 @@
+This is a special module that installs all the downstream dependencies for Jarvis.
+
+Installer
+See also
+Uses subprocess module to run the installation process.
+Triggered by commandline interface using the command jarvis install
+Installs OS specific and OS-agnostic dependencies.
+Has specific sections for main and dev dependencies.
+Warning
+Unlike other pypi packages, pip install jarvis-ironman will only download the package.
+Running jarvis install is what actually installs all the dependent packages.
+jarvis.lib.installer.convert_seconds(seconds: int | float, n_elem: int = 2) → str
+Calculate years, months, days, hours, minutes, seconds, and milliseconds from given input.
+
+Parameters:
+seconds – Number of seconds to convert (supports float values).
+n_elem – Number of elements required from the converted list.
+Returns:
+Returns a humanized string notion of the number of seconds.
+Return type:
+str
+class jarvis.lib.installer.Runtime(breakout: int = 2)
+A context manager that captures runtime for a given execution.
+
+Using context manager:
+with Runtime() as runtime:
+    bin(2018)
+print(runtime.get())
+Manually:
+runtime = Runtime()
+runtime.start()
+time.sleep(10)
+runtime.stop()
+print(runtime.get())
+start() → None
+Manually start the timer.
+stop() → Union[None, NoReturn]
+Manually stop the timer.
+get() → Union[None, NoReturn]
+Retrieve the elapsed time.
+jarvis.lib.installer.pretext() → str
+Pre-text to gain reader’s attention in the terminal.
+jarvis.lib.installer.center(text: str) → str
+Aligns text to center of the terminal and returns it.
+jarvis.lib.installer.get_arch() → Union[str, NoReturn]
+Classify system architecture into known categories.
+
+Returns:
+Returns exit code 1 if no architecture was detected.
+jarvis.lib.installer.confirmation_prompt() → Union[None, NoReturn]
+Prompts a confirmation from the user to continue or exit.
+class jarvis.lib.installer.Env
+Custom configuration variables, passed on to shell scripts as env vars.
+
+Env
+install_uv() → Union[None, NoReturn]
+Installs uv package manager.
+jarvis.lib.installer.run_subprocess(command: str) → None
+Run shell commands/scripts as subprocess including system environment variables.
+
+See also
+0 → success.
+non-zero → failure.
+Exit Codes:
+1 → indicates a general failure.
+2 → indicates incorrect use of shell builtins.
+3-124 → indicate some error in job (check software exit codes)
+125 → indicates out of memory.
+126 → indicates command cannot execute.
+127 → indicates command not found
+128 → indicates invalid argument to exit
+129-192 → indicate jobs terminated by Linux signals
+For these, subtract 128 from the number and match to signal code
+Enter kill -l to list signal codes
+Enter man signal for more information
+jarvis.lib.installer.windows_handler() → Union[None, NoReturn]
+Function to handle installations on Windows operating systems.
+jarvis.lib.installer.untested_os() → Union[None, NoReturn]
+Function to handle unsupported operating systems.
+jarvis.lib.installer.untested_arch() → Union[None, NoReturn]
+Function to handle unsupported architecture.
+jarvis.lib.installer.no_venv() → Union[None, NoReturn]
+Function to handle installations that are NOT on virtual environments.
+class jarvis.lib.installer.Requirements
+Install locations for pinned, locked and upgrade-able packages.
+
+Requirements
+jarvis.lib.installer.os_specific_pip() → List[str]
+Returns a list of pip installed packages.
+jarvis.lib.installer.thread_worker(commands: List[str]) → bool
+Thread worker that runs subprocess commands in parallel.
+
+Parameters:
+commands – List of commands to be executed simultaneously.
+Returns:
+Returns a boolean flag to indicate if there was a failure.
+Return type:
+bool
+jarvis.lib.installer.dev_uninstall() → None
+Uninstalls all the dev packages installed from pypi repository.
+jarvis.lib.installer.main_uninstall() → None
+Uninstalls all the main packages installed from pypi repository.
+jarvis.lib.installer.os_agnostic() → None
+Function to handle os-agnostic installations.
+jarvis.lib.installer.init() → None
+Runs pre-flight validations and upgrades setuptools and wheel packages.
+jarvis.lib.installer.dev_install() → None
+Install dev dependencies.
+jarvis.lib.installer.main_install() → None
+Install main dependencies.
+——–Preflight Tests——–
+Camera
+Module to get camera index information.
+
+Camera
+jarvis.modules.camera.camera.list_splitter(original_list: List[str], delimiter: str) → List[List[str]]
+Splits a list into multiple lists at a specific value given.
+
+Notes
+
+delimiter: This value should be final value where the initial list must be split.
+
+See also
+main_list = ['First Name', 'Vignesh', 'Last Name', 'Rao', 'Drives', 'Jaguar',
+             'First Name', 'Tony', 'Last Name', 'Stark', 'Drives', 'Mark III']
+delimiter should be Drives since that’s where the main list has to be split.
+Parameters:
+original_list – List that has to be split.
+delimiter – Value where the list has to be split.
+Returns:
+Returns list of list(s).
+Return type:
+List[List[str]]
+class jarvis.modules.camera.camera.Camera
+Initiates camera object to get information about the connected cameras.
+
+Camera
+Raises:
+CameraError –
+If unable to connect to the camera. –
+_get_camera_info_linux() → Generator[str]
+Get camera information for Linux.
+
+Warning
+Results will be yielded in raw terminal output format.
+Yields:
+str – Returns the information of all connected cameras as a list of string.
+_list_cameras_linux() → Generator[str]
+Yields the camera name for Linux.
+
+Yields:
+str – Names of the connected cameras.
+_get_camera_info_windows() → Generator[Dict[str, str]]
+Get camera information for WindowsOS.
+
+Yields:
+Dict[str, str] – Returns the information of all connected cameras as a list of dictionary.
+_list_cameras_windows() → Generator[str]
+Yields the camera name for WindowsOS.
+
+Yields:
+str – Names of the connected cameras.
+_get_camera_info_darwin() → Generator[Dict[str, str]]
+Get camera information for macOS.
+
+Returns:
+Returns the raw XML output as a dictionary.
+Return type:
+Dict[str, str]
+_list_cameras_darwin() → Generator[str]
+Yields the camera name for macOS.
+
+Yields:
+str – Names of the connected cameras.
+get_camera_info() → List[Union[Dict[str, str], str]]
+Gets the yielded camera information as a generator object and returns as a list.
+
+Returns:
+List of dictionaries.
+Return type:
+List[Dict[str, str] | str]
+list_cameras() → List[str]
+List of names of all cameras connected.
+
+Returns:
+List of camera names.
+Return type:
+List[str]
+get_index() → str
+Get the index and name of each connected camera.
+
+Returns:
+Index and name of cameras as a string.
+Return type:
+str
+Audio Devices
+This is a space to test peripherals and get index numbers for each peripheral.
+
+Exceptions
+jarvis.modules.peripherals.channel_type
+alias of ChannelType
+jarvis.modules.peripherals.get_audio_devices(channels: str) → Generator[Mapping[str, str | int | float]]
+Iterates over all devices and yields the device that has input channels.
+
+Parameters:
+channels – Takes an argument to determine whether to yield input or output channels.
+Yields:
+dict – Yields a dictionary with all the input devices available.
+class jarvis.modules.peripherals.ChannelType(Enum)
+Allowed values for channel types.
+
+ChannelType
+input_channels = 'maxInputChannels'
+output_channels = 'maxOutputChannels'
+Text To Speech
+Module to learn and train speech controls.
+
+Speak
+class jarvis.modules.speaker.speak.Speaker
+Initiates speaker object to test the speaker’s voice and rate.
+
+Speaker
+get_all_voices() → Generator[Dict[str, str | int]]
+Yields all the available voices, converting attributes into dict.
+get_english_voices() → Generator[Dict[str, str | int]]
+Yields all the available voices for english language, converting attributes into dict.
+get_voice_by_language(lang_code: str) → Generator[Dict[str, str | int]]
+Yields all the available voices for the given language, converting attributes into dict.
+get_voice_by_index(index: int) → Dict[str, str | int]
+Yields all the available voices for the given index, converting attributes into dict.
+get_voice_by_name(name: str) → Generator[Dict[str, str | int]]
+Yields all the available voices matching the given name, converting attributes into dict.
+get_voice_by_gender(gender: str) → Generator[Dict[str, str | int]]
+Yields all the available voices matching the given gender, converting attributes into dict.
+set_voice_by_index(voice_index: int, rate: int = 200) → None
+Set voice attributes per given values.
+
+Parameters:
+voice_index – Index of the voice that has to be used.
+rate – Rate at which the voice should speak.
+set_voice_by_name(voice_name: str, rate: int = 200) → None
+Set voice attributes per given values.
+
+Parameters:
+voice_name – Name of the voice that has to be used.
+rate – Rate at which the voice should speak.
+speak_all_voices() → None
+Speaks the voice name in all available voices.
+speak_english_voices() → None
+Speaks the voice name in all available english voices.
+run(text: str = None) → None
+Speaks the given text in the voice set.
+
+Parameters:
+text – Text that has to be spoken. Defaults to a sample text.
+Speech To Text
+Module to learn and train speech recognition settings.
+
+Recognizer
+async jarvis.modules.microphone.recognizer.save_for_reference() → None
+Saves the original config and new config in a yaml file.
+async jarvis.modules.microphone.recognizer.main() → None
+Initiates yaml dump in an asynchronous call and initiates listener in a never ending loop.
+Realtime Microphone Usage
+Module to plot realtime microphone spectrum using matplotlib.
+
+GraphMic
+References
+
+sound device readthedocs
+
+class jarvis.modules.microphone.graph_mic.Settings
+Wraps all the required options in an object.
+
+Settings
+channels: Optional[List[int]]
+device: Optional[Union[str, int]]
+window: Optional[int]
+interval: Optional[int]
+samplerate: Optional[float]
+down_sample: Optional[int]
+window_size: Optional[Tuple[int, int]]
+rate: Optional[int]
+dark_mode: Optional[bool]
+mapping: Optional[List[int]]
+lines: Optional[List[Line2D]]
+plot_data: Optional[ndarray]
+jarvis.modules.microphone.graph_mic.list_devices() → DeviceList
+List audion devices.
+jarvis.modules.microphone.graph_mic.audio_callback(indata: ndarray, frames: int, time: Struct, status: CallbackFlags) → None
+This is called (from a separate thread) for each audio block.
+jarvis.modules.microphone.graph_mic.update_plot(frame: int) → List[Line2D]
+This is called by matplotlib for each plot update.
+
+Typically, audio callbacks happen more frequently than plot updates,
+therefore the queue tends to contain multiple blocks of audio data.
+jarvis.modules.microphone.graph_mic.plot_mic(channels: List[int] = None, device: str | int = None, window: int = 200, interval: int = 30, samplerate: float = None, down_sample: int = 10, window_size: Tuple[int, int] = (5, 3), rate: int = 40, dark_mode: bool = True) → None
+Loads all the arguments into a dict and kicks off the mapping.
+
+Parameters:
+channels – Input channels to plot (default: the first [1])
+device – Input device (numeric ID or substring)
+window – Visible time slot (default: 200 ms)
+interval – Minimum time between plot updates (default: 30 ms)
+samplerate – Sampling rate of audio device
+down_sample – Display every Nth sample (default: 10)
+window_size – Size of the spectrum window (default: 7 inches in width, 5 inches in height)
+rate – How quick the graph should be moving on screen (lower is slower, 1000 is pretty quick)
+dark_mode – Sets graph background to almost black
+jarvis.modules.microphone.graph_mic._kick_off() → None
+Plots the live microphone signal(s) with matplotlib.
+———-Main Module———-
+Jarvis
+jarvis.main.constructor() → Dict[str, Union[str, List[float], List[str]]]
+Construct arguments for wake word detector.
+
+Returns:
+Arguments for wake word detector constructed as a dictionary based on the system and dependency version.
+Return type:
+Dict[str, str | List[float] | List[str]]
+jarvis.main.restart_checker() → None
+Operations performed during internal/external request to restart.
+class jarvis.main.Activator
+Awaits for the keyword Jarvis and triggers initiator when heard.
+
+Activator
+See also
+Instantiates an instance of Porcupine object and monitors audio stream for occurrences of keywords.
+A higher sensitivity results in fewer misses at the cost of increasing the false alarm rate.
+sensitivity: Tolerance/Sensitivity level. Takes argument or env var sensitivity or defaults to 0.5
+References
+
+Audio Overflow handling.
+open_stream() → Stream
+Initializes an audio stream.
+
+Returns:
+Audio stream from pyaudio.
+Return type:
+pyaudio.Stream
+executor() → None
+Calls the listener for actionable phrase and runs the speaker node for response.
+start() → None
+Runs audio_stream in a forever loop and calls initiator when the phrase Jarvis is heard.
+stop() → None
+Invoked when the run loop is exited or manual interrupt.
+
+See also
+Terminates/Kills all the background processes.
+Releases resources held by porcupine.
+Closes audio stream.
+Releases port audio resources.
+jarvis.main.start() → None
+Starts main process to activate Jarvis after checking internet connection and initiating background processes.
+Keywords Classifier
+jarvis._preexec.keywords_handler.load_ignores(data: dict) → None
+Loads ignore_after and ignore_add list to avoid iterations on the same phrase.
+jarvis._preexec.keywords_handler.rewrite_keywords() → None
+Loads keywords.yaml file if available, else loads the base keywords module as an object.
+———-Jarvis API———-
+API - Application
+jarvis.api.main.lifespan(_: FastAPI)
+Simple startup function to add anything that has to be triggered when Jarvis API starts up.
+API - Entrypoint
+jarvis.api.entrypoint.get_cors_params() → dict
+Allow CORS: Cross-Origin Resource Sharing to allow restricted resources on the API.
+jarvis.api.entrypoint.startup() → None
+Runs startup scripts (.py, .sh, .zsh) stored in fileio/startup directory.
+API - Logger
+Looger configuration specific for Jarvis API.
+
+Logger
+See also
+Configures custom logging for uvicorn.
+Disables uvicorn access logs from printing on the screen.
+Modifies application logs to match uvicorn default log format.
+Creates a multiprocessing log wrapper, and adds a filter to include custom process name in the logger format.
+API - Server
+jarvis.api.server.jarvis_api() → None
+Initiates the fast API in a dedicated process using uvicorn server.
+
+See also
+Checks if the port is being used. If so, makes a GET request to the endpoint.
+Attempts to kill the process listening to the port, if the endpoint doesn’t respond.
+Models - Authenticator
+async jarvis.api.models.authenticator.offline_has_access(token: HTTPBasicCredentials = Depends(HTTPBearer)) → None
+Validates the token if mentioned as a dependency.
+
+Parameters:
+token – Takes the authorization header token as an argument.
+Raises:
+APIResponse –
+- 401 – If authorization is invalid.
+async jarvis.api.models.authenticator.robinhood_has_access(token: HTTPBasicCredentials = Depends(HTTPBearer)) → None
+Validates the token if mentioned as a dependency.
+
+Parameters:
+token – Takes the authorization header token as an argument.
+Raises:
+APIResponse –
+- 401 – If authorization is invalid.
+async jarvis.api.models.authenticator.surveillance_has_access(token: HTTPBasicCredentials = Depends(HTTPBearer)) → None
+Validates the token if mentioned as a dependency.
+
+Parameters:
+token – Takes the authorization header token as an argument.
+Raises:
+APIResponse –
+- 401 – If authorization is invalid.
+async jarvis.api.models.authenticator.listener_spectrum_has_access(token: HTTPBasicCredentials = Depends(HTTPBearer)) → None
+Validates the token if mentioned as a dependency.
+
+Parameters:
+token – Takes the authorization header token as an argument.
+Raises:
+APIResponse –
+- 401 – If authorization is invalid.
+Models - Modals
+class jarvis.api.models.modals.OfflineCommunicatorModal(pydantic.BaseModel)
+BaseModel that handles input data for OfflineCommunicatorModal.
+
+OfflineCommunicatorModal
+command: str
+native_audio: Optional[bool]
+speech_timeout: Optional[Union[int, float]]
+class jarvis.api.models.modals.StockMonitorModal(pydantic.BaseModel)
+BaseModel that handles input data for StockMonitorModal.
+
+StockMonitorModal
+email: pydantic.networks.EmailStr | None
+token: Any | None
+request: Any | None
+plaintext: bool
+class jarvis.api.models.modals.CameraIndexModal(pydantic.BaseModel)
+BaseModel that handles input data for CameraIndexModal.
+
+CameraIndexModal
+index: Optional[Any]
+class jarvis.api.models.modals.SpeechSynthesisModal(pydantic.BaseModel)
+BaseModel that handles input data for SpeechSynthesisModal.
+
+SpeechSynthesisModal
+text: str
+timeout: Optional[Union[int, float]]
+quality: Optional[str]
+voice: Optional[str]
+Models - Settings
+class jarvis.api.models.settings.Robinhood(pydantic.BaseModel)
+Initiates Robinhood object to handle members across modules.
+
+Robinhood
+token: Hashable
+class jarvis.api.models.settings.Surveillance(pydantic.BaseConfig)
+Initiates Surveillance object to handle members across modules.
+
+Surveillance
+token: Hashable = None
+camera_index: str = None
+client_id: int = None
+available_cameras: List[str] = []
+processes: Dict[int, Process] = {}
+queue_manager: Dict[int, Queue] = {}
+session_manager: Dict[int, float] = {}
+frame: Tuple[int, int, int] = ()
+class jarvis.api.models.settings.StockMonitor(pydantic.BaseModel)
+Initiates StockMonitor object to handle members across modules.
+
+StockMonitor
+user_info: Tuple[str, str, str, str, str, str]
+values: str
+alerts: Tuple[str, str, str, str, str, str, str]
+alert_values: str
+Initiates ConnectionManager object to handle multiple connections using WebSockets.
+
+ConnectionManager
+References
+
+https://fastapi.tiangolo.com/advanced/websockets/#handling-disconnections-and-multiple-clients
+
+Routers - Routes
+class jarvis.api.routers.routes.APIPath(value, names=None, *, module=None, qualname=None, type=None, start=1, boundary=None)
+Endpoint for each API endpoint.
+
+root = '/'
+proxy = '/proxy'
+health = '/health'
+keywords = '/keywords'
+get_file = '/get-file'
+put_file = '/put-file'
+video_feed = '/video-feed'
+investment = '/investment'
+line_count = '/line-count'
+file_count = '/file-count'
+list_files = '/list-files'
+secure_send = '/secure-send'
+get_signals = '/get-signals'
+favicon_ico = '/favicon.ico'
+surveillance = '/surveillance'
+stock_monitor = '/stock-monitor'
+speech_synthesis = '/speech-synthesis'
+offline_communicator = '/offline-communicator'
+surveillance_ws = '/ws/surveillance/{client_id}'
+robinhood_authenticate = '/robinhood-authenticate'
+speech_synthesis_voices = '/speech-synthesis-voices'
+surveillance_authenticate = '/surveillance-authenticate'
+listener_index = '/listener'
+listener_spectrum_ws = '/ws/listener_spectrum'
+listener_spectrum_js = '/listener_spectrum_wave.js'
+listener_spectrum_wave = '/wave/{command}'
+jarvis.api.routers.routes.get_all_routes() → List[fastapi.routing.APIRoute | fastapi.routing.APIWebSocketRoute]
+Loads all API routes and returns as list.
+
+Returns:
+List of all APIRoute or APIWebSocketRoute objects.
+Return type:
+List[APIRoute | APIWebSocketRoute]
+Routers - Basic
+async jarvis.api.routers.basics.redirect_index()
+Redirect to docs in read-only mode.
+
+Returns:
+Redirects the root endpoint / url to read-only doc location.
+Return type:
+str
+async jarvis.api.routers.basics.health()
+Health Check for OfflineCommunicator.
+
+Raises:
+- 200 – For a successful health check.
+async jarvis.api.routers.basics.get_favicon()
+Gets the favicon.ico and adds to the API endpoint.
+
+Returns:
+Returns the favicon.ico file as FileResponse to support the front-end.
+Return type:
+FileResponse
+async jarvis.api.routers.basics.keywords()
+Converts the keywords and conversations into a dictionary of key-value pairs.
+
+Returns:
+Key-value pairs of the keywords file.
+Return type:
+Dict[str, List[str]]
+Routers - FileIO
+async jarvis.api.routers.fileio.list_files()
+Get all YAML files from fileio and all log files from logs directory.
+
+Returns:
+Dictionary of files that can be downloaded or uploaded.
+Return type:
+Dict[str, List[str]]
+async jarvis.api.routers.fileio.get_file(filename: str)
+Download a particular YAML file from fileio or log file from logs directory.
+
+Parameters:
+filename – Name of the file that has to be downloaded.
+Returns:
+Returns the FileResponse object of the file.
+Return type:
+FileResponse
+async jarvis.api.routers.fileio.put_file(file: UploadFile)
+Upload a particular YAML file to the fileio directory.
+
+Parameters:
+file – Takes the UploadFile object as an argument.
+Routers - Investment
+async jarvis.api.routers.investment.authenticate_robinhood()
+Authenticates the request and generates single use token.
+
+Raises:
+APIResponse –
+- 200 – If initial auth is successful and single use token is successfully sent via email.
+- 503 – If failed to send the single use token via email.
+See also If basic auth (stored as an env var robinhood_endpoint_auth) succeeds:
+Sends a token for MFA via email.
+Also stores the token in the Robinhood object which is verified in the /investment endpoint.
+The token is nullified in the object as soon as it is verified, making it single use.
+async jarvis.api.routers.investment.robinhood_path(request: Request, token: str = None)
+Serves static file.
+
+Parameters:
+- request – Takes the Request class as an argument.
+- token – Takes custom auth token as an argument.
+Raises:
+APIResponse –
+- 403 – If token is null.
+- 404 – If the HTML file is not found.
+- 417 – If token doesn’t match the auto-generated value.
+Returns:
+Renders the html page.
+Return type:
+HTMLResponse
+See also
+This endpoint is secured behind single use token sent via email as MFA (Multi-Factor Authentication)
+Initial check is done by the function authenticate_robinhood behind the path “/robinhood-authenticate”
+Once the auth succeeds, a one-time usable hex-uuid is generated and stored in the Robinhood object.
+This UUID is sent via email to the env var RECIPIENT, which should be entered as query string.
+The UUID is deleted from the object as soon as the argument is checked for the first time.
+Page refresh is useless because the value in memory is cleared as soon as it is authed once.
+Routers - Listener Spectrum
+async jarvis.api.routers.listener_spectrum.load_index() → HTMLResponse
+Loads the HTML index path for listener spectrum file.
+
+Returns:
+Returns the HTML response for listener spectrum.
+Return type:
+HTMLResponse
+async jarvis.api.routers.listener_spectrum.get_listener_spectrum_js() → FileResponse
+Returns the JavaScript for listener spectrum.
+
+Returns:
+Returns the loaded JavaScript as FileResponse.
+Return type:
+FileResponse
+async jarvis.api.routers.listener_spectrum.websocket_endpoint(websocket: WebSocket) → None
+Websocket endpoint for listener spectrum display.
+
+Parameters:
+websocket – Websocket object.
+async jarvis.api.routers.listener_spectrum.send_wave_command(command: str) → Dict[str, str]
+Function to send wave commands to ‘start’ or ‘stop’ the spectrum.
+
+Parameters:
+command – Start or Stop command.
+Returns:
+Returns a key-value pair with status.
+Return type:
+Dict[str, str]
+Routers - Offline
+jarvis.api.routers.offline.kill_power() → None
+Inserts a flag into stopper table in base database.
+async jarvis.api.routers.offline.process_ok_response(response: str, input_data: OfflineCommunicatorModal) → bytes | starlette.responses.FileResponse
+Processes responses for 200 messages. Response is framed as synthesized or native based on input data.
+
+Parameters:
+response – Takes the response as text.
+input_data – Input data modal.
+Returns:
+FileResponse in case of native audio or bytes in case of speech synthesized response.
+Return type:
+bytes | FileResponse
+async jarvis.api.routers.offline.offline_communicator_api(request: Request, input_data: OfflineCommunicatorModal)
+Offline Communicator API endpoint for Jarvis.
+
+Parameters:
+- request – Takes the Request class as an argument.
+- input_data – Takes the following arguments as an OfflineCommunicatorModal object.
+command: The task which Jarvis has to do.
+native_audio: Whether the response should be as an audio file with the server’s built-in voice.
+speech_timeout: Timeout to process speech-synthesis.
+Raises:
+APIResponse –
+- 200 – A dictionary with the command requested and the response for it from Jarvis.
+- 204 – If empty command was received.
+Returns:
+Returns the audio file as a response if the output is requested as audio.
+Return type:
+FileResponse
+Routers - Proxy Engine
+jarvis.api.routers.proxy_service.is_valid_media_type(media_type: str) → bool
+Regular expression to match valid media types.
+
+Parameters:
+media_type – Takes the media type to be validated.
+Returns:
+Returns a boolean value to indicate validity.
+Return type:
+bool
+async jarvis.api.routers.proxy_service.proxy_service_api(request: Request, origin: HttpUrl, output: str)
+API endpoint to act as a proxy for GET calls.
+
+See also This is primarily to solve the CORS restrictions on web browsers.
+Examples
+
+curl -X 'GET' 'http://0.0.0.0:{PORT}/proxy?origin=http://example.com&output=application/xml'
+Parameters:
+request – FastAPI request module.
+origin – Origin URL as query string.
+output – Output media type.
+Routers - SecureSend
+async jarvis.api.routers.secure_send.secure_send_api(request: Request, key: str, access_token: Optional[str] = Header(None))
+API endpoint to share/retrieve secrets.
+
+Parameters:
+request – FastAPI request module.
+key – Secret key to be retrieved.
+access_token – Access token for the secret to be retrieved.
+Raises:
+- 200 – For a successful authentication (secret will be returned)
+- 400 – For a bad request if headers are passed with underscore
+- 401 – For a failed authentication (if the access token doesn’t match)
+- 404 – If the secure_send mapping file is unavailable
+Routers - SpeechSynthesis
+async jarvis.api.routers.speech_synthesis.speech_synthesis_voices()
+Get all available voices in speech synthesis.
+
+Raises:
+- 200 – If call to speech synthesis endpoint was successful.
+- 500 – If call to speech synthesis fails.
+async jarvis.api.routers.speech_synthesis.speech_synthesis(input_data: SpeechSynthesisModal, raise_for_status: bool = True)
+Process request to convert text to speech using the speech-synthesis API endpoint.
+
+Parameters:
+- input_data – Takes the following arguments as GetText class instead of a QueryString.
+- raise_for_status – Takes a boolean flag to determine whether the result should be raised as an API response.
+text: Text to be processed with speech synthesis.
+timeout: Timeout for speech-synthesis API call.
+quality: Quality of audio conversion.
+voice: Voice model ot be used.
+Raises:
+APIResponse –
+- 404 – If audio file was not found after successful response.
+- 500 – If the connection to speech synthesizer fails.
+- 204 – If speech synthesis file wasn’t found.
+Returns:
+Audio file to be downloaded.
+Return type:
+FileResponse
+Routers - Stats
+Snippet to get the lines of code and total number of files for Jarvis.
+
+Following shell command is a simple one-liner replicating this snippet.
+
+Notes
+
+find . (dot) can be replaced with the base directory to start the scan from.
+
+find . \( -path './venv' -o -path './docs' -o -path './docs_gen' \) \
+    -prune -o \( -name '*.py' -o -name '*.sh' -o -name '*.html' \) \
+    -print | xargs wc -l | grep total
+class jarvis.api.routers.stats.ValidColors(value, names=None, *, module=None, qualname=None, type=None, start=1, boundary=None)
+Valid colors for badges in img.shields.io.
+
+ValidColors
+Source:
+https://github.com/badges/buckler/blob/master/README.md#valid-colours
+brightgreen = 'brightgreen'
+green = 'green'
+yellowgreen = 'yellowgreen'
+yellow = 'yellow'
+orange = 'orange'
+red = 'red'
+grey = 'grey'
+gray = 'grey'
+lightgrey = 'lightgrey'
+lightgray = 'lightgray'
+blue = 'blue'
+jarvis.api.routers.stats.should_include(filepath: Path) → bool
+Check if the file has one of the desired extensions and if the directory is excluded.
+
+Parameters:
+filepath – File path for which the exclusion status is needed.
+Returns:
+Boolean flag to indicate whether the file has to be included.
+Return type:
+bool
+jarvis.api.routers.stats.count_lines(filepath: Path) → int
+Opens a file and counts the number of lines in it.
+
+Parameters:
+filepath – File path to get the line count from.
+Returns:
+Returns the number of lines in the file.
+Return type:
+PositiveInt
+jarvis.api.routers.stats.get_files() → Generator[str]
+Walk through the directory and collect all relevant files.
+
+Yields:
+Yields the file path.
+jarvis.api.routers.stats.total_lines_of_code() → int
+Cached function to calculate the total lines of code.
+
+Returns:
+Total lines of code in all files within the base directory.
+Return type:
+PositiveInt
+jarvis.api.routers.stats.total_files() → int
+Cached function to calculate the total number of files.
+
+Returns:
+Total files within the base directory.
+Return type:
+PositiveInt
+async jarvis.api.routers.stats.line_count(badge: bool = False, color: ValidColors = ValidColors.blue, text: str = 'lines of code')
+Get total lines of code for Jarvis.
+
+Parameters:
+badge – Boolean flag to return a badge from img.shields.io as HTML.
+color – Color for the badge.
+text – Text to be displayed in the badge.
+Returns:
+Returns a badge from img.shields.io or an integer with total count based on the badge argument.
+Return type:
+RedirectResponse
+async jarvis.api.routers.stats.file_count(badge: bool = False, color: ValidColors = ValidColors.blue, text: str = 'total files')
+Get total number of files for Jarvis.
+
+Parameters:
+badge – Boolean flag to return a badge from img.shields.io as HTML.
+color – Color for the badge.
+text – Text to be displayed in the badge.
+Returns:
+Returns a badge from img.shields.io or an integer with total count based on the badge argument.
+Return type:
+RedirectResponse
+Routers - StockMonitor
+async jarvis.api.routers.stock_monitor.send_otp_stock_monitor(email_address: EmailStr, reset_timeout: int = 300)
+Send one time password via email.
+
+Parameters:
+email_address – Email address to which the token has to be sent.
+reset_timeout – Seconds after which the token has to expire.
+Raises:
+- 200 – If email delivery was successful.
+- 503 – If failed to send an email.
+async jarvis.api.routers.stock_monitor.stock_monitor_api(request: Request, input_data: StockMonitorModal, email_otp: Optional[str] = Header(None), apikey: Optional[str] = Header(None))
+Stock monitor api endpoint.
+
+Parameters:
+- request – Takes the Request class as an argument.
+- input_data – Takes the following arguments as OfflineCommunicatorModal class instead of a QueryString.
+- email_otp – One Time Passcode (OTP) received via email.
+token: Authentication token.
+email: Email to which the notifications have to be triggered.
+request: Request type. Takes any of GET/PUT/DELETE
+plaintext: Takes a boolean flag if a plain text response is expected for GET request.
+See also
+token is not required for GET requests.
+For PUT and DELETE requests, token should be a JWT of the following keys:
+Ticker: Stock ticker.
+Max: Max price for notification.
+Min: Min price for notification.
+Correction: Correction percentage.
+Daily Alerts: String value of “on” or “off”
+Use https://vigneshrao.com/jwt for conversion.
+Raises:
+APIResponse –
+- 422 – For any invalid entry made by the user.
+- 409 – If current price is lesser than the minimum value or grater than the maximum value.
+- 404 – If a delete request is made against an entry that is not available in the database.
+- 502 – If price check fails.
+See also
+This API endpoint is simply the backend for stock price monitoring.
+This function validates the user information and stores it to a database.
+Routers - StockAnalysis
+async jarvis.api.routers.stock_analysis.get_signals(symbol: str, bar_count: int = 100, data_dict: bool = False)
+Get buy, sell and hold signals for a particular stock or all tickers supported by webull.
+
+Parameters:
+- symbol – Stock ticker.
+- bar_count – Number of bars from webull.
+- data_dict – Boolean flag to receive tickers as a dictionary with the ORG names. Applies only for all symbol.
+jarvis.api.routers.stock_analysis.thread_worker(function_to_call: Callable) → None
+Initiates ThreadPoolExecutor with in a dedicated thread.
+
+Parameters:
+function_to_call – Takes the function/method that has to be called as an argument.
+jarvis.api.routers.stock_analysis.get_signals_per_ticker(symbol: str, bar_count: int = 100, all_tickers: bool = False)
+Get buy, sell and hold signals for a particular stock.
+
+Parameters:
+symbol – Stock ticker.
+bar_count – Number of bars from webull.
+all_tickers – Boolean flag to get signals for all tickers.
+See also
+A larger bar_count gives longer historical data for trend analysis.
+A smaller count focuses on recent data for short-term signals.
+Experiment and backtest to find the best fit for your approach.
+Endpoint can be accessed via https://vigneshrao.com/stock-analysis
+References
+
+https://github.com/thevickypedia/trading-algorithm
+Routers - Surveillance
+async jarvis.api.routers.surveillance.authenticate_surveillance(cam: CameraIndexModal)
+Tests the given camera index, generates a token for the endpoint to authenticate.
+
+Parameters:
+cam – Index number of the chosen camera.
+Raises:
+APIResponse –
+- 200 – If initial auth is successful and single use token is successfully sent via email.
+- 503 – If failed to send the single use token via email.
+See also If basic auth (stored as an env var SURVEILLANCE_ENDPOINT_AUTH) succeeds:
+Sends a token for MFA via email.
+Also stores the token in the Surveillance object which is verified in the /surveillance endpoint.
+The token is nullified in the object as soon as it is verified, making it single use.
+async jarvis.api.routers.surveillance.monitor(token: str = None)
+Serves the monitor page’s frontend after updating it with video origin and websocket origins.
+
+Parameters:
+- request – Takes the Request class as an argument.
+- token – Takes custom auth token as an argument.
+Raises:
+APIResponse –
+- 307 – If token matches the auto-generated value.
+- 401 – If token is null.
+- 417 – If token doesn’t match the auto-generated value.
+Returns:
+Renders the html page.
+Return type:
+HTMLResponse
+See also
+This endpoint is secured behind single use token sent via email as MFA (Multi-Factor Authentication)
+Initial check is done by authenticate_surveillance behind the path “/surveillance-authenticate”
+Once the auth succeeds, a one-time usable hex-uuid is generated and stored in the Surveillance object.
+This UUID is sent via email to the env var RECIPIENT, which should be entered as query string.
+The UUID is deleted from the object as soon as the argument is checked for the last time.
+Page refresh is useless because the value in memory is cleared as soon as the video is rendered.
+async jarvis.api.routers.surveillance.video_feed(request: Request, token: str = None)
+Authenticates the request, and returns the frames generated as a StreamingResponse.
+
+Raises:
+APIResponse –
+- 307 – If token matches the auto-generated value.
+- 401 – If token is null.
+- 417 – If token doesn’t match the auto-generated value.
+Parameters:
+- request – Takes the Request class as an argument.
+- token – Token generated in /surveillance-authenticate endpoint to restrict direct access.
+Returns:
+StreamingResponse with a collective of each frame.
+Return type:
+StreamingResponse
+async jarvis.api.routers.surveillance.websocket_endpoint(websocket: WebSocket, client_id: int)
+Initiates a websocket connection.
+
+Parameters:
+websocket – WebSocket.
+client_id – Epoch time generated when each user renders the video file.
+See also
+Websocket checks the frontend and kills the backend process to release the camera if connection is closed.
+Closing the multiprocessing queue is not required as the backend process will be terminated anyway.
+Notes
+
+Closing queue before process termination will raise ValueError as the process is still updating the queue.
+Closing queue after process termination will raise EOFError as the queue will not be available to close.
+Routers - TelegramAPI
+jarvis.api.routers.telegram.two_factor(request: Request) → bool
+Two factor verification for messages coming via webhook.
+
+Parameters:
+request – Request object from FastAPI.
+Returns:
+Flag to indicate the calling function if the auth was successful.
+Return type:
+bool
+async jarvis.api.routers.telegram.telegram_webhook(request: Request)
+Invoked when a new message is received from Telegram API.
+
+Parameters:
+request – Request instance.
+Raises:
+HTTPException –
+406: If the request payload is not JSON format-able.
+Squire - Discover Routers
+Squire - Scheduler
+jarvis.api.squire.scheduler.market_hours(extended: bool = False) → Dict[str, Dict[str, int]]
+Returns the market hours for each timezone in the US.
+
+Parameters:
+extended – Boolean flag to use extended hours.
+Returns:
+Returns a dictionary of timezone and the market open and close hours.
+Return type:
+Dict[str, Dict[str, int]]
+jarvis.api.squire.scheduler.rh_cron_schedule(extended: bool = False) → CronExpression
+Creates a cron expression for stock_report.py. Determines cron schedule based on current timezone.
+
+Parameters:
+extended – Boolean flag to use extended hours.
+See also
+extended: 1 before and after market hours.
+default(regular): Regular market hours.
+Returns:
+Crontab expression object running every 30 minutes during market hours based on the current timezone.
+Return type:
+CronExpression
+jarvis.api.squire.scheduler.sm_cron_schedule(include_weekends: bool = False) → CronExpression
+Creates a cron expression for stock_monitor.py.
+
+Parameters:
+include_weekends – Takes a boolean flag to run cron schedule over the weekends.
+Returns:
+Crontab expression object running every 15 minutes.
+Return type:
+CronExpression
+Squire - StockMonitor
+jarvis.api.squire.stockmonitor_squire.cleanup_stock_userdata() → None
+Delete duplicates tuples within the database.
+jarvis.api.squire.stockmonitor_squire.insert_stock_userdata(params: Tuple[str, EmailStr, int | float, int | float, int, str]) → None
+Inserts new entry into the stock database.
+
+Parameters:
+params – Tuple of information that has to be inserted.
+jarvis.api.squire.stockmonitor_squire.get_stock_userdata(email: Optional[Union[EmailStr, str]] = None) → List[Tuple[str, EmailStr, int | float, int | float, int, str]]
+Reads the stock database to get all the user data.
+
+Returns:
+List of tuple of user information.
+Return type:
+list
+jarvis.api.squire.stockmonitor_squire.get_daily_alerts() → Generator[Dict[int, Tuple[int, str, EmailStr, int | float, int | float, int, str]]]
+Get all the information stored in stock_daily database table.
+
+Yields:
+A dictionary of epoch time and tuple of user information stored as key value pairs.
+jarvis.api.squire.stockmonitor_squire.put_daily_alerts(params: List[Dict[int, Tuple[int, str, EmailStr, int | float, int | float, int, str]]])
+Updates the daily alerts into the stock_daily database table.
+
+Parameters:
+params – Takes the tuple of all entries that has to be inserted.
+jarvis.api.squire.stockmonitor_squire.delete_stock_userdata(data: Tuple[str, EmailStr, int | float, int | float, int, str]) → None
+Delete particular user data from stock database.
+
+Parameters:
+data – Tuple of user information to be deleted.
+Squire - StockAnalysis
+jarvis.api.squire.stockanalysis_squire.ticker_gatherer(character: str) → None
+Gathers the stock ticker in NASDAQ. Runs on multi-threading which drops run time by ~7 times.
+
+Parameters:
+character – ASCII character (alphabet) with which the stock ticker name starts.
+jarvis.api.squire.stockanalysis_squire.thread_worker(function_to_call: Callable, iterable: Union[List, Iterable], workers: int = None) → None
+Initiates ThreadPoolExecutor with in a dedicated thread.
+
+Parameters:
+function_to_call – Takes the function/method that has to be called as an argument.
+iterable – List or iterable to be used as args.
+workers – Maximum number of workers to spin up.
+jarvis.api.squire.stockanalysis_squire.nasdaq() → None
+Get all stock tickers available. Creates/Updates backup file to be used.
+Squire - Surveillance
+jarvis.api.squire.surveillance_squire.generate_error_frame(text: str, dimension: Tuple[int, int, int]) → Tuple[bytes, str]
+Generates a single frame for error image.
+
+Parameters:
+text – Text that should be in the image.
+dimension – Dimension (Height x Width x Channel) of the frame.
+Returns:
+Returns a tuple of the numpy array and the filename.
+Return type:
+Tuple[bytes, str]
+See also
+Creates a black image.
+Gets coordinates based on boundaries of the text to center the text in image.
+jarvis.api.squire.surveillance_squire.test_camera() → None
+Tests a camera connected on the index number provided by the user.
+
+Raises:
+CameraError –
+If unable to connect to the camera. –
+jarvis.api.squire.surveillance_squire.gen_frames(manager: Queue, index: int, available_cameras: List[str]) → None
+Generates frames from the camera, flips the image and stores the frame in a multiprocessing queue.
+
+Parameters:
+manager – Multiprocessing queues.
+index – Index of the camera.
+available_cameras – List of available cameras.
+jarvis.api.squire.surveillance_squire.streamer() → AsyncIterable[bytes]
+Yields bytes string extracted from the multiprocessing queue, until the queue_manager is alive.
+
+Yields:
+ByteString – Concat frame one by one and yield the result.
+Warning
+When pushing large items onto a multiprocess queue, the items are essentially buffered, despite the
+immediate return of the queue’s put function. This may increase the latency during live feed.
+Squire - Timeout OTP
+jarvis.api.squire.timeout_otp.reset_robinhood() → None
+Resets robinhood token after the set time.
+jarvis.api.squire.timeout_otp.reset_stock_monitor(email_address: EmailStr) → None
+Resets stock monitor OTP after the set time.
+
+Parameters:
+email_address – Email address that should be cleared.
+jarvis.api.squire.timeout_otp.reset_surveillance() → None
+Resets surveillance token after the set time.
+Triggers - StockMonitor
+Runs on a cron schedule every 15 minutes during weekdays.
+
+jarvis.api.triggers.stock_monitor.generate_graph(logger: Logger, ticker: str, bars: int = 300) → str | None
+Generate historical graph for stock price.
+
+Parameters:
+logger – Takes the class logging.Logger as an argument.
+ticker – Stock ticker.
+bars – Number of bars to be fetched
+References
+
+https://stackoverflow.com/a/49729752
+class jarvis.api.triggers.stock_monitor.StockMonitor(logger: Logger)
+Initiates StockMonitor to check user entries in database and trigger notification if condition matches.
+
+StockMonitor
+Parameters:
+logger – Takes the class logging.Logger as an argument.
+at_exit()
+Removes bin file created by webull client and updates the repeat alerts yaml mapping.
+group_data() → None
+Groups columns in the database by ticker to check the current prices and by email to send a notification.
+
+See also
+For ticker grouping, first value in the list is the ticker, so key will be ticker and the rest are values.
+For email grouping, first value among the rest is the email, so key is email and the rest are values.
+get_prices() → Dict[str, Dict[str, float | str]]
+Get the price of each stock ticker along with the exchange code.
+
+Returns:
+Returns a dictionary of prices for each ticker and their exchange code and key-value pairs.
+Return type:
+dict
+static closest_maximum(stock_price: int | float, maximum: int | float, correction: int) → bool
+Determines if a stock price is close to the maximum value.
+
+Examples
+
+Current stock price: 96
+Maximum price after which notification has to trigger: 100
+Correction: 15%
+Corrected: 100 (max) - 15 (15%) = 85 (this becomes the new maximum price)
+Notifies since stock price is more than corrected amount, even though it is less than actual stock price.
+Parameters:
+stock_price – Current stock price.
+maximum – Maximum price set by user.
+correction – Correction percentage.
+Returns:
+Boolean flag to indicate whether the current stock price is less than set maximum by correction percentage.
+Return type:
+bool
+static closest_minimum(stock_price: int | float, minimum: int | float, correction: int) → bool
+Determines if a stock price is close to the minimum value.
+
+Examples
+
+Current stock price: 225
+Minimum price below which notification has to trigger: 220
+Correction: 10%
+Corrected: 220 (min) + 22 (10%) = 242 (this becomes the new minimum price)
+Notifies since stock price is less than corrected amount, even though it is more than actual stock price.
+Parameters:
+stock_price – Current stock price.
+minimum – Minimum price set by user.
+correction – Correction percentage.
+Returns:
+Boolean flag to indicate whether the current stock price is more than set maximum by correction percentage.
+Return type:
+bool
+skip_signal(condition_list: Tuple[Any, Any, Any, Any, Any, Any], hours: int = 12) → bool
+Generate a skip signal for a particular stock monitoring alert.
+
+Parameters:
+condition_list – Alert entry for which the validation should be done.
+hours – Number of hours of overlap to look for.
+Returns:
+Returns a boolean flag indicating a repeat signal was generated.
+Return type:
+bool
+send_notification() → None
+Sends notification to the user when the stock price matches the requested condition.
+Triggers - StockReport
+Runs once during API startup and continues to run in a cron scheduler as per market hours.
+
+class jarvis.api.triggers.stock_report.Investment(logger: Logger)
+Initiates Investment which gathers portfolio information.
+
+Investment
+Parameters:
+logger – Takes the class logging.Logger as an argument.
+watcher() → Tuple[str, str, str, str, str]
+Gathers all the information and wraps into parts of strings to create an HTML file.
+
+Returns:
+Returns a tuple of portfolio header, profit, loss, and current profit/loss compared from purchased.
+Return type:
+Tuple[str, str, str, str, str]
+watchlist(interval: str = 'hour', strict: bool = False) → Tuple[str, str]
+Sweeps all watchlist stocks and compares current price with historical data (24h ago) to wrap as a string.
+
+Parameters:
+interval – Takes interval for historic data. Defaults to hour. Options are hour or 10minute
+strict – Flag to ignore the watchlist items if the stocks were purchased already.
+Returns:
+Returns a tuple of each watch list item and a unicode character to indicate if the price went up or down.
+Return type:
+Tuple[str, str]
+gatherer() → None
+Gathers all the necessary information and creates an index.html using a Jinja template.
+report_gatherer() → None
+Runs gatherer to call other dependent methods.
+———-Executors———-
+Alarm
+jarvis.executors.alarm.check_overlap(new_alarm: Dict[str, str | bool], old_alarms: List[Dict[str, str | bool]]) → bool
+Checks to see if there is a possibility of an overlap.
+
+Parameters:
+new_alarm – Current alarm formatted as a dict.
+old_alarms – List of existing alarms.
+Returns:
+Returns a True flag if it is an overlap.
+Return type:
+bool
+jarvis.executors.alarm.create_alarm(alarm_time: datetime, phrase: str, timer: str = None, repeat: bool = False, day: str = None) → None
+Creates an entry in the alarms’ mapping file.
+
+Parameters:
+alarm_time – Time of alarm as a datetime object.
+phrase – Takes the phrase spoken as an argument.
+timer – Number of minutes/hours to alarm.
+repeat – Boolean flag if the alarm should be repeated every day.
+day – Day of week when the alarm should be repeated.
+jarvis.executors.alarm.set_alarm(phrase: str) → None
+Passes hour, minute and am/pm to Alarm class which initiates a thread for alarm clock in the background.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.alarm.get_alarm_state(alarm_time: str = None) → List[str]
+Frames a response text with all the alarms present.
+
+Returns:
+Returns a list of alarms framed as a response.
+Return type:
+List[str]
+jarvis.executors.alarm.more_than_one_alarm_to_kill(alarms: List[Dict[str, str | bool]], phrase: str, alarm_states: List[str]) → None
+Helper function for kill alarm, if there are multiple alarms set at the same time with different days.
+
+Parameters:
+alarms – All existing alarms.
+phrase – Takes the phrase spoken as an argument.
+alarm_states – Alarms that were converted as response.
+jarvis.executors.alarm.kill_alarm(phrase: str) → None
+Removes the entry from the alarms’ mapping file.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.alarm.executor() → None
+Runs the alarm.mp3 file at max volume and reverts the volume after 3 minutes.
+Automation
+jarvis.executors.automation.automation_handler(phrase: str) → None
+Handles automation file resets by renaming it to tmp if requested to disable.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.automation.rewrite_automator(write_data: dict) → None
+Rewrites the automation file with the updated dictionary.
+
+Parameters:
+write_data – Takes the new dictionary as an argument.
+jarvis.executors.automation.validate_weather_alert() → None
+Adds the env var for weather alert (if present) to automation feed file.
+jarvis.executors.automation.auto_helper() → str | None
+Runs in a thread to help the automator function in the main module.
+
+Returns:
+Task to be executed.
+Return type:
+str
+Background Task
+jarvis.executors.background_task.background_task_handler(phrase: str) → None
+Handles background tasks file resets by renaming it to tmp if requested to disable.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.background_task.compare_tasks(dict1: dict, dict2: dict) → bool
+Compares tasks currently in background tasks yaml file and the tasks already loaded.
+
+Parameters:
+dict1 – Takes either the task in yaml file or loaded task as an argument.
+dict2 – Takes either the task in yaml file or loaded task as an argument.
+Returns:
+A boolean flag to if both the dictionaries are similar.
+Return type:
+bool
+jarvis.executors.background_task.remove_corrupted(task: jarvis.modules.models.classes.BackgroundTask | dict) → None
+Removes a corrupted task from the background tasks feed file.
+
+Parameters:
+task – Takes a background task object as an argument.
+jarvis.executors.background_task.validate_tasks(log: bool = True) → Generator[BackgroundTask]
+Validates each of the background tasks.
+
+Parameters:
+log – Takes a boolean flag to suppress info level logging.
+Yields:
+BackgroundTask – BackgroundTask object.
+Car
+jarvis.executors.car.create_connection() → None
+Creates a new connection and stores the refresh token and device ID in a dedicated object.
+jarvis.executors.car.current_set_temperature(latitude: float, longitude: float) → Tuple[int | str, int]
+Get the current temperature at a given location.
+
+Returns:
+A tuple of current temperature and target temperature.
+Return type:
+tuple
+class jarvis.executors.car.Operations
+Car operations that car condensed into its own object.
+
+Operations
+turn_on(phrase: str) → str
+Calls the vehicle function to turn the car on with the requested climate setting.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+See also API climate controls (Conversion): 31 is LO, 57 is HOT Car Climate controls (Fahrenheit): 58 is LO, 84 is HOT
+Warning
+API docs are misleading to believe that the temperature arg is Celsius, but not really.
+https://documenter.getpostman.com/view/6250319/RznBMzqo#59910c25-c107-4335-b178-22e343782b41
+Returns:
+Response after turning on the vehicle.
+Return type:
+str
+turn_off() → str
+Calls the vehicle function to turn off the vehicle.
+
+Returns:
+Response after turning off the vehicle.
+Return type:
+str
+enable_guard(phrase) → str
+Requests vehicle function to enable guardian mode for the requested time.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+See also
+Extracts a numeric value in the phrase or words that refer to a numeric value in the phrase
+Returns:
+Response after enabling guardian mode on the vehicle.
+Return type:
+str
+lock() → str
+Calls vehicle function to perform the lock operation.
+
+Returns:
+Response after locking the vehicle.
+Return type:
+str
+unlock(dt_string: str = None) → str
+Calls vehicle function to perform the unlock operation.
+
+Returns:
+Response after unlocking the vehicle.
+Return type:
+str
+honk() → str
+Calls vehicle function to honk the car.
+
+Returns:
+Response after honking the vehicle.
+Return type:
+str
+locate() → str
+Calls vehicle function to locate the car.
+
+Returns:
+Response after retrieving the location of the vehicle.
+Return type:
+str
+report() → str
+Calls vehicle function to get the status report.
+
+Returns:
+Response after generating a status report of the vehicle.
+Return type:
+str
+jarvis.executors.car.car(phrase: str) → None
+Controls the car to lock, unlock or remote start.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.car.convert_dt_report(dt_string: str) → str
+Converts UTC to local datetime string. Helper function for generating car report.
+
+Parameters:
+dt_string – Takes the UTC datetime string as an argument.
+Returns:
+Returns the local datetime string.
+Return type:
+str
+jarvis.executors.car.report(status_data: Dict[str, Union[str, Dict[str, str]]], subscription_data: List[Dict[str, str]], attributes: Dict[str, Union[List[Dict[str, str]], Dict[str, str]]]) → str
+Generates a report based on the vehicle’s status and sends an email notification.
+
+Parameters:
+status_data – Raw status data.
+subscription_data – Raw subscription data.
+attributes – Raw attributes data.
+Returns:
+Response to the user.
+Return type:
+str
+jarvis.executors.car.vehicle(operation: str, temp: int = None, end_time: int = None, retry: bool = True) → str | dict | None
+Establishes a connection with the car and returns an object to control the primary vehicle.
+
+Parameters:
+operation – Operation to be performed.
+temp – Temperature for climate control.
+end_time – End time for guardian mode. Should be a 13 digit integer including microseconds.
+retry – Retry logic used when guardian mode is enabled already.
+Returns:
+Returns the vehicle’s name.
+Return type:
+str
+Ciphertext
+jarvis.executors.ciphertext.encrypt(payload: Any) → str
+Encrypts the payload using Fernet symmetric encryption.
+
+Parameters:
+payload – Payload to be encrypted, can be of any data type.
+Returns:
+Encrypted payload as a string.
+Return type:
+str
+jarvis.executors.ciphertext.decrypt(encrypted_payload: str) → Any
+Decrypts the encrypted payload using Fernet symmetric encryption.
+
+Parameters:
+encrypted_payload – Encrypted payload as bytes.
+Returns:
+Decrypted payload, which can be of any data type.
+Return type:
+Any
+Communicator
+jarvis.executors.communicator.read_gmail(*args) → None
+Reads unread emails from the gmail account for which the credentials are stored in env variables.
+jarvis.executors.communicator.send_sms(user: str, password: str, number: str | int, body: str, subject: str = None) → bool | str
+Send text message through SMS gateway of destination number.
+
+References
+
+Uses gmail-connector to send the SMS.
+
+Parameters:
+user – Gmail username to authenticate SMTP lib.
+password – Gmail password to authenticate SMTP lib.
+number – Phone number stored as env var.
+body – Content of the message.
+subject – Takes subject as an optional argument.
+Returns:
+Boolean flag to indicate the SMS was sent successfully.
+Error response from gmail-connector.
+Return type:
+bool | str
+jarvis.executors.communicator.send_email(body: str, recipient: pydantic.networks.EmailStr | str, subject: str = None, sender: str = None, gmail_user: pydantic.networks.EmailStr | str = None, gmail_pass: str = None, title: str = None, attachment: str = None) → bool | str
+Sends an email using an email template formatted as html.
+
+Parameters:
+body – Message to be inserted as html body in the email.
+sender – Sender name of the email.
+subject – Subject of the email.
+recipient – Email address to which the mail has to be sent.
+gmail_user – Username for email.
+gmail_pass – Password for email.
+title – Sender name on template.
+attachment – Attachment to include in notification.
+References
+
+Uses gmail-connector to send the Email.
+
+Returns:
+Boolean flag to indicate the email was sent successfully.
+Error response from gmail-connector.
+Return type:
+bool | str
+jarvis.executors.communicator.ntfy_send(topic: str, title: str, message: str) → bool
+Uses ntfy to send notification to a specific topic.
+
+Parameters:
+topic – Topic to send notifications to.
+title – Title of the notification.
+message – Notification content.
+Returns:
+Boolean flag to indicate the results
+Return type:
+bool
+Communicator Squire
+jarvis.executors.comm_squire.extract_contacts(name: str, key: str) → int | pydantic.networks.EmailStr | str | None
+Extract contact destination for phone or email from the contacts.yaml file, if present.
+
+Parameters:
+name – Name for which the contact information has to be retrieved.
+key – Takes either phone or email as an argument.
+Returns:
+EmailStr: If email address is requested.
+int: If phone number is requested.
+Return type:
+int | EmailStr | str
+jarvis.executors.comm_squire.send_notification(phrase: str) → None
+Initiates notification via SMS or email.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.comm_squire.initiate_sms(body: str, to: str | int) → None
+Sends a message to the number received.
+
+If no number was received, it will ask for a number, looks if it is 10 digits and then sends a message.
+
+Parameters:
+body – Message that has to be sent.
+to – Target phone number or name.
+jarvis.executors.comm_squire.initiate_email(body: str, to: str) → None
+Sends an email to the contact name receive after looking it up in the contacts.yaml file.
+
+Parameters:
+body – Text that has to be sent.
+to – Target name to fetch from the contacts file..
+See also
+Requires contacts.yaml to be present in fileio directory.
+Connection
+jarvis.executors.connection.wifi(conn_object: WiFiConnection) → jarvis.modules.models.classes.WiFiConnection | None
+Checks for internet connection as per given frequency. Enables Wi-Fi and connects to SSID if connection fails.
+
+Parameters:
+conn_object – Takes an object of unknown errors and OSError as an argument.
+Returns:
+Returns the connection object to keep alive, None to stop calling this function.
+Return type:
+WiFiConnection
+Conditions
+jarvis.executors.conditions.conditions(phrase: str) → None
+Conditions function is used to check the message processed.
+
+Uses the keywords to match pre-defined conditions and trigger the appropriate function which has dedicated task.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Raises:
+StopSignal –
+When requested to stop Jarvis. –
+Commander
+jarvis.executors.commander.split_phrase(phrase: str) → None
+Splits the input at ‘and’ or ‘also’ and makes it multiple commands to execute if found in statement.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.commander.delay_condition(phrase: str, delay: int | float) → None
+Delays the execution after sleeping for the said time, after which it is sent to offline_communicator.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+delay – Sleeps for the number of seconds.
+jarvis.executors.commander.timed_delay(phrase: str) → Tuple[str, int | float]
+Checks pre-conditions if a delay is necessary.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Returns:
+Returns a boolean flag whether the time delay should be applied.
+Return type:
+bool
+jarvis.executors.commander.initialize() → None
+Awakens from sleep mode. greet_check is to ensure greeting is given only for the first function call.
+jarvis.executors.commander.initiator(phrase: str = None) → None
+When invoked by Activator, checks for the right keyword to wake up and gets into action.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Controls
+jarvis.executors.controls.restart(ask: bool = True) → None
+Restart the host machine.
+
+Warning
+Restarts the machine without approval when uptime is more than 2 days as the confirmation is requested
+in system_vitals.
+This is done ONLY when the system vitals are read, and the uptime is more than 2 days.
+Parameters:
+ask – Boolean flag to get confirmation from user.
+Raises:
+StopSignal –
+To stop Jarvis' PID. –
+jarvis.executors.controls.exit_process() → None
+Function that holds the list of operations done upon exit.
+jarvis.executors.controls.sleep_control(*args) → bool
+Locks the screen and reduces brightness to bare minimum.
+jarvis.executors.controls.sentry(*args) → bool
+Speaks sentry mode message and sets greeting value to false.
+jarvis.executors.controls.kill(*args) → None
+Kills active listener.
+
+Raises:
+StopSignal –
+To stop main process. –
+jarvis.executors.controls.db_restart_entry(caller: str) → None
+Writes an entry to the DB to restart the caller.
+
+Parameters:
+caller – Name of the process that has to be restarted.
+jarvis.executors.controls.restart_control(phrase: str = None, quiet: bool = False) → None
+Controls the restart functions based on the user request.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+quiet – Take a boolean flag to restart without warning.
+jarvis.executors.controls.stop_terminals(apps: tuple = ('iterm', 'terminal')) → None
+Stops background processes.
+
+Parameters:
+apps – Default apps that have to be shutdown when deep argument is not set.
+jarvis.executors.controls.terminator() → NoReturn
+Exits the process with specified status without calling cleanup handlers, flushing stdio buffers, etc.
+jarvis.executors.controls.shutdown(*args, proceed: bool = False) → None
+Gets confirmation and turns off the machine.
+
+Parameters:
+proceed – Boolean value whether to get confirmation.
+Raises:
+StopSignal – To stop Jarvis’ PID.
+jarvis.executors.controls.delete_logs() → None
+Delete log files that were updated before the log retention period. Checks if file’s inode was changed.
+jarvis.executors.controls.delete_pycache() → None
+Deletes __pycache__ folder from all sub-dir.
+jarvis.executors.controls.set_executable() → None
+Modify file permissions for all the files within the fileio directory.
+jarvis.executors.controls.starter() → None
+Initiates crucial functions which needs to be called during start up.
+
+- put_listener_state
+To activate listener enabling voice conversations.
+- volume
+To default the master volume a specific percent.
+- voices
+To change the voice to default value.
+- delete_logs
+To purge log files older than the set log retention time.
+- delete_pycache
+To purge pycache directories.
+- set_executable
+To allow access to all the files within fileio directory.
+Crontab
+jarvis.executors.crontab.executor(statement: str, log_file: str = None, process_name: str = None) → None
+Executes a cron statement.
+
+Parameters:
+statement – Cron statement to be executed.
+log_file – Log file for crontab execution logs.
+process_name – Process name for the execution.
+Warning
+Executions done by crontab executor are not stopped when Jarvis is stopped.
+On the bright side, almost all executions made by Jarvis are short-lived.
+jarvis.executors.crontab.validate_jobs(log: bool = True) → Generator[CronExpression]
+Validates each of the cron job.
+
+Parameters:
+log – Takes a boolean flag to suppress info level logging.
+Yields:
+CronExpression – CronExpression object.
+Custom Conditions
+jarvis.executors.custom_conditions.custom_conditions(phrase: str, function_map: OrderedDict[str, Callable]) → bool
+Execute one or many functions based on custom conditions.
+DateTime
+jarvis.executors.date_time.current_time(converted: str = None) → None
+Says current time at the requested location if any, else with respect to the current timezone.
+
+Parameters:
+converted – Takes the phrase as an argument.
+jarvis.executors.date_time.current_date(*args) → None
+Says today’s date and adds the current time in speaker queue if report function was called.
+DisplayFunctions
+jarvis.executors.display_functions.brightness(phrase: str)
+Pre-process to check the phrase received and call the appropriate brightness function as necessary.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Face
+jarvis.executors.face.detected_face() → None
+Captures a picture, shows a preview and stores it for future recognition.
+jarvis.executors.face.faces(phrase: str) → None
+Initiates face recognition script and looks for images stored in named directories within train directory.
+Files
+Wrapper for frequently used mapping files.
+
+jarvis.executors.files._loader(filepath: FilePath, default: Union[List[Any], Dict[str, Any], OrderedDict, DefaultDict] = None) → Union[List[Any], Dict[str, Any]]
+Loads the given yaml file and returns the data.
+
+Parameters:
+filepath – YAML filepath to load.
+default – Default value if loading failed or file missing.
+Returns:
+Returns the YAML data as a list or dict.
+Return type:
+List[Any] | Dict[str, Any]
+jarvis.executors.files._dumper(filepath: FilePath, data: Union[List[Any], Dict[str, Any], OrderedDict, DefaultDict], indent: int = 2, sort_keys: bool = False) → None
+Dumps the data into the given yaml filepath.
+
+Parameters:
+filepath – Filepath to dump.
+data – Data to dump.
+indent – Indentation to maintain.
+sort_keys – Boolean flag to sort the keys.
+jarvis.executors.files.get_contacts() → Union[Dict[str, Dict[str, str]], DefaultDict[str, Dict[str, str]]]
+Reads the contact file and returns the data.
+jarvis.executors.files.get_frequent() → Dict[str, int]
+Retrieve frequently used keywords’ mapping file.
+jarvis.executors.files.put_frequent(data: Dict[str, int]) → None
+Writes frequently used keywords into a mapping file.
+
+Parameters:
+data – Takes the mapping dictionary as an argument.
+jarvis.executors.files.get_location() → DefaultDict[str, Union[Dict, float, bool]]
+Reads the location file and returns the location data.
+jarvis.executors.files.get_secure_send() → Dict[str, Dict[str, Any]]
+Get existing secure-send information from the mapping file.
+jarvis.executors.files.delete_secure_send(key: str) → None
+Delete a particular secure key dictionary stored in the mapping file.
+
+Parameters:
+key – Key in dictionary to be deleted.
+jarvis.executors.files.put_secure_send(data: Dict[str, Dict[str, Any]]) → None
+Add a particular secure key dictionary to the mapping file.
+
+Parameters:
+data – Data dict that has to be added.
+jarvis.executors.files.get_custom_conditions() → Dict[str, Dict[str, str]]
+Custom conditions to map specific keywords to one or many functions.
+jarvis.executors.files.get_restrictions() → List[str]
+Function level restrictions to restrict certain keywords via offline communicator.
+jarvis.executors.files.put_restrictions(restrictions: List[str]) → None
+Function level restrictions to restrict certain keywords via offline communicator.
+
+Parameters:
+restrictions – A list of function names that has to be restricted.
+jarvis.executors.files.get_gpt_data() → List[Dict[str, str]]
+Get history from Jarvis -> Ollama conversation.
+jarvis.executors.files.put_gpt_data(data: List[Dict[str, str]]) → None
+Stores Jarvis -> Ollama conversations in a history file.
+
+Parameters:
+data – List of dictionaries that have to be saved for future reference.
+jarvis.executors.files.get_automation() → Dict[str, Union[List[Dict[str, str | bool]], Dict[str, str | bool]]]
+Load automation data from feed file.
+jarvis.executors.files.put_automation(data: Dict[str, Union[List[Dict[str, str | bool]], Dict[str, str | bool]]]) → None
+Dumps automation data into feed file.
+
+Parameters:
+data – Data that has to be dumped into the automation feed file.
+jarvis.executors.files.get_smart_devices() → dict | None
+Load smart devices’ data from feed file.
+jarvis.executors.files.put_smart_devices(data: dict) → None
+Dumps smart devices’ data into feed file.
+
+Parameters:
+data – Data that has to be dumped into the smart devices’ feed file.
+jarvis.executors.files.get_processes() → Dict[str, List[Union[int, List[str]]]]
+Get the processes’ mapping from stored map file.
+jarvis.executors.files.get_reminders() → List[Dict[str, str]]
+Get all reminders stored.
+jarvis.executors.files.put_reminders(data: List[Dict[str, str]]) → None
+Dumps the reminder data into the respective yaml file.
+
+Parameters:
+data – Data to be dumped.
+jarvis.executors.files.get_alarms() → List[Dict[str, str | bool]]
+Get all alarms stored.
+jarvis.executors.files.put_alarms(data: List[Dict[str, str | bool]]) → None
+Dumps the alarm data into the respective yaml file.
+
+Parameters:
+data – Data to be dumped.
+jarvis.executors.files.get_recognizer() → RecognizerSettings
+Get the stored settings for speech recognition.
+jarvis.executors.files.get_crontab() → List[str]
+Get list of stored crontab settings.
+jarvis.executors.files.get_ip_info() → Dict[str, Any]
+Get IP information from a stored yaml file.
+jarvis.executors.files.put_ip_info(data: Dict[str, Any]) → None
+Store IP address information in a mapping file.
+
+Parameters:
+data – IP information to be stored.
+jarvis.executors.files.delete(path: pydantic.v1.types.FilePath | pydantic.v1.types.DirectoryPath) → None
+Delete a file or directory.
+
+Parameters:
+path – File or directory path to be removed.
+Functions
+Creates a dictionary with the keyword category as key and the function to be called as value.
+
+Functions
+jarvis.executors.functions.function_mapping() → OrderedDict[str, Callable]
+Returns an ordered dictionary of functions mapping.
+
+Returns:
+OrderedDict of category and keywords as key-value pairs.
+Return type:
+OrderedDict
+GitHub
+jarvis.executors.github.get_repos() → Generator[Dict[str, str | bool]]
+Get repositories in GitHub account.
+
+Yields:
+Generator[Dict[str, str | bool]] – Yields each repository information.
+jarvis.executors.github.github(*args) → None
+Get GitHub account information.
+Guard
+jarvis.executors.guard.get_state(log: bool = True) → Tuple[int, str]
+Reads the state of guard column in the base db.
+
+Parameters:
+log – Boolean flag whether to log state.
+Returns:
+0 or 1 to indicate if the security mode is enabled.
+Return type:
+int
+jarvis.executors.guard.put_state(state: bool) → None
+Updates the state of guard column in the base db.
+
+Parameters:
+state – True or False flag to stop the security mode.
+jarvis.executors.guard.stop_and_respond(stop: bool) → None
+Stops security mode and responds accordingly.
+
+Parameters:
+stop – Boolean flag to stop or simply repsond.
+jarvis.executors.guard.politely_disable() → None
+Disable security mode in the background without any response.
+jarvis.executors.guard.guard_disable(*args) → None
+Checks the state of security mode, sets flag to False if currently enabled.
+
+See also Informs if a threat was detected during its runtime.
+jarvis.executors.guard.security_runner(offline: bool = True) → None
+Enables microphone and camera to watch and listen for potential threats. Notifies if any.
+jarvis.executors.guard.guard_enable(*args) → None
+Security Mode will enable camera and microphone in the background.
+
+Notes
+
+If any speech is recognized or a face is detected, there will another thread triggered to send notifications.
+Notifications will be triggered only after 5 minutes of previous notification.
+jarvis.executors.guard.threat_notify(converted: str, face_detected: str | None) → None
+Sends an SMS and email notification in case of a threat.
+
+References
+
+Uses gmail-connector to send the SMS and email.
+
+Parameters:
+converted – Takes the voice recognized statement as argument.
+face_detected – Name of the attachment file which is the picture of the intruder.
+Internet
+jarvis.executors.internet.ip_address() → str | None
+Uses simple check on network id to see if it is connected to local host or not.
+
+Returns:
+Private IP address of host machine.
+Return type:
+str
+jarvis.executors.internet.vpn_checker() → bool | str
+Uses simple check on network id to see if it is connected to local host or not.
+
+Returns:
+Returns a False flag if VPN is detected, else the IP address.
+Return type:
+bool or str
+jarvis.executors.internet.check_ip_version(ip_addr: str) → bool
+Check if IP address is a valid IPv5 notation.
+
+Parameters:
+ip_addr – IP address as string.
+Returns:
+Returns a boolean flag to indicate validity.
+Return type:
+bool
+jarvis.executors.internet.get_public_ip() → str | None
+Retrieves public IP address from various sources.
+
+Returns:
+Retrieved public IP address.
+Return type:
+str
+jarvis.executors.internet.get_and_store_ip_data(url: str, ip_addr: str) → Dict[str, str]
+Retrieve IP information and store it in YAML mapping.
+
+Parameters:
+url – URL to request IP data from.
+ip_addr – IP address retrieved.
+Returns:
+Public IP information.
+Return type:
+Dict[str, str]
+jarvis.executors.internet.public_ip_info() → Dict[str, str]
+Get public IP information.
+
+Returns:
+Public IP information.
+Return type:
+Dict[str, str]
+jarvis.executors.internet.ip_info(phrase: str) → None
+Gets IP address of the host machine.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.internet.get_connection_info(target: str = 'SSID') → str | None
+Gets information about the network connected.
+
+Returns:
+Wi-Fi or Ethernet SSID or Name.
+Return type:
+str
+jarvis.executors.internet.speed_test(*args) → None
+Initiates speed test and says the ping rate, download and upload speed.
+
+References
+
+Number of threads per core: https://psutil.readthedocs.io/en/latest/#psutil.cpu_count
+jarvis.executors.internet.get_tunnel(log: bool = True) → HttpUrl
+Checks for any active public URL tunneled using Ngrok.
+
+Returns:
+Ngrok public URL.
+Return type:
+HttpUrl
+iOS Functions
+jarvis.executors.ios_functions.device_selector(phrase: str) → pyicloud.services.findmyiphone.AppleDevice | None
+Selects a device using the received input string.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Returns:
+Returns the selected device from the class AppleDevice
+Return type:
+AppleDevice
+jarvis.executors.ios_functions.location_services(device: AppleDevice) → dict | None
+Gets the current location of an Apple device.
+
+Parameters:
+device – Particular Apple device that has to be located.
+Returns:
+Dictionary of location information.
+Return type:
+dict
+jarvis.executors.ios_functions.locate_device(target_device: AppleDevice) → None
+Speaks the location information of the target device.
+
+Parameters:
+target_device – Takes the target device as an argument.
+jarvis.executors.ios_functions.locate(phrase: str) → None
+Locates an Apple device using icloud api for python.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Lights
+jarvis.executors.lights.get_lights(data: dict) → Dict[str, List[str]]
+Extract lights’ mapping from the data in smart devices.
+
+Parameters:
+data – Raw data from smart devices.
+Returns:
+Return lights’ information as stored in smart devices yaml mapping.
+Return type:
+Dict[str, List[str]]
+class jarvis.executors.lights.ThreadExecutor(mapping: Dict[str, List[str]])
+Instantiates ThreadExecutor object to control the lights using pool of threads.
+
+ThreadExecutor
+thread_worker(function_to_call: Callable) → Dict[str, List[str]]
+Initiates ThreadPoolExecutor with in a dedicated thread.
+
+Parameters:
+function_to_call – Takes the function/method that has to be called as an argument.
+Returns:
+Returns a dictionary of light location and the list of the IPs that failed as key value pairs.
+Return type:
+Dict[str, List[str]]
+avail_check(function_to_call: Callable) → None
+Speaks an error message if any of the lights aren’t reachable.
+
+Parameters:
+function_to_call – Takes the function/method that has to be called as an argument.
+jarvis.executors.lights.lights(phrase: str) → None
+Controller for smart lights.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.lights_squire.turn_off(host: str) → None
+Turns off the device.
+
+Parameters:
+host – Takes target device’s IP address as an argument.
+jarvis.executors.lights_squire.warm(host: str) → None
+Sets lights to warm/yellow.
+
+Parameters:
+host – Takes target device’s IP address as an argument.
+jarvis.executors.lights_squire.cool(host: str) → None
+Sets lights to cool/white.
+
+Parameters:
+host – Takes target device’s IP address as an argument.
+jarvis.executors.lights_squire.lumen(host: str, rgb: int = 255) → None
+Sets lights to custom brightness.
+
+Parameters:
+host – Takes target device’s IP address as an argument.
+rgb – Red, Green andBlue values to alter the brightness.
+jarvis.executors.lights_squire.preset(host: str, color: int = None, speed: int = 100) → None
+Changes light colors to preset values.
+
+Parameters:
+host – Takes target device’s IP address as an argument.
+color – Preset value extracted from list of color codes. Defaults to a random color code.
+speed – Speed of color change. Defaults to 100.
+jarvis.executors.lights_squire.runner(host: List[str]) → None
+Runs a never ending loop setting random light IP addresses to random color preset values.
+
+Parameters:
+host – Takes list of lights’ IP addresses as argument.
+jarvis.executors.lights_squire.check_status() → str | int | None
+Retrieve process ID from the party table.
+
+Returns:
+Process ID if party mode is enabled.
+Return type:
+Process.pid
+jarvis.executors.lights_squire.remove_status() → None
+Removes all entries from the party table.
+jarvis.executors.lights_squire.update_status(process: Process) → None
+Update the children and party tables with process ID.
+
+Parameters:
+process – Process for which the PID has to be stored in database.
+jarvis.executors.lights_squire.party_mode(host: List[str], phrase: str) → bool
+Handles party mode by altering colors in given light hostnames with random color codes.
+
+Parameters:
+host – Takes list of lights’ IP addresses as argument.
+phrase – Takes the phrase spoken as an argument.
+Returns:
+True if party mode has to be disabled.
+Return type:
+bool
+Listener Controls
+jarvis.executors.listener_controls.listener_control(phrase: str) → None
+Controls the listener table in base db.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.listener_controls.get_listener_state() → bool
+Gets the current state of listener.
+
+Returns:
+A boolean flag to indicate if the listener is active.
+Return type:
+bool
+jarvis.executors.listener_controls.put_listener_state(state: bool) → None
+Updates the state of the listener.
+
+Parameters:
+state – Takes the boolean value to be inserted.
+Location
+jarvis.executors.location.get_coordinates_from_ip() → Union[Tuple[float, float], Tuple[float, ...]]
+Uses public IP to retrieve latitude and longitude. If fails, uses Speedtest module.
+
+Returns:
+Returns latitude and longitude as a tuple.
+Return type:
+tuple
+jarvis.executors.location.get_location_from_coordinates(coordinates: tuple) → Dict[str, str]
+Uses the latitude and longitude information to get the address information.
+
+Parameters:
+coordinates – Takes the latitude and longitude as a tuple.
+Returns:
+Location address.
+Return type:
+dict
+jarvis.executors.location.write_current_location() → None
+Extracts location information from public IP address and writes it to a yaml file.
+jarvis.executors.location.location(*args) → None
+Gets the user’s current location.
+jarvis.executors.location.distance(phrase) → None
+Extracts the start and end location to get the distance for it.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.location.distance_controller(origin: str = None, destination: str = None) → None
+Calculates distance between two locations.
+
+Parameters:
+origin – Takes the starting place name as an optional argument.
+destination – Takes the destination place name as optional argument.
+Notes
+
+If origin is None, Jarvis takes the current location as origin.
+If destination is None, Jarvis will ask for a destination from the user.
+jarvis.executors.location.locate_places(phrase: str = None) → None
+Gets location details of a place.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.location.directions(phrase: str = None, no_repeat: bool = False) → None
+Opens Google Maps for a route between starting and destination.
+
+Uses reverse geocoding to calculate latitude and longitude for both start and destination.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+no_repeat – A placeholder flag switched during recursion so that, Jarvis doesn’t repeat himself.
+Method Executor
+jarvis.executors.method.executor(func: Callable, phrase: str) → None
+Executes a function.
+
+Parameters:
+func – Function to be called.
+phrase – Takes the phrase spoken as an argument.
+Offline
+jarvis.executors.offline.background_tasks() → None
+Initiate the runner function for background tasks.
+jarvis.executors.offline.background_task_runner() → None
+Trigger for background tasks, cron jobs, automation, alarms, reminders, events and meetings sync.
+jarvis.executors.offline.ondemand_offline_automation(task: str) → str | None
+Makes a POST call to offline-communicator to execute a said task.
+
+Parameters:
+task – Takes the command to be executed as an argument.
+Returns:
+Returns the response if request was successful.
+Return type:
+str
+jarvis.executors.offline.offline_communicator(command: str, bg_flag: bool = False) → Union[AnyStr, HttpUrl]
+Initiates conditions after flipping status flag in called_by_offline dict which suppresses the speaker.
+
+Parameters:
+command – Takes the command that has to be executed as an argument.
+bg_flag – Takes the background flag caller as an argument.
+Returns:
+Response from Jarvis.
+Return type:
+AnyStr
+Others
+jarvis.executors.others.repeat(phrase: str) → None
+Repeats whatever is heard or what was said earlier.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.others.apps(phrase: str) → None
+Launches the requested application and if Jarvis is unable to find the app, asks for the app name from the user.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Warning macOS ventura does not display built-in applications for the ls command.
+jarvis.executors.others.music(phrase: str = None) → None
+Scans music directory in the user profile for .mp3 files and plays using default player.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.others.google_home(device: str = None, file: str = None) → None
+Uses socket lib to extract ip address and scan ip range for Google home devices.
+
+Notes
+
+Can also play music on multiple devices at once.
+See also
+https://github.com/deblockt/google-home-push/pull/7
+When music is played and immediately stopped/tasked the Google home device, it is most likely to except
+BrokenPipeError
+This usually happens when a socket is written after it is fully closed.
+This error occurs when one end of the connection tries sending data while the other has closed the connection.
+This can simply be ignored or handled adding the code below in socket module (NOT PREFERRED).
+except IOError as error:
+    import errno
+    if error.errno != errno.EPIPE:
+        support.write_screen(error)
+Parameters:
+device – Name of the Google home device on which the music has to be played.
+file – Scanned audio file to be played.
+jarvis.executors.others.flip_a_coin(*args) → None
+Says heads or tails from a random choice.
+jarvis.executors.others.meaning(phrase: str) → None
+Gets meaning for a word skimmed from the user statement.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.others.notes(*args) → None
+Listens to the user and saves it as a text file.
+jarvis.executors.others.news(news_source: str = 'fox') → None
+Says news around the user’s location.
+
+Parameters:
+news_source – Source from where the news has to be fetched. Defaults to fox.
+jarvis.executors.others.report(*args) → None
+Initiates a list of functions, that I tend to check first thing in the morning.
+jarvis.executors.others.celebrate(phrase: str = None) → str | None
+Function to look if the current date is a holiday or a birthday.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Returns:
+A string of the event observed today.
+Return type:
+str
+jarvis.executors.others.abusive(phrase: str) → None
+Response for abusive phrases.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.others.photo(*args) → str
+Captures a picture of the ambience using the connected camera.
+
+Returns:
+Filename.
+Return type:
+str
+jarvis.executors.others.pypi_versions(package_name: str) → Optional[List[str]]
+Get all available versions from pypi.
+
+Parameters:
+package_name – Package for which the versions are needed.
+Returns:
+List of version numbers.
+Return type:
+List[str]
+jarvis.executors.others.version(*args) → None
+Speaks the version information along with the current version on GitHub.
+Port Handler
+jarvis.executors.port_handler.is_port_in_use(port: int) → bool
+Connect to a remote socket at address, to identify if the port is currently being used.
+
+Parameters:
+port – Takes the port number as an argument.
+Returns:
+A boolean flag to indicate whether a port is open.
+Return type:
+bool
+jarvis.executors.port_handler.kill_port_pid(port: int, protocol: str = 'tcp') → bool | None
+Uses List all open files lsof to get the PID of the process that is listening on the given port and kills it.
+
+Parameters:
+port – Port number which the application is listening on.
+protocol – Protocol serving the port. Defaults to TCP
+Warning Use only when the application listening to given port runs as a dedicated/child process with a different PID
+This function will kill the process that is using the given port.
+If the PID is the same as that of MainProcess, triggers a warning without terminating the process.
+Returns:
+Flag to indicate whether the process was terminated successfully.
+Return type:
+bool
+Processor
+jarvis.executors.processor.delete_db() → None
+Delete base db if exists. Called upon restart or shut down.
+jarvis.executors.processor.clear_db() → None
+Deletes entries from all databases except for the tables assigned to hold data forever.
+jarvis.executors.processor.create_process_mapping(processes: Dict[str, Dict[str, Union[Process, List[str]]]], func_name: str = None) → None
+Creates or updates the processes mapping file.
+
+Parameters:
+processes – Dictionary of process names, process id and their impact.
+func_name – Function name of the process.
+jarvis.executors.processor.start_processes(func_name: str = None) → Union[Process, Dict[str, Process]]
+Initiates multiple background processes to achieve parallelization.
+
+Parameters:
+func_name – Name of the function that has to be started.
+Returns:
+Returns a process object if a function name is passed, otherwise a mapping of function name and process objects.
+Return type:
+Process | Dict[str, Process]
+See also
+telegram_api: Initiates polling Telegram API to execute offline commands (if no webhook config is available)
+jarvis_api: Initiates uvicorn server to process API requests, stock monitor and robinhood report generation.
+background_tasks: Initiates internal background tasks, cron jobs, alarms, reminders, events and meetings sync.
+plot_mic: Initiates plotting realtime microphone usage using matplotlib.
+jarvis.executors.processor.stop_child_processes() → None
+Stops sub processes (for meetings and events) triggered by child processes.
+jarvis.executors.processor.stop_processes(func_name: str = None) → None
+Stops all background processes initiated during startup and removes database source file.
+Process Map
+jarvis.executors.process_map.base() → Dict[str, Dict[str, Union[Process, List[str]]]]
+Creates a base mapping with all the processes handled by Jarvis.
+
+Returns:
+Nested dictionary of process mapping.
+Return type:
+Dict[str, Dict[str, Process | List[str]]]
+jarvis.executors.process_map.get() → Dict[str, Dict[int, List[str]]]
+Get the existing process map.
+
+Returns:
+Returns the dictionary of process data and the impact information.
+Return type:
+Dict[str, Dict[int, List[str]]]
+jarvis.executors.process_map.add(data: Dict[str, Dict[int, List[str]]]) → None
+Dumps the process map data into the mapping file.
+
+Parameters:
+data – Dictionary of process data and the impact information.
+jarvis.executors.process_map.remove(func_name: str) → None
+Remove process map for a function that has stopped running.
+
+Parameters:
+func_name – Name of the function that has to be removed from the mapping.
+jarvis.executors.process_map.update(func_name: str, old_pid: int, new_pid: int) → None
+Remove process map for a function that has stopped running.
+
+Parameters:
+func_name – Name of the function that has to be removed from the mapping.
+old_pid – Old process ID that needs to be updating.
+new_pid – New process ID that needs to be updated.
+Remind
+jarvis.executors.remind.create_reminder(reminder_time: datetime, message: str, to_about: str, phrase: str, day: str = None, timer: str = None) → None
+Updates the reminder file to set a reminder.
+
+Parameters:
+reminder_time – Time of reminder as a datetime object.
+message – Message to be reminded for.
+to_about – remind to or remind about as said in phrase.
+phrase – Phrase spoken by the user.
+day – Day to include in the response.
+timer – Number of minutes/hours to reminder.
+jarvis.executors.remind.find_name(phrase: str) → str
+Looks for names in contact file if there is any matching the phrase.
+jarvis.executors.remind.get_reminder_state() → List[str]
+Frames a response text with all the reminders present.
+
+Returns:
+Returns a list of reminders framed as a response.
+Return type:
+List[str]
+jarvis.executors.remind.reminder(phrase: str) → None
+Passes hour, minute, am/pm and reminder message to Reminder class which initiates a thread for reminder.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.remind.executor(message: str, contact: str = None) → None
+Notifies user about the reminder (per the options set in env vars) and displays a notification on the device.
+
+Parameters:
+message – Takes the reminder message as an argument.
+contact – Name of the person to send the reminder to.
+See also
+Uses phone number to send SMS notification
+Uses recipient email address to send email notification
+Uses telegram account ID to send a message notification
+Uses NTFY topic to send a push notification
+Resource Tracker
+jarvis.executors.resource_tracker.semaphores(fn: Callable, args: Tuple = None, kwargs: Dict[str, Any] = None, daemon: bool = False) → None
+Resource tracker to store undefined process IDs in the base database and cleanup at shutdown.
+
+Parameters:
+fn – Function to start multiprocessing for.
+args – Optional arguments to pass.
+kwargs – Keyword arguments to pass.
+daemon – Boolean flag to set daemon mode.
+Restrictions
+jarvis.executors.restrictions.restricted(phrase: str) → bool
+Check if phrase matches the category that’s restricted.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Returns:
+Returns a boolean flag if the category (function name) is present in restricted functions.
+Return type:
+bool
+jarvis.executors.restrictions.get_func(phrase: str) → str
+Extract function name from the phrase.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Raises:
+InvalidArgument –
+- If the phrase doesn't match any of the operations supported. –
+Returns:
+Function name matching the existing function map.
+Return type:
+str
+jarvis.executors.restrictions.handle_restrictions(phrase: str) → str
+Handles adding/removing restrictions for offline communicators.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Raises:
+InvalidArgument –
+- If the phrase doesn't match any of the operations supported. –
+Returns:
+Returns the response as a string.
+Return type:
+str
+Robinhood
+Initiates robinhood client to get the portfolio details.
+
+jarvis.executors.robinhood.get_summary() → str
+Fetches all necessary information about the user’s investment portfolio.
+
+Returns:
+A string value of total purchased stocks and resultant profit/loss.
+Return type:
+str
+jarvis.executors.robinhood.robinhood(*args) → None
+Gets investment details from robinhood API.
+SecureSend
+jarvis.executors.secure_send.get_aws_secrets(name: str = None) → Union[str, List[str]]
+Get secrets from AWS secretsmanager.
+
+Parameters:
+name – Get name of the particular secret.
+Returns:
+Returns the value of the secret or list of all secrets’ names.
+Return type:
+str | List[str]
+jarvis.executors.secure_send.get_aws_params(name: str = None) → Union[str, List[str]]
+Get SSM parameters from AWS.
+
+Parameters:
+name – Get name of the particular parameter.
+Returns:
+Returns the value of the parameter or list of all parameter names.
+Return type:
+str | List[str]
+jarvis.executors.secure_send.format_secret(secret: Any) → list | dict | str | int | float | bool | None
+Format secrets into primitive and non-primitive data types.
+
+Parameters:
+secret – Secret value of any data type.
+Returns:
+Returns the formatted secret.
+Return type:
+list | dict | str | int | float | bool | None
+jarvis.executors.secure_send.store_secret(key: str, value: Any) → str
+Stores the secret in the secure-send yaml file.
+
+Parameters:
+key – Key for payload.
+value – Value for payload.
+Returns:
+Returns the generate key that is used as identifier for the payload.
+Return type:
+str
+class jarvis.executors.secure_send.SecretResponse(*, response: str | None = None, token: str | None = None)
+Base model to store secret response from the server.
+
+SecretResponse
+response: str | None
+token: str | None
+_abc_impl = <_abc._abc_data object>
+model_config: ClassVar[ConfigDict] = {}
+Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+jarvis.executors.secure_send.secrets(phrase: str) → jarvis.executors.secure_send.SecretResponse | None
+Handle getting secrets from AWS or local env vars.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Returns:
+Response the SecretResponse object with the server response and the token.
+Return type:
+SecretResponse
+Simulator
+jarvis.executors.simulator.get_simulation_data() → Dict[str, List[str]]
+Reads the simulation file and loads it as a dictionary.
+
+Returns:
+Returns the required data to run the simulation.
+Return type:
+Dict[str, List[str]]
+jarvis.executors.simulator.initiate_simulator(simulation_data: Dict[str, List[str]]) → None
+Runs simulation on a preset of phrases.
+
+Parameters:
+simulation_data – A key value pair of category and phrase list.
+jarvis.executors.simulator.simulation(*args) → None
+Initiates simulation in a dedicated process logging into a dedicated file.
+StaticResponses
+jarvis.executors.static_responses.form(*args) → None
+Response for form.
+jarvis.executors.static_responses.greeting(*args) → None
+Response for greeting.
+jarvis.executors.static_responses.capabilities(*args) → None
+Response for capabilities.
+jarvis.executors.static_responses.languages(*args) → None
+Response for languages.
+jarvis.executors.static_responses.whats_up(*args) → None
+Response for what’s up.
+jarvis.executors.static_responses.what(*args) → None
+Response for what.
+jarvis.executors.static_responses.hi(*args) → None
+Response for hi and hello.
+jarvis.executors.static_responses.who(*args) → None
+Response for whom.
+jarvis.executors.static_responses.age(*args) → None
+Response for age.
+jarvis.executors.static_responses.about_me(*args) → None
+Response for about me.
+jarvis.executors.static_responses.not_allowed_offline() → None
+Response for tasks not supported via offline communicator.
+jarvis.executors.static_responses.un_processable() → None
+Speaker response for un-processable requests.
+System
+jarvis.executors.system.system_info(phrase: str) → None
+Tells the system configuration and current statistics.
+Telegram
+jarvis.executors.telegram.get_webhook_origin(retry: int) → str
+Get the telegram bot webhook origin.
+
+Parameters:
+retry – Number of retry attempts to get public URL.
+Returns:
+Public URL where the telegram webhook is hosted.
+Return type:
+str
+jarvis.executors.telegram.telegram_api(webhook_trials: int = 20) → None
+Initiates polling for new messages.
+
+Parameters:
+webhook_trials – Number of retry attempts to get the public URL for Jarvis (if hosted via Ngrok)
+See also
+webhook_trials is set to 3 when polling fails (which is already a fallback for webhook retries)
+Handles:
+BotWebhookConflict: When there’s a broken webhook set already.
+BotInUse: Restarts polling to take control over.
+EgressErrors: Initiates after 10, 20 or 30 seconds. Depends on retry count. Restarts after 3 attempts.
+Thermostat
+jarvis.executors.thermostat.create_connection() → None
+Creates a new connection and stores the device object and expiration time in a dedicated object.
+jarvis.executors.thermostat.get_thermostat(device: Zone, phrase: str) → None
+Get operations to be performed on the thermostat.
+
+Parameters:
+device – Authenticated device object.
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.thermostat.set_thermostat(device: Zone, phrase: str) → None
+Update operations to be performed on the thermostat.
+
+Parameters:
+device – Authenticated device object.
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.thermostat.get_auth_object() → pyhtcc.pyhtcc.Zone | None
+Loads the authenticated Zone object with a built-in retry logic and expiration check.
+
+Returns:
+Authenticated Zone object.
+Return type:
+Zone
+jarvis.executors.thermostat.thermostat_controls(phrase: str) → None
+Directs to the target function based on user requirement.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+To Do
+jarvis.executors.todo_list.todo(phrase: str) → None
+Figure out the task to be executed on the DB and call the appropriate function.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.todo_list.get_todo() → None
+Says the item and category stored in the to-do list.
+jarvis.executors.todo_list.add_todo() → None
+Adds new items to the to-do list.
+jarvis.executors.todo_list.delete_todo_items() → None
+Deletes items from an existing to-do list.
+jarvis.executors.todo_list.delete_todo() → None
+Deletes all the data from the table tasks in the database.
+TV
+jarvis.executors.tv.get_tv(data: dict) → Tuple[Dict[str, Dict[str, Union[str, List[str]]]], str]
+Extract TV mapping from the data in smart devices.
+
+Parameters:
+data – Raw data from smart devices.
+Returns:
+Return TV information and the key name under which it was stored. The key will be used to update the file.
+Return type:
+Tuple[Dict[str, Dict[str, str | List[str]]], str]
+jarvis.executors.tv.tv_status(tv_ip_list: List[str], attempt: int = 0) → str
+Pings the tv and returns the IP address.
+
+Parameters:
+tv_ip_list – List of possible IP addresses for the Television.
+attempt – Takes iteration count as an argument.
+See also
+Status codes:
+0 if able to ping, 256 if unable to ping.
+Returns:
+Returns the reachable IP address from the list.
+Return type:
+str
+jarvis.executors.tv.television(phrase: str) → None
+Controls all actions on a TV (LG Web OS or Roku).
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.tv_controls.tv_controller(phrase: str, tv_ip: str, identifier: str, nickname: str, client_key: str = None, key: str = None) → None
+Controller for Roku or LG tv actions.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+tv_ip – IP address of the television.
+identifier – String to control roku or LG WebOS.
+nickname – Name as in the source yaml file.
+key – Key under which the TV information was stored in source file.
+client_key – Client key to connect to the LG WebOS tv.
+Unconditional
+jarvis.executors.unconditional.google_maps(query: str) → bool
+Uses google’s places api to get places nearby or any particular destination.
+
+This function is triggered when the words in user’s statement doesn’t match with any predefined functions.
+
+Parameters:
+query – Takes the voice recognized statement as argument.
+Returns:
+Boolean True if Google’s maps API is unable to fetch consumable results.
+Return type:
+bool
+Volume
+jarvis.executors.volume.speaker_volume(level: int) → None
+Changes volume just for Jarvis’ speech without disturbing the system volume.
+
+Parameters:
+level – Takes the volume level as an argument.
+jarvis.executors.volume.volume(phrase: str = None, level: int = None) → None
+Controls volume from the numbers received. Defaults to 50%.
+
+See also SetVolume for Windows: https://rlatour.com/setvol/
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+level – Level of volume to which the system has to set.
+VPN Server
+jarvis.executors.vpn_server.regional_phrase(phrase: str) → Generator[str]
+Converts alphabetical numbers into actual numbers.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Yields:
+str – Yields the word.
+jarvis.executors.vpn_server.extract_custom_region(phrase: str) → str
+Tries to find region name in the phrase.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Returns:
+Region name if a match is found.
+Return type:
+str
+jarvis.executors.vpn_server.vpn_server(phrase: str) → None
+Enables or disables VPN server.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+jarvis.executors.vpn_server.vpn_server_switch(operation: str, custom_region: str = None) → None
+Automator to create or destroy a VPN server.
+
+Parameters:
+operation – Takes enabled or disabled as argument.
+custom_region – Takes a custom AWS region as argument.
+See also
+Check Read Me in vpn-server for more information.
+Weather
+jarvis.executors.weather.make_request(lat: float, lon: float) → Optional[Dict]
+Get weather information from OpenWeatherMap API.
+
+Parameters:
+lat – Latitude of location to get weather info.
+lon – Longitude of location to get weather info.
+Returns:
+JSON response from api.
+Return type:
+dict
+jarvis.executors.weather.weather_with_specifics(phrase: str, response: Dict[str, Any], weather_location: str) → None
+Parses the weather information in depth when requested for a specific timeline.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+response – Response payload from openweather API.
+weather_location – Weather location parsed from the phrase.
+jarvis.executors.weather.weather(phrase: str = None, monitor: bool = False) → Optional[Tuple[Any, int, int, int, Optional[str]]]
+Says weather at any location if a specific location is mentioned.
+
+Says weather at current location by getting IP using reverse geocoding if no place is received.
+
+References
+
+https://www.weather.gov/mlb/seasonal_wind_threat
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+monitor – Takes a boolean value to simply return the weather response.
+jarvis.executors.weather_monitor.monitor() → None
+Weather monitoring system to trigger notifications for high, low weather and severe weather alert.
+Word Match
+Module for keyword classification algorithm.
+
+KeywordClassifier
+jarvis.executors.word_match.reverse_lookup(lookup: str, match_list: Union[List, Tuple]) → str | None
+Returns the word in phrase that matches the one in given list.
+jarvis.executors.word_match.forward_lookup(lookup: Union[str, List, Tuple], match_list: Union[List, Tuple]) → str | None
+Returns the word in list that matches with the phrase given as string or list.
+jarvis.executors.word_match.word_match(phrase: str, match_list: Union[List, Tuple], strict: bool = False) → str | None
+Keyword classifier.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+match_list – List or tuple of words against which the phrase has to be checked.
+strict – Look for the exact word match instead of regex.
+Returns:
+Returns the word that was matched.
+Return type:
+str
+———-Models———-
+Classes
+This is a space for environment variables shared across multiple modules validated using pydantic.
+
+Classes
+jarvis.modules.models.classes.env_vault_loader() → jarvis.modules.models.classes.EnvConfig | None
+Load env config by retrieving a DB table.
+
+Notes
+
+Looks for the environment variable vault_env or env_file Defaults to .vault.env to load env vars specific to vault.
+
+Returns:
+Returns a reference to the EnvConfig object.
+Return type:
+EnvConfig
+jarvis.modules.models.classes.env_file_loader() → EnvConfig
+Loads environment variables based on filetypes.
+
+Notes
+
+Looks for the environment variable jarvis_env or env_file Defaults to .env to load env vars specific to Jarvis.
+
+Returns:
+Returns a reference to the EnvConfig object.
+Return type:
+EnvConfig
+class jarvis.modules.models.classes.Settings(pydantic.BaseSettings)
+Loads most common system values that do not change.
+
+Settings
+Raises:
+UnsupportedOS –
+If the hosted device is other than Linux, macOS or Windows. –
+interactive: bool
+pid: int
+pname: str
+ram: Union[int, float]
+disk: Union[int, float]
+physical_cores: int
+logical_cores: int
+limited: bool
+invoker: str
+device: str
+os_name: str
+os_version: str
+distro: str
+weather_onecall: bool
+os: str
+class jarvis.modules.models.classes.VehicleConnection(pydantic.BaseModel)
+Wrapper to create and store vehicle connection.
+
+VehicleConnection
+vin: Optional[str]
+device_id: Optional[str]
+expiration: Optional[float]
+control: Optional[Vehicle]
+refresh_token: Optional[Union[str, UUID]]
+class Config
+Config to allow arbitrary types.
+
+arbitrary_types_allowed = True
+class jarvis.modules.models.classes.RecognizerSettings(pydantic.BaseModel)
+Settings for speech recognition.
+
+RecognizerSettings
+See also
+energy_threshold: Minimum energy to consider for recording. Greater the value, louder the voice should be.
+dynamic_energy_threshold: Change considerable audio energy threshold dynamically.
+pause_threshold: Seconds of non-speaking audio before a phrase is considered complete.
+phrase_threshold: Minimum seconds of speaking audio before it can be considered a phrase.
+non_speaking_duration: Seconds of non-speaking audio to keep on both sides of the recording.
+energy_threshold: int
+pause_threshold: Union[int, float]
+phrase_threshold: Union[int, float]
+dynamic_energy_threshold: bool
+non_speaking_duration: Union[int, float]
+class jarvis.modules.models.classes.BackgroundTask(pydantic.BaseModel)
+Custom links model.
+
+seconds: int
+task: str
+ignore_hours: Optional[Union[List[int], List[str], str, int, List[int | str]]]
+classmethod check_empty_string(value)
+Validate task field in tasks.
+classmethod check_hours_format(value) → List[int]
+Validate each entry in ignore hours list.
+class jarvis.modules.models.classes.EnvConfig(pydantic.BaseSettings)
+Configure all env vars and validate using pydantic to share across modules.
+
+EnvConfig
+distance_unit: jarvis.modules.models.enums.DistanceUnits | None
+temperature_unit: jarvis.modules.models.enums.TemperatureUnits | None
+home: Path
+volume: int
+limited: bool
+root_user: str
+root_password: str | None
+mute_for_meetings: bool
+voice_name: str | None
+speech_rate: Union[int, float]
+camera_index: Optional[Union[int, int]]
+speaker_index: Optional[Union[int, int]]
+microphone_index: Optional[Union[int, int]]
+debug: bool
+log_retention: Union[int, int]
+birthday: str | None
+title: str
+name: str
+website: Union[HttpUrl, List[HttpUrl]]
+plot_mic: bool
+ntfy_url: pydantic.networks.HttpUrl | None
+ntfy_username: str | None
+ntfy_password: str | None
+ntfy_topic: str | None
+notify_reminders: Union[ReminderOptions, List[ReminderOptions]]
+author_mode: bool
+startup_options: Union[StartupOptions, List[StartupOptions]]
+weather_apikey: str | None
+weather_endpoint: HttpUrl
+maps_apikey: str | None
+news_apikey: str | None
+ollama: bool
+ollama_model: str
+ollama_timeout: int
+ollama_reuse_threshold: float | None
+gmail_user: pydantic.networks.EmailStr | None
+gmail_pass: str | None
+open_gmail_user: pydantic.networks.EmailStr | None
+open_gmail_pass: str | None
+recipient: pydantic.networks.EmailStr | None
+phone_number: str | None
+telegram_id: int | None
+offline_host: str
+offline_port: int
+offline_pass: str
+workers: int
+event_app: jarvis.modules.models.enums.EventApp | None
+ics_url: pydantic.networks.HttpUrl | None
+sync_meetings: int | None
+sync_events: int | None
+stock_monitor_api: Dict[EmailStr, str]
+surveillance_endpoint_auth: str | None
+surveillance_session_timeout: int
+icloud_user: pydantic.networks.EmailStr | None
+icloud_pass: str | None
+icloud_recovery: str | None
+robinhood_user: pydantic.networks.EmailStr | None
+robinhood_pass: str | None
+robinhood_qr: str | None
+robinhood_endpoint_auth: str | None
+git_token: str | None
+vpn_username: str | None
+vpn_password: str | None
+vpn_subdomain: str
+vpn_key_pair: str
+vpn_security_group: str
+vpn_info_file: str
+vpn_hosted_zone: str | None
+car_username: pydantic.networks.EmailStr | None
+car_password: str | None
+car_pin: str | None
+tcc_username: pydantic.networks.EmailStr | None
+tcc_password: str | None
+tcc_device_name: str | None
+sensitivity: Union[float, int, List[float], List[int]]
+porcupine_key: str | None
+listener_timeout: Union[float, int]
+listener_phrase_limit: Union[float, int]
+listener_spectrum_key: str | None
+recognizer_confidence: Union[float, int]
+bot_token: str | None
+bot_chat_ids: List[int]
+bot_users: List[str]
+bot_webhook: pydantic.networks.HttpUrl | None
+bot_webhook_ip: ipaddress.IPv4Address | None
+bot_endpoint: str
+bot_secret: str | None
+bot_certificate: Optional[Path]
+speech_synthesis_timeout: int
+speech_synthesis_voice: str
+speech_synthesis_quality: SSQuality
+speech_synthesis_api: pydantic.networks.HttpUrl | None
+weather_alert: str | datetime.datetime | None
+weather_alert_min: Union[int, int]
+weather_alert_max: Union[int, int]
+wifi_ssid: str | None
+wifi_password: str | None
+connection_retry: Union[int, float]
+wake_words: List[str]
+class Config
+Environment variables configuration.
+
+env_prefix = ''
+extra = 'allow'
+classmethod from_env_file(filename: Path) → EnvConfig
+Create an instance of EnvConfig from environment file.
+
+Parameters:
+filename – Name of the env file.
+See also
+Loading environment variables from files are an additional feature.
+Both the system’s and session’s env vars are processed by default.
+Returns:
+Loads the EnvConfig model.
+Return type:
+EnvConfig
+classmethod validate_weather_endpoint(value: HttpUrl) → HttpUrl
+Validates the weather endpoint.
+classmethod validate_websites(value: Union[HttpUrl, List[HttpUrl]]) → List[HttpUrl]
+Validate websites.
+classmethod validate_notify_reminders(value: Union[ReminderOptions, List[ReminderOptions]]) → List[ReminderOptions]
+Validate reminder options.
+classmethod validate_startup_options(value: Optional[Union[StartupOptions, List[StartupOptions]]]) → Union[List[StartupOptions], List]
+Validate startup options.
+classmethod validate_microphone_index(value: int) → Optional[int]
+Validates microphone index.
+classmethod validate_speaker_index(value: int) → Optional[int]
+Validates speaker index.
+classmethod validate_birthday(value: str) → str | None
+Validates date value to be in DD-MM format.
+classmethod validate_vpn_password(v: str) → Union[str, NoReturn]
+Validates vpn_password as per the required regex.
+classmethod validate_weather_alert(value: str) → str | None
+Validates date value to be in DD-MM format.
+class jarvis.modules.models.classes.FileIO(pydantic.BaseModel)
+Loads all the files’ path required/created by Jarvis.
+
+FileIO
+root: Path
+recognizer: Path
+crontab: Path
+tmp_crontab: Path
+automation: Path
+tmp_automation: Path
+background_tasks: Path
+tmp_background_tasks: Path
+smart_devices: Path
+contacts: Path
+ip_info: Path
+alarms: Path
+reminders: Path
+simulation: Path
+keywords: Path
+conditions: Path
+restrictions: Path
+base_db: Path
+task_db: Path
+stock_db: Path
+robinhood: Path
+stock_list_backup: Path
+frequent: Path
+training_data: Path
+gpt_data: Path
+startup_dir: Path
+location: Path
+notes: Path
+processes: Path
+app_launcher: Path
+event_script: Path
+speech_synthesis_wav: Path
+speech_synthesis_cid: Path
+speech_synthesis_log: Path
+secure_send: Path
+uploads: Path
+ollama_model_file: Path
+class jarvis.modules.models.classes.Indicators(pydantic.BaseModel)
+Loads all the mp3 files’ path required by Jarvis.
+
+Indicators
+acknowledgement: Path
+alarm: Path
+coin: Path
+end: Path
+start: Path
+class jarvis.modules.models.classes.WiFiConnection(pydantic.BaseModel)
+Wrapper to store Wi-Fi controls.
+
+WiFiConnection
+unknown_errors: int
+os_errors: int
+class jarvis.modules.models.classes.Thermostat(pydantic.BaseModel)
+Wrapper to store thermostat controls.
+
+Thermostat
+device: Optional[Union[Zone, str]]
+expiration: Optional[float]
+class Config
+Config to allow arbitrary types.
+
+arbitrary_types_allowed = True
+Enums
+class jarvis.modules.models.enums.SupportedPlatforms(Enum)
+Supported operating systems.
+
+windows = 'Windows'
+macOS = 'Darwin'
+linux = 'Linux'
+class jarvis.modules.models.enums.TemperatureUnits(Enum)
+Types of temperature units supported by Jarvis.
+
+TemperatureUnits
+METRIC = 'metric'
+IMPERIAL = 'imperial'
+class jarvis.modules.models.enums.DistanceUnits(Enum)
+Types of distance units supported by Jarvis.
+
+DistanceUnits
+MILES = 'miles'
+KILOMETERS = 'kilometers'
+class jarvis.modules.models.enums.EventApp(Enum)
+Types of event applications supported by Jarvis.
+
+EventApp
+CALENDAR = 'calendar'
+OUTLOOK = 'outlook'
+class jarvis.modules.models.enums.SSQuality(Enum)
+Quality modes available for speech synthesis.
+
+SSQuality
+High = 'high'
+Medium = 'medium'
+Low = 'low'
+EnvFile
+Module to load the environment variable containing the path to a dotenv file that holds the required secrets.
+
+The module first checks the environment variable options for the dotenv file path. If none are found, it falls back to the default file.
+
+Jarvis
+
+Options: JARVIS_ENV or ENV_FILE
+Default: .jarvis.env
+Vault
+
+Options: VAULT_ENV or ENV_FILE
+Default: .vault.env
+See also Refer VaultAPI documentation for a secure and seamless integration.
+jarvis.modules.models.env_file.get_env(keys: List[str], default: str = None) → str | None
+Get environment variables with case insensitivity.
+
+Parameters:
+keys – Options for the key.
+default – Default value.
+Returns:
+Returns the value for the given key.
+Return type:
+str
+class jarvis.modules.models.env_file.EnvFile(pydantic.BaseModel)
+Object to handle env files.
+
+EnvFile
+default
+Default env file to look for.
+
+Type:
+Optional[str]
+options
+Options for env file in existing env vars.
+
+Type:
+Optional[List[str]]
+filepath
+Loaded filepath for the env file.
+
+Type:
+Optional[pathlib.Path]
+default: Optional[str]
+options: Optional[List[str]]
+filepath: Optional[Path]
+classmethod from_preset(options: List[str], default: str) → Optional[EnvFile]
+Loads EnvFile object from preset values.
+
+Parameters:
+options – Different options to consider when looking for env file.
+default – Default env filename.
+Returns:
+Returns the EnvFile object if file exists.
+Return type:
+Union[EnvFile, None]
+Tables
+Tables to create in the base DB. SQLite is a “typeless” database, so the column types are inferred with affinity.
+
+class jarvis.modules.models.tables.Table(pydantic.BaseModel)
+Object to store table information.
+
+Table
+name: str
+columns: Sequence[str]
+pkey: str | None
+keep: bool
+class jarvis.modules.models.tables.Tables(pydantic.BaseModel)
+Table objects to be created in the base DB.
+
+Tables
+party: Table
+fernet: Table
+ics: Table
+vpn: Table
+guard: Table
+robinhood: Table
+restart: Table
+stopper: Table
+listener: Table
+events: Table
+children: Table
+Models
+This is a space where all the validated environment variables are loaded and evalued as per requirements.
+
+Models
+jarvis.modules.models.models._set_fernet_key() → str
+Set a new Fernet key in the database.
+
+Returns:
+Returns 32 url-safe base64-encoded bytes.
+Return type:
+str
+jarvis.modules.models.models.get_fernet_key() → str
+Get the Fernet key from the database, if it does not exist, create a new one.
+
+Returns:
+Returns 32 url-safe base64-encoded bytes.
+Return type:
+str
+jarvis.modules.models.models._distance_temperature_brute_force() → None
+Convert distance and temperature so that, metric goes with kilometers and imperial with miles.
+jarvis.modules.models.models._set_default_voice_name() → None
+Set default voice name based on the Operating System.
+jarvis.modules.models.models._main_process_validations() → None
+Validations that should happen only when the main process is triggered.
+jarvis.modules.models.models._global_validations() → None
+Validations that should happen for all processes including parent and child.
+Squire
+jarvis.modules.models.squire.get_distributor_info_linux() → Dict[str, str]
+Returns distributor information (i.e., Ubuntu) for Linux based systems.
+
+Returns:
+A dictionary of key-value pairs with distributor id, name and version.
+Return type:
+dict
+jarvis.modules.models.squire.channel_validator(value: int, ch_type: str) → int | None
+Channel validator for camera and microphone index.
+
+Parameters:
+value – Index of the device.
+ch_type – Input/output.
+Returns:
+Returns the validated device index.
+Return type:
+int | PositiveInt | None
+jarvis.modules.models.squire.parse_ignore_hours(value: Optional[Union[List[int], List[str], str, int, List[int | str]]]) → List[int]
+Parse the env var ignore_hours into a valid list.
+
+Parameters:
+value – Takes the value from env vars.
+Returns:
+Returns a list of hours in HH format to ignore for background tasks.
+Return type:
+List[int]
+jarvis.modules.models.squire.handle_multiform(form_list: List[str]) → List[int]
+Handles ignore_hours in the format 7-10.
+
+Parameters:
+form_list – Takes the split string as an argument.
+Returns:
+List of hours as integers.
+Return type:
+List[int]
+Raises:
+ValueError –
+In case of validation errors. –
+Validators
+class jarvis.modules.models.validators.Validator(main: bool, env: EnvConfig)
+Object to run various startup validations.
+
+Validator
+validate_wake_words(detector_version: str, operating_system: str) → Union[None, NoReturn]
+Validate wake words and wake word detector installation.
+
+Parameters:
+detector_version – Dependent library version.
+operating_system – Operating system of the host machine.
+validate_builtin_voices(voices: List[Voice]) → Union[bool, None, NoReturn]
+Validates the builtin voices.
+
+Parameters:
+voices – List of available voices.
+Returns:
+Returns an optional boolean flag to set the default voice.
+Return type:
+Optional[bool]
+validate_camera_indices() → Union[int, None, NoReturn]
+Validate if the camera index is readable.
+
+Returns:
+Returns the index of the camera.
+Return type:
+Optional[int]
+validate_speech_synthesis_voices() → Union[None, NoReturn]
+Validate given voice for speech synthesis.
+———-Modules———-
+Audio
+Module for speaker and voice options.
+
+Speaker
+jarvis.modules.audio.speaker.speech_synthesizer(text: str, timeout: int | float = None, quality: str = SSQuality.Medium, voice: str = 'en-us_northern_english_male-glow_tts') → bool
+Makes a post call to the speech-synthesis API for text-to-speech.
+
+Parameters:
+text – Takes the text that has to be spoken as an argument.
+timeout – Time to wait for the speech-synthesis API to process the text-to-speech request.
+quality – Quality at which the conversion is to be done.
+voice – Voice for speech synthesis.
+Returns:
+A boolean flag to indicate whether speech synthesis has worked.
+Return type:
+bool
+jarvis.modules.audio.speaker.speak(text: str = None, run: bool = False, block: bool = True) → None
+Speaks a statement from the received text.
+
+Parameters:
+text – Takes the text that has to be spoken as an argument.
+run – Takes a boolean flag to choose whether to run the loop.
+block – Takes a boolean flag to await other tasks while speaking. [Applies only for speech-synthesis on docker]
+jarvis.modules.audio.speaker.frequently_used(function_name: str) → None
+Writes the function called and the number of times into a yaml file.
+
+Parameters:
+function_name – Name of the function that called the speaker.
+See also
+This function does not have purpose, but to analyze and re-order the conditions’ module at a later time.
+Module for speech recognition listener.
+
+Listener
+jarvis.modules.audio.listener.listen(sound: bool = True, no_conf: bool = False, timeout: Union[int, float] = 3, phrase_time_limit: Union[int, float] = 5) → str | None
+Function to activate listener, this function will be called by most upcoming functions to listen to user input.
+
+Parameters:
+sound – Flag whether to play the listener indicator sound. Defaults to True unless set to False.
+no_conf – Boolean flag to skip confidence check.
+timeout – Custom timeout for functions expecting a longer wait time.
+phrase_time_limit – Custom time limit for functions expecting a longer user input.
+Returns:
+Returns recognized statement from the microphone.
+Return type:
+str
+jarvis.modules.audio.listener.listen_recursive(source: Microphone, timeout: int, phrase_time_limit: int) → bool
+Process confirmation for words that were recognized with a confidence score lower than the threshold.
+
+Parameters:
+source – Microphone source.
+timeout – Custom timeout for functions expecting a longer wait time.
+phrase_time_limit – Custom time limit for functions expecting a longer user input.
+Returns:
+True if confirmation was received from the user via voice input.
+Return type:
+bool
+Module for text to speech and speech to text conversions.
+
+TTS and STT
+jarvis.modules.audio.tts_stt.text_to_audio(text: str, filename: Union[Path, str] = None) → Optional[Union[Path, str]]
+Converts text into an audio file using the default speaker configuration.
+
+Parameters:
+filename – Name of the file that has to be generated.
+text – Text that has to be converted to audio.
+Warning This can be flaky at times as it relies on converting native wav to kernel specific wav format.
+jarvis.modules.audio.tts_stt.audio_to_text(filename: Union[Path, str]) → str
+Converts audio to text using speech recognition.
+
+Parameters:
+filename – Filename to process the information from.
+Returns:
+Returns the string converted from the audio file.
+Return type:
+str
+Module for voice changes.
+
+Voices
+jarvis.modules.audio.voices.voice_default() → Engine
+Sets voice module to default.
+
+Returns:
+Returns the audio driver as an object.
+Return type:
+Engine
+jarvis.modules.audio.voices.voice_changer(phrase: str = None) → None
+Speaks to the user with available voices and prompts the user to choose one.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Auth Bearer
+Module to set up bearer authentication.
+
+AuthBearer
+class jarvis.modules.auth_bearer.BearerAuth(token: str)
+Instantiates BearerAuth object.
+
+BearerAuth
+Parameters:
+token – Token for bearer auth.
+References
+
+New Forms of Authentication
+Built-In Overrides
+class jarvis.modules.builtin_overrides.APIServer(config: Config)
+Shared servers state that is available between all protocol instances.
+
+APIServer
+References
+
+https://github.com/encode/uvicorn/issues/742#issuecomment-674411676
+
+install_signal_handlers() → None
+Overrides install_signal_handlers in uvicorn.Server module.
+run_in_parallel() → None
+Initiates Server.run in a dedicated process.
+jarvis.modules.builtin_overrides.ordered_load(stream, Loader=<class 'yaml.loader.SafeLoader'>, object_pairs_hook=<class 'collections.OrderedDict'>) → OrderedDict
+Custom loader for OrderedDict.
+
+Parameters:
+stream – FileIO stream.
+Loader – Yaml loader.
+object_pairs_hook – OrderedDict object.
+Returns:
+Dictionary after loading yaml file.
+Return type:
+OrderedDict
+jarvis.modules.builtin_overrides.ordered_dump(dump, stream=None, Dumper=<class 'yaml.dumper.SafeDumper'>, **kwds) → None | str | bytes
+Custom dumper to serialize OrderedDict.
+
+Parameters:
+dump – Data to be dumped into yaml file.
+stream – FileIO stream.
+Dumper – Yaml dumper.
+kwds – Keyword arguments like indent.
+Returns:
+Response from yaml Dumper.
+Return type:
+Dumper
+class jarvis.modules.builtin_overrides.AddProcessName(process_name: str)
+Wrapper that overrides logging.Filter to add processName to the existing log format.
+
+AddProcessName
+Parameters:
+process_name – Takes name of the process to be added as argument.
+filter(record: LogRecord) → bool
+Overrides the built-in filter record.
+Cache - LRU
+jarvis.modules.cache.cache.timed_cache(max_age: int, maxsize: int = 128, typed: bool = False)
+Least-recently-used cache decorator with time-based cache invalidation.
+
+Parameters:
+max_age – Time to live for cached results (in seconds).
+maxsize – Maximum cache size (see functools.lru_cache).
+typed – Cache on distinct input types (see functools.lru_cache).
+See also
+lru_cache takes all params of the function and creates a key.
+If even one key is changed, it will map to new entry thus refreshed.
+This is just a trick to force lru_cache lib to provide TTL on top of max size.
+Uses time.monotonic since time.time relies on the system clock and may not be monotonic.
+time.time() not always guaranteed to increase,
+it may in fact decrease if the machine syncs its system clock over a network.
+Conditions
+List of conversational keywords for each variable which is condition matched in main module.
+
+Conversation
+jarvis.modules.conditions.conversation.conversation_mapping() → OrderedDict[str, List[str]]
+Returns a dictionary of base keywords mapping.
+
+Returns:
+OrderedDict of category and keywords as key-value pairs.
+Return type:
+OrderedDict
+List of keywords for each variable which is condition matched in the main module.
+
+KeywordsBase
+jarvis.modules.conditions.keywords.keyword_mapping() → OrderedDict[str, List[str]]
+Returns an ordered dictionary of base keywords mapping.
+
+See also
+Keywords should have both singular and plural forms wherever possible.
+An alternate is to use
+import inflect
+phrase = inflect.Word("penny")
+engine = inflect.engine()
+engine.plural(phrase)
+engine.singular_noun(phrase)
+But the approach is time taking and inconsistent.
+Returns:
+OrderedDict of category and keywords as key-value pairs.
+Return type:
+OrderedDict
+Crontab
+Module to handle crontab expressions.
+
+Expression
+class jarvis.modules.crontab.expression.CronExpression(line: str, epoch: tuple = (1970, 1, 1, 0, 0, 0), epoch_utc_offset: int = 0)
+Initiates CronExpression object to validate and parse a crontab entry.
+
+CronExpression
+Raises:
+InvalidArgument –
+If the given number of fields is invalid. –
+Notes
+
+If the epoch is defined, the UTC offset can be specified one of two ways:
+As the sixth element in ‘epoch’ or supplied in epoch_utc_offset.
+The epoch should be defined down to the minute sorted by descending significance.
+DAY_NAMES = <zip object>
+MINUTES = (0, 59)
+HOURS = (0, 23)
+DAYS_OF_MONTH = (1, 31)
+MONTHS = (1, 12)
+DAYS_OF_WEEK = (0, 6)
+L_FIELDS = ((0, 6), (1, 31))
+FIELD_RANGES = ((0, 59), (0, 23), (1, 31), (1, 12), (0, 6))
+MONTH_NAMES = <zip object>
+DEFAULT_EPOCH = (1970, 1, 1, 0, 0, 0)
+SUBSTITUTIONS = {'@annually': '0 0 1 1 *', '@daily': '0 0 * * *', '@hourly': '0 * * * *', '@midnight': '0 0 * * *', '@monthly': '0 0 1 * *', '@weekly': '0 0 * * 0', '@yearly': '0 0 1 1 *'}
+compute_numtab()
+Recomputes the sets for the static ranges of the trigger time.
+
+Notes
+
+This method should only be called by the user if the string_tab member is modified.
+check_trigger(date_tuple: Union[Tuple[int, int, int, int, int], Tuple[int, ...]] = None, utc_offset: int = 0) → bool
+Returns boolean indicating if the trigger is active at the given time.
+
+Parameters:
+date_tuple – Tuple of year, month, date, hour and minute. Defaults to current.
+utc_offset – UTC offset.
+See also
+The date tuple should be in the local time. Unless periodicities are used, utc_offset does not need to
+be specified. If periodicity is used, specifically in the hour and minutes fields, it is crucial that
+the utc_offset is specified.
+Returns:
+A boolean flag to indicate whether the given datetime matches the crontab entry.
+Return type:
+bool
+jarvis.modules.crontab.expression.parse_atom(parse: str, minmax: tuple) → set
+Returns a set containing valid values for a given cron-style range of numbers.
+
+Parameters:
+parse – Element to be parsed.
+minmax – Two element iterable containing the inclusive upper and lower limits of the expression
+Raises:
+InvalidArgument –
+If the cron expression is invalid. –
+Examples
+
+parse_atom("1-5",(0,6))
+set([1, 2, 3, 4, 5])
+parse_atom("*/6",(0,23))
+set([0, 6, 12, 18])
+parse_atom("18-6/4",(0,23))
+set([18, 22, 0, 4])
+parse_atom("*/9",(0,23))
+set([0, 9, 18])
+Database
+Module for database controls.
+
+Database
+class jarvis.modules.database.database.Database(database: Union[Path, str], timeout: int = 3)
+Creates a connection to the base DB.
+
+Database
+Parameters:
+database – Name of the database file.
+timeout – Timeout for the connection to database.
+property connection: Connection
+Creates a database connection.
+
+Returns:
+Returns a sqlite3.Connection object.
+Return type:
+sqlite3.Connection
+create_table(table_name: str, columns: Union[List[str], Tuple[str]], primary_key: str = None) → None
+Creates the table with the required columns.
+
+Parameters:
+table_name – Name of the table that has to be created.
+columns – List of columns that has to be created.
+primary_key – Primary key.
+class jarvis.modules.database.database.__TestDatabase
+Basic examples of a test database.
+
+__TestDatabase
+at_exit()
+Deletes the database file sample.
+random_single() → None
+Example using a single column.
+random_double() → None
+Example using two columns with only one holding a value at any given time.
+Exceptions
+This is a space for custom exceptions and errors masking defaults with meaningful names.
+
+Exceptions
+jarvis.modules.exceptions.py_error_handler(filename: ByteString, line: int, function: ByteString, err: int, fmt: ByteString) → None
+Handles errors from pyaudio module especially for Linux based operating systems.
+jarvis.modules.exceptions.no_alsa_err() → Generator
+Wrapper to suppress ALSA error messages when PyAudio module is called.
+
+Notes
+
+This happens specifically for Linux based operating systems.
+There are usually multiple sound APIs to choose from but not all of them might be configured correctly.
+PyAudio goes through “ALSA”, “PulseAudio” and “Jack” looking for audio hardware and that triggers warnings.
+None of the options below seemed to work in all given conditions, so the approach taken was to hide them.
+Options:
+Comment off the ALSA devices where the error is triggered.
+Set energy threshold to the output from python -m speech_recognition
+Setting dynamic energy threshold to True
+References
+
+https://github.com/Uberi/speech_recognition/issues/100
+https://github.com/Uberi/speech_recognition/issues/182
+https://github.com/Uberi/speech_recognition/issues/191
+https://forums.raspberrypi.com/viewtopic.php?t=136974
+exception jarvis.modules.exceptions.UnsupportedOS
+Custom OSError raised when initiated in an unsupported operating system.
+
+UnsupportedOS
+exception jarvis.modules.exceptions.CameraError
+Custom BlockingIOError to handle missing camera device.
+
+CameraError
+exception jarvis.modules.exceptions.BotError
+Custom base exception for Telegram Bot.
+
+BotError
+exception jarvis.modules.exceptions.BotWebhookConflict
+Error for conflict with webhook and getUpdates API call.
+
+BotWebhookConflict
+exception jarvis.modules.exceptions.BotInUse
+Error indicate bot token is being used else where.
+
+BotInUse
+exception jarvis.modules.exceptions.StopSignal
+Custom KeyboardInterrupt to handle manual interruption.
+
+StopSignal
+exception jarvis.modules.exceptions.APIResponse(status_code: int, detail: Any = None, headers: Optional[Dict[str, str]] = None)
+Custom HTTPException from FastAPI to wrap an API response.
+
+APIResponse
+exception jarvis.modules.exceptions.InvalidEnvVars
+Custom ValueError to indicate invalid env vars.
+
+InvalidEnvVars
+exception jarvis.modules.exceptions.DependencyError
+Custom base exception for dependency errors.
+
+DependencyError
+exception jarvis.modules.exceptions.InvalidArgument
+Custom ValueError to indicate invalid args.
+
+InvalidArgument
+exception jarvis.modules.exceptions.TVError
+Custom ConnectionResetError to indicate that the TV is not reachable.
+
+TVError
+FaceNet
+Module for face recognition, face detection and image capture.
+
+Face
+jarvis.modules.facenet.face.verify_image(filename: Union[str, Path]) → bool
+Verifies if a particular image can be used for training.
+
+Parameters:
+filename – Name/path of the file.
+Returns:
+Returns a boolean flag to indicate whether the image is compatible.
+Return type:
+bool
+jarvis.modules.facenet.face.condition_check(filename: Union[str, Path]) → bool
+Condition check to load the dataset.
+
+Parameters:
+filename – Name of the file to check.
+Returns:
+Boolean flag whether the file can be considered for training.
+Return type:
+bool
+class jarvis.modules.facenet.face.FaceNet
+Module for image capture, face recognition and detection using defined tolerance level and specific model.
+
+FaceNet
+Raises:
+CameraError –
+If unable to connect to the camera. –
+LEARNING_RATE = 0.6
+MODEL = 'hog'
+load_dataset(location: str) → None
+Loads the dataset.
+face_recognition(location: Union[str, Path], retry_count: int = 20) → str | None
+Recognizes faces from the training dataset - images in the train directory.
+
+Returns:
+Number of trials to recognize a face before the function can quit.
+Return type:
+retry_count
+Returns:
+Name of the enclosing directory in case of a recognized face.
+Return type:
+str
+face_detection(retry_count: int = 20, mirror: bool = False, filename: str = 'cv2_open.jpg', display: bool = False) → bool
+Detects faces by converting it to grayscale and neighbor match method.
+
+Parameters:
+retry_count – Number of trials to detect a face before the function can quit.
+mirror – Mirrors the live feed vertically.
+filename – Filename under which the detected face has to be stored.
+display – Only displays the live feed instead of saving it to a file.
+Notes
+
+Filename should not include the file path but just the name.
+
+Returns:
+A boolean value if not a face was detected.
+Return type:
+bool
+capture_image(filename: str = 'cv2_open.jpg') → None
+Captures an image and saves it locally.
+
+Parameters:
+filename – Name of the file to be saved.
+Lights
+Module to control smart lights using MagicHomeAPI.
+
+SmartLights
+References
+
+https://github.com/adamkempenich/magichome-python/blob/master/magichome.py
+https://github.com/SynTexDZN/homebridge-syntex-magichome/blob/master/src/flux_led.py
+jarvis.modules.lights.smart_lights.check_number_range(number: int) → int
+Check if the given number is in the allowed range.
+
+Parameters:
+number – Takes integer value for RGB value [0-255] check.
+Returns:
+An accepted number between 0 and 255.
+Return type:
+int
+jarvis.modules.lights.smart_lights.calculate_checksum(bytes_: list) → int
+Calculate the checksum from an array of bytes.
+
+Parameters:
+bytes_ – Takes a list value as argument.
+Returns:
+Checksum value for the given list value.
+Return type:
+int
+class jarvis.modules.lights.smart_lights.MagicHomeApi(device_ip: str, device_type: int)
+Wrapper for MagicHome lights to initialize device setup via UDP.
+
+MagicHomeApi
+Parameters:
+device_ip – Takes device IP address as argument.
+device_type – Specific device type.
+See also
+Device types:
+0: RGB
+1: RGB+WW
+2: RGB+WW+CW
+3: Bulb (v.4+)
+4: Bulb (v.3-)
+Supports:
+Bulbs (Firmware v.4 and greater)
+Legacy Bulbs (Firmware v.3 and lower)
+RGB Controllers
+RGB+WW Controllers
+RGB+WW+CW Controllers
+API_PORT = 5577
+turn_on() → None
+Turn a device on.
+turn_off() → None
+Turn a device off.
+static byte_to_percent(byte: int) → int
+Converts byte integer into a percentile.
+get_status() → str | None
+Get the current status of a device.
+
+Returns:
+Status of the light as string.
+Return type:
+str
+update_device(r: int = 0, g: int = 0, b: int = 0, warm_white: int = None, cool_white: int = None) → None
+Updates a device based upon what we’re sending to it.
+
+Values are excepted as integers between 0-255. Whites can have a value of None.
+
+Parameters:
+r – Values for the color Red. [0-255]
+g – Values for the color Green. [0-255]
+b – Values for the color Blue. [0-255]
+warm_white – RGB values for the warm white color.
+cool_white – RGB values for the cool white color.
+send_preset_function(preset_number: int, speed: int) → None
+Send a preset command to a device.
+
+Parameters:
+preset_number – Takes preset value as argument.
+speed – Rate at which the colors should change. Integer in rage 0-100.
+See also Presets can range from 0x25 (int 37) to 0x38 (int 56)
+send_bytes(*bytes_) → None
+Send commands to the device.
+
+If the device hasn’t been communicated to in 5 minutes, reestablish the connection.
+
+Parameters:
+*bytes_ – Takes a tuple value as argument.
+Dictionary values of color and preset number for the lights.
+
+PRESET_VALUES
+Logger
+class jarvis.modules.logger.APIConfig(pydantic.BaseModel)
+Custom log configuration to redirect all uvicorn logs to individual log files.
+
+APIConfig
+DEFAULT_LOG_LEVEL: str
+ACCESS_LOG_FILENAME: str
+DEFAULT_LOG_FILENAME: str
+ACCESS_LOG_FORMAT: str
+ERROR_LOG_FORMAT: str
+LOG_CONFIG: dict
+class jarvis.modules.logger.AddProcessName(logging.Filter)
+Wrapper that overrides logging.Filter to add processName to the existing log format.
+
+AddProcessName
+Parameters:
+process_name – Takes name of the process to be added as argument.
+filter(record: LogRecord) → bool
+Overrides the built-in filter record.
+jarvis.modules.logger.multiprocessing_logger(filename: str, log_format: ~logging.Formatter = <logging.Formatter object>) → str
+Remove existing handlers and adds a new handler when a child process kicks in.
+
+Parameters:
+filename – Filename where the subprocess should log.
+log_format – Custom log format dedicated for each process.
+See also This will override the main logger and add a new logger pointing to the given filename.
+Returns:
+Actual log filename with datetime converted.
+Return type:
+str
+jarvis.modules.logger.log_file(filename: str) → str
+Creates a log file and writes the headers into it.
+
+Returns:
+Log filename.
+Return type:
+str
+jarvis.modules.logger.custom_handler(filename: str = None, log_format: Formatter = None) → FileHandler
+Creates a FileHandler, sets the log format and returns it.
+
+Returns:
+Returns file handler.
+Return type:
+logging.FileHandler
+Meanings
+Module to get meanings of words from wordnetweb.princeton.edu.
+
+Dictionary
+jarvis.modules.dictionary.dictionary.meaning(term: str) → Optional[Dict]
+Gets the meaning of a word from wordnetweb.princeton.edu.
+
+Parameters:
+term – Word for which the meaning has to be fetched.
+Returns:
+A dictionary of the part of speech and the meaning of the word.
+Return type:
+dict
+Meetings
+Module to parse meetings information from an ICS data.
+
+ICS
+class jarvis.modules.meetings.ics.ICS(**kwargs)
+Wrapper for ICS events.
+
+ICS
+Keyword Arguments:
+summary – Summary of the meeting.
+start – Start time (local TZ) for the meeting.
+end – End time (local TZ) for the meeting.
+all_day – Boolean flag to indicate an all day meeting.
+Duration – Duration of the meeting in datetime format.
+summary: str
+start: datetime
+end: datetime
+all_day: bool
+duration: timedelta
+jarvis.modules.meetings.ics.convert_to_local_tz(ddd_object: vDDDTypes) → datetime
+Converts any datetime from any timezone to local time.
+
+Parameters:
+ddd_object – Parsed Datetime, Date, Duration object.
+Returns:
+Local datetime object.
+Return type:
+datetime.datetime
+jarvis.modules.meetings.ics.all_day_event(dt_start: vDDDTypes, dt_end: vDDDTypes) → bool
+Check if an event is all day by looking for timestamp in the datetime objects.
+
+Parameters:
+dt_start – Start of the event.
+dt_end – End of the event.
+Returns:
+True if the start or end datetime objects don’t have a timestamp.
+Return type:
+bool
+jarvis.modules.meetings.ics.parse_calendar(calendar_data: str, lookup_date: date) → Generator[ICS]
+Parsed the ICS information and yields the events’ information for a specific day.
+
+Parameters:
+calendar_data – Extracted ICS data.
+lookup_date – Date to extract meetings for.
+Yields:
+ICS – Custom ICS object with event summary, start time, end time, duration and all day event flag.
+Module to get meetings information from parsed ICS data.
+
+ICalendar
+jarvis.modules.meetings.ics_meetings.meetings_writer(queue: Queue = None) → None
+Gets return value from meetings() and writes it to a file.
+
+This function runs in a dedicated process every hour to avoid wait time when meetings information is requested.
+
+Parameters:
+queue – Multiprocessing queue in case mute for meetings is enabled.
+jarvis.modules.meetings.ics_meetings.meetings_gatherer(custom_date: date = None, addon: str = 'today', queue: Queue = None) → str
+Get ICS data, parse it and frame a statement with meeting information.
+
+Parameters:
+custom_date – Takes custom date as a datetime object.
+addon – When the custom date is.
+queue – Multiprocessing queue to put events’ time during which the listener will be deactivated.
+Returns:
+On success, returns a message saying which event is scheduled at what time.
+If no events, returns a message saying there are no events today.
+On failure, returns a message saying Jarvis was unable to read the calendar schedule.
+Return type:
+str
+jarvis.modules.meetings.ics_meetings.custom_meetings(phrase: str) → bool
+Handles meeting request for a custom date.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Returns:
+A true flag if the custom meetings request matches the supported format.
+Return type:
+bool
+jarvis.modules.meetings.ics_meetings.meetings(phrase: str) → None
+Controller for meetings.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Module to gather events from the chosen macOS application.
+
+Events
+jarvis.modules.meetings.events.events_writer() → None
+Gets return value from events_gatherer function and writes it to events table in the database.
+
+This function runs in a dedicated process to avoid wait time when events information is requested.
+jarvis.modules.meetings.events.event_app_launcher() → None
+Launches either Calendar or Outlook application which is required to read events.
+jarvis.modules.meetings.events.events_gatherer() → str
+Uses applescript to fetch events from local Calendar (including subscriptions) or Microsoft Outlook.
+
+See also When reading from apple Calendar, the calendar should be named as Jarvis
+Returns:
+On success, returns a message saying which event is scheduled at what time.
+If no events, returns a message saying there are no events in the next 12 hours.
+On failure, returns a message saying Jarvis was unable to read calendar/outlook.
+Return type:
+str
+jarvis.modules.meetings.events.events(*args) → None
+Controller for events.
+Retry Handler
+Module that creates a wrapper that can be used to functions that should be retried upon exceptions.
+
+Retry
+jarvis.modules.retry.retry.retry(attempts: int = 3, interval: int | float = 0, warn: bool = False, exclude_exc=None) → Optional[Union[Callable, Any]]
+Wrapper for any function that has to be retried upon failure.
+
+Parameters:
+attempts – Number of retry attempts.
+interval – Seconds to wait between each iteration.
+warn – Takes a boolean flag whether to throw a warning message instead of raising final exception.
+exclude_exc – Exception(s) that has to be logged and ignored.
+Returns:
+Calls the decorator function.
+Return type:
+Callable
+Shared Resources
+This is a space for variables shared across multiple modules.
+
+Shared
+Support
+This is a space for support functions used across different modules.
+
+Support
+jarvis.modules.utils.support.hostname_to_ip(hostname: str, localhost: bool = True) → List[str]
+Uses socket.gethostbyname_ex to translate a host name to IPv4 address format, extended interface.
+
+See also
+A host may have multiple interfaces.
+In case of true DNS being used or the host entry file is carefully handwritten, the system will look
+there to find the translation.
+But depending on the configuration, the host name can be bound to all the available interfaces, including
+the loopback ones.
+gethostbyname returns the address of the first of those interfaces in its own order.
+To get the assigned IP, gethostbyname_ex is used, which returns a list of all the interfaces, including
+the host spot connected, and loopback IPs.
+References
+
+https://docs.python.org/3/library/socket.html#socket.gethostbyname_ex
+
+Parameters:
+hostname – Takes the hostname of a device as an argument.
+localhost – Takes a boolean value to behave differently in case of localhost.
+jarvis.modules.utils.support.country_timezone() → Dict[str, str]
+Returns a mapping of timezone and the country where the timezone belongs.
+jarvis.modules.utils.support.get_capitalized(phrase: str, ignore: Iterable = None, dot: bool = True) → str | None
+Looks for words starting with an upper-case letter.
+
+Parameters:
+phrase – Takes input string as an argument.
+ignore – Takes an iterable of upper case strings to be ignored.
+dot – Takes a boolean flag whether to include words separated by (.) dot.
+Returns:
+Returns the upper case words if skimmed.
+Return type:
+str
+jarvis.modules.utils.support.unrecognized_dumper(train_data: dict) → None
+If none of the conditions are met, converted text is written to a yaml file for training purpose.
+
+Parameters:
+train_data – Takes the dictionary that has to be written as an argument.
+jarvis.modules.utils.support.size_converter(byte_size: int | float) → str
+Gets the current memory consumed and converts it to human friendly format.
+
+Parameters:
+byte_size – Receives byte size as argument.
+Returns:
+Converted understandable size.
+Return type:
+str
+jarvis.modules.utils.support.check_restart() → List[str]
+Checks for entries in the restart table in base db.
+
+Returns:
+Returns the flag, caller from the restart table.
+Return type:
+list
+jarvis.modules.utils.support.utc_to_local(utc_dt: datetime) → datetime
+Converts UTC datetime object to local datetime object.
+
+Parameters:
+utc_dt – Takes UTC datetime object as an argument
+Returns:
+Local datetime as an object.
+Return type:
+datetime
+jarvis.modules.utils.support.build_lookup() → List[str]
+Build an array and get the number of days ahead and before of a certain day to lookup.
+
+Returns:
+Returns a list of days ahead and before of the lookup date.
+Return type:
+List[str]
+jarvis.modules.utils.support.detect_lookup_date(phrase: str) → Tuple[datetime, str]
+Converts general human phrases into datetime objects.
+
+Parameters:
+phrase – Takes input string as an argument.
+Returns:
+Returns a tuple of the datetime object, the detected/supported humanized date.
+Return type:
+Tuple[datetime, str]
+jarvis.modules.utils.support.humanized_day_to_datetime(phrase: str) → Optional[Tuple[datetime, str]]
+Converts human date from general conversations into a datetime object.
+
+Parameters:
+phrase – Takes input string as an argument.
+See also
+Supports terms like day before yesterday, yesterday, tomorrow, day after tomorrow,
+last friday, this wednesday, next monday
+For extended lookup, refer to extract_humanized_date
+Returns:
+Returns a tuple of the datetime object, the detected/supported humanized date.
+Return type:
+Tuple[datetime, str]
+jarvis.modules.utils.support.extract_humanized_date(phrase: str, fail_past: bool = False) → Optional[Tuple[date, str, str]]
+Converts most humanized date into datetime object.
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+fail_past – Boolean value to raise an error in case the humanized datetime is in the past.
+Returns:
+A tuple of the date object, human friendly name, and the tense.
+Return type:
+Tuple[datetime.date, str, str]
+jarvis.modules.utils.support.check_stop() → List[str]
+Checks for entries in the stopper table in base db.
+
+Returns:
+Returns the flag, caller from the stopper table.
+Return type:
+list
+jarvis.modules.utils.support.exit_message() → str
+Variety of exit messages based on day of week and time of day.
+
+Returns:
+A greeting bye message.
+Return type:
+str
+jarvis.modules.utils.support.no_env_vars() → None
+Says a message about permissions when env vars are missing.
+jarvis.modules.utils.support.unsupported_features() → None
+Says a message about unsupported features.
+jarvis.modules.utils.support.write_screen(text: Any) → None
+Write text on screen that can be cleared later.
+
+Parameters:
+text – Text to be written.
+jarvis.modules.utils.support.flush_screen() → None
+Flushes the screen output.
+
+See also Writes new set of empty strings for the size of the terminal if ran using one.
+jarvis.modules.utils.support.number_to_words(input_: int | str, capitalize: bool = False) → str
+Converts integer version of a number into words.
+
+Parameters:
+input_ – Takes the integer version of a number as an argument.
+capitalize – Boolean flag to capitalize the first letter.
+Returns:
+String version of the number.
+Return type:
+str
+jarvis.modules.utils.support.pluralize(count: int, word: str, to_words: bool = False, cap_word: bool = False) → str
+Helper for time_converter function.
+
+Parameters:
+count – Number based on which plural form should be determined.
+word – Word for which the plural form should be converted.
+to_words – Boolean flag to convert numeric to words in the response string.
+cap_word – If to_words is passed as True, then analyzes whether the first letter should be capitalized.
+Returns:
+String formatted time in singular or plural.
+Return type:
+str
+jarvis.modules.utils.support.time_converter(second: float) → str
+Modifies seconds to appropriate days/hours/minutes/seconds.
+
+Parameters:
+second – Takes number of seconds as argument.
+Returns:
+Seconds converted to days or hours or minutes or seconds.
+Return type:
+str
+jarvis.modules.utils.support.remove_file(filepath: str, delay: int = 0) → None
+Deletes the requested file after a certain time.
+
+Parameters:
+filepath – Filepath that has to be removed.
+delay – Delay in seconds after which the requested file is to be deleted.
+jarvis.modules.utils.support.stop_process(pid: int) → None
+Stop a particular process using SIGTERM and SIGKILL signals.
+
+Parameters:
+pid – Process ID that has to be shut down.
+jarvis.modules.utils.support.connected_to_network() → bool
+Function to check internet connection status.
+
+Returns:
+True if connection is active, False otherwise.
+Return type:
+bool
+Utilities
+This is a space for utility functions that do not rely on any external or internal modules but built-ins.
+
+Util
+jarvis.modules.utils.util.get_timezone() → str
+Get local timezone using datetime module.
+
+Returns:
+Returns local timezone abbreviation.
+Return type:
+str
+jarvis.modules.utils.util.epoch_to_datetime(seconds: int | float, format_: str = None, zone: timezone = None) → datetime.datetime | str
+Convert epoch time to datetime.
+
+Parameters:
+seconds – Epoch timestamp.
+format_ – Custom datetime string format.
+zone – Timezone of epoch.
+Returns:
+Returns either a datetime object or a string formatted datetime.
+Return type:
+datetime | str
+jarvis.modules.utils.util.miles_to_kms(miles: int | float) → float
+Takes miles as an argument and returns it in kilometers.
+jarvis.modules.utils.util.kms_to_miles(kms: int | float) → float
+Takes kilometers as an argument and returns it in miles.
+jarvis.modules.utils.util.part_of_day() → str
+Checks the current hour to determine the part of day.
+
+Returns:
+Morning, Afternoon, Evening or Night based on time of day.
+Return type:
+str
+jarvis.modules.utils.util.get_closest_match(text: str, match_list: list, get_ratio: bool = False) → Union[Dict[str, float], str]
+Get the closest matching word from a list of words.
+
+Parameters:
+text – Text to look for in the matching list.
+match_list – List to be compared against.
+get_ratio – Boolean flag to return the closest match along with the ratio, as a dict.
+Returns:
+Returns the text that matches closest in the list or a dictionary of the closest match and the match ratio.
+Return type:
+Dict[str, float] | str
+jarvis.modules.utils.util.hashed(key: UUID) → Hashable
+Generates sha from UUID.
+
+Parameters:
+key – Takes the UUID generated as an argument.
+Returns:
+Hashed value of the UUID received.
+Return type:
+Hashable
+jarvis.modules.utils.util.token() → Hashable
+Generates a token using hashed uuid4.
+
+Returns:
+Returns hashed UUID as a string.
+Return type:
+Hashable
+jarvis.modules.utils.util.keygen_str(length: int, punctuation: bool = False) → str
+Generates random key.
+
+Parameters:
+length – Length of the keygen.
+punctuation – A boolean flag to include punctuation in the keygen.
+Returns:
+Random key of specified length.
+Return type:
+str
+jarvis.modules.utils.util.keygen_uuid(length: int = 32) → str
+Generates random key from hex-d UUID.
+
+Parameters:
+length – Length of the required key.
+Returns:
+Random key of specified length.
+Return type:
+str
+jarvis.modules.utils.util.words_to_number(input_: str) → int
+Converts words into integers.
+
+Parameters:
+input_ – Takes an integer wording as an argument.
+Returns:
+Integer version of the words.
+Return type:
+int
+jarvis.modules.utils.util.comma_separator(list_: list) → str
+Separates commas using simple .join() function and analysis based on length of the list taken as argument.
+
+Parameters:
+list_ – Takes a list of elements as an argument.
+Returns:
+Comma separated list of elements.
+Return type:
+str
+jarvis.modules.utils.util.extract_time(input_: str) → List[str]
+Extracts 12-hour time value from a string.
+
+Parameters:
+input_ – Takes the phrase spoken as an argument.
+Returns:
+Extracted time from the string.
+Return type:
+List[str]
+jarvis.modules.utils.util.split_time(input_: str) → Tuple[str, str, str]
+Splits the 12-hour time value from a string into a tuple.
+
+Parameters:
+input_ – Input string from the function extract_time.
+Returns:
+Hour, minute and am/pm as a tuple of strings.
+Return type:
+Tuple[str, str, str]
+jarvis.modules.utils.util.delay_calculator(phrase: str) → int | float
+Calculates the delay in phrase (if any).
+
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+Returns:
+Seconds of delay.
+Return type:
+int | float
+jarvis.modules.utils.util.extract_nos(input_: str, method: type = <class 'float'>) → int | float
+Extracts number part from a string.
+
+Parameters:
+input_ – Takes string as an argument.
+method – Takes a type to return a float or int value.
+Returns:
+Float values.
+Return type:
+int | float
+jarvis.modules.utils.util.format_nos(input_: float) → int | float
+Removes .0 float values.
+
+Parameters:
+input_ – Strings or integers with .0 at the end.
+Returns:
+Int if found, else returns the received float value.
+Return type:
+int | float
+jarvis.modules.utils.util.extract_str(input_: str) → str
+Extracts strings from the received input.
+
+Parameters:
+input_ – Takes a string as argument.
+Returns:
+A string after removing special characters.
+Return type:
+str
+jarvis.modules.utils.util.matrix_to_flat_list(input_: List[list]) → List
+Converts a matrix into flat list.
+
+Parameters:
+input_ – Takes a list of list as an argument.
+Returns:
+Flat list.
+Return type:
+list
+jarvis.modules.utils.util.remove_none(input_: List[Any]) → List[Any]
+Removes None values from a list.
+
+Parameters:
+input_ – Takes a list as an argument.
+Returns:
+Clean list without None values.
+Return type:
+List[Any]
+jarvis.modules.utils.util.remove_duplicates(input_: List[Any]) → List[Any]
+Remove duplicate values from a list.
+
+Parameters:
+input_ – Takes a list as an argument.
+Returns:
+Returns a cleaned up list.
+Return type:
+List[Any]
+jarvis.modules.utils.util.get_free_port() → int
+Chooses a PORT number dynamically that is not being used to ensure we don’t rely on a single port.
+
+Instead of binding to a specific port, sock.bind(('', 0)) is used to bind to 0.
+
+See also
+The port number chosen can be found using sock.getsockname()[1]
+Passing it on to the slaves so that they can connect back.
+sock is the socket that was created, returned by socket.socket.
+The OS will then pick an available port.
+Notes
+
+Well-Known ports: 0 to 1023
+Registered ports: 1024 to 49151
+Dynamically available: 49152 to 65535
+Returns:
+Randomly chosen port number that is not in use.
+Return type:
+int
+Telegram
+Module for TelegramAPI.
+
+Bot
+jarvis.modules.telegram.bot.username_is_valid(username: str) → bool
+Compares username and returns True if username is allowed.
+jarvis.modules.telegram.bot.greeting() → str
+Returns a random greeting message.
+
+Returns:
+Random greeting.
+Return type:
+str
+jarvis.modules.telegram.bot.get_title_by_name(name: str) → str
+Predicts gender by name and returns a title accordingly.
+
+Parameters:
+name – Name for which gender has to be predicted.
+Returns:
+mam if predicted to be female, sir if gender is predicted to be male or unpredicted.
+Return type:
+str
+jarvis.modules.telegram.bot.intro() → str
+Returns a welcome message as a string.
+
+Return type:
+str
+jarvis.modules.telegram.bot._get_file(data_class: jarvis.modules.telegram.settings.Voice | jarvis.modules.telegram.settings.Document) → bytes | None
+Makes a request to get the file and file path.
+
+Parameters:
+data_class – Required section of the payload as Voice or Document object.
+Returns:
+Returns the file content as bytes.
+Return type:
+bytes
+jarvis.modules.telegram.bot._make_request(url: str, payload: dict, files: dict = None) → Response
+Makes a post request with a connect timeout of 5 seconds and read timeout of 60.
+
+Parameters:
+url – URL to submit the request.
+payload – Payload received, to extract information from.
+files – Take filename as an optional argument.
+Returns:
+Response class.
+Return type:
+Response
+jarvis.modules.telegram.bot.send_audio(chat_id: int, filename: Union[str, Path], parse_mode: str = 'HTML') → Response
+Sends an audio file to the user.
+
+Parameters:
+chat_id – Chat ID.
+filename – Name of the audio file that has to be sent.
+parse_mode – Parse mode. Defaults to HTML
+Returns:
+Response class.
+Return type:
+Response
+jarvis.modules.telegram.bot.send_document(chat_id: int, filename: Union[str, Path], parse_mode: str = 'HTML') → Response
+Sends a document to the user.
+
+Parameters:
+chat_id – Chat ID.
+filename – Name of the audio file that has to be sent.
+parse_mode – Parse mode. Defaults to HTML
+Returns:
+Response class.
+Return type:
+Response
+jarvis.modules.telegram.bot.send_photo(chat_id: int, filename: Union[str, Path]) → Response
+Sends an image file to the user.
+
+Parameters:
+chat_id – Chat ID.
+filename – Name of the image file that has to be sent.
+Returns:
+Response class.
+Return type:
+Response
+jarvis.modules.telegram.bot.reply_to(chat: Chat, response: str, parse_mode: str | None = 'markdown', retry: bool = False) → Response
+Generates a payload to reply to a message received.
+
+Parameters:
+chat – Required section of the payload as Chat object.
+response – Message to be sent to the user.
+parse_mode – Parse mode. Defaults to markdown
+retry – Retry reply in case reply failed because of parsing.
+Returns:
+Response class.
+Return type:
+Response
+jarvis.modules.telegram.bot.send_message(chat_id: int, response: str, parse_mode: str | None = 'markdown', retry: bool = False) → Response
+Generates a payload to reply to a message received.
+
+Parameters:
+chat_id – Chat ID.
+response – Message to be sent to the user.
+parse_mode – Parse mode. Defaults to markdown
+retry – Retry reply in case reply failed because of parsing.
+Returns:
+Response class.
+Return type:
+Response
+jarvis.modules.telegram.bot.poll_for_messages() → None
+Polls api.telegram.org for new messages.
+
+Raises:
+BotInUse –
+When a new polling is initiated using the same token.
+ConnectionError –
+If unable to connect to the endpoint.
+See also Swaps offset value during every iteration to avoid reprocessing messages.
+jarvis.modules.telegram.bot.process_request(payload: Dict[str, int | dict]) → None
+Processes the request via Telegram messages.
+
+Parameters:
+payload – Payload as received.
+jarvis.modules.telegram.bot.authenticate(chat: Chat) → bool
+Authenticates the user with userId and userName.
+
+Parameters:
+chat – Required section of the payload as Chat object.
+Returns:
+Returns a boolean to indicate whether the user is authenticated.
+Return type:
+bool
+jarvis.modules.telegram.bot.verify_timeout(chat: Chat) → bool
+Verifies whether the message was received in the past 60 seconds.
+
+Parameters:
+chat – Required section of the payload as Chat object.
+Returns:
+True or False flag to indicate if the request timed out.
+Return type:
+bool
+jarvis.modules.telegram.bot.verify_stop(chat: Chat, data_class: Text) → bool
+Stops Jarvis by setting stop flag in base_db if stop is requested by the user with an override flag.
+
+Parameters:
+chat – Required section of the payload as Chat object.
+data_class – Required section of the payload as Text object.
+Returns:
+Boolean flag to indicate whether to proceed.
+Return type:
+bool
+jarvis.modules.telegram.bot.process_photo(chat: Chat, data_class: List[PhotoFragment]) → None
+Processes a photo input.
+
+Parameters:
+chat – Required section of the payload as Chat object.
+data_class – Required section of the payload as Voice object.
+jarvis.modules.telegram.bot.process_audio(chat: Chat, data_class: Audio) → None
+Processes an audio input.
+
+Parameters:
+chat – Required section of the payload as Chat object.
+data_class – Required section of the payload as Voice object.
+jarvis.modules.telegram.bot.process_video(chat: Chat, data_class: Video) → None
+Processes a video input.
+
+Parameters:
+chat – Required section of the payload as Chat object.
+data_class – Required section of the payload as Voice object.
+jarvis.modules.telegram.bot.process_voice(chat: Chat, data_class: Voice) → None
+Processes the audio file in payload received after checking for authentication.
+
+Parameters:
+chat – Required section of the payload as Chat object.
+data_class – Required section of the payload as Voice object.
+jarvis.modules.telegram.bot.process_document(chat: Chat, data_class: jarvis.modules.telegram.settings.Document | jarvis.modules.telegram.settings.Audio | jarvis.modules.telegram.settings.Video) → None
+Processes the document in payload received after checking for authentication.
+
+Parameters:
+chat – Required section of the payload as Chat object.
+data_class – Required section of the payload as Document object.
+jarvis.modules.telegram.bot.process_text(chat: Chat, data_class: Text) → None
+Processes the text in payload received after checking for authentication.
+
+Parameters:
+chat – Required section of the payload as Chat object.
+data_class – Required section of the payload as Text object.
+See also
+Requesting files and secrets are considered as special requests, so they cannot be combined with
+other requests using ‘and’ or ‘also’
+jarvis.modules.telegram.bot.jarvis(command: str, chat: Chat) → None
+Uses the table offline in the database to process a response.
+
+Parameters:
+command – Command to execute.
+chat – Required section of the payload as Chat object.
+jarvis.modules.telegram.bot.executor(command: str, chat: Chat) → None
+Executes the command via offline communicator.
+
+Parameters:
+command – Command to be executed.
+chat – Required section of the payload as Chat object.
+jarvis.modules.telegram.bot.process_response(response: str, chat: Chat) → None
+Processes the response via Telegram API.
+
+Parameters:
+response – Response from Jarvis.
+chat – Required section of the payload as Chat object.
+Custom audio file IO handler for Telegram API.
+
+AudioHandler
+jarvis.modules.telegram.audio_handler.audio_converter_mac() → Callable
+Imports transcode from ftransc.
+
+Returns:
+Transcode function from ftransc.
+Return type:
+Callable
+jarvis.modules.telegram.audio_handler.audio_converter_win(input_filename: Union[Path, str], output_audio_format: str) → str | None
+Imports AudioSegment from pydub.
+
+Parameters:
+input_filename – Input filename.
+output_audio_format – Output audio format.
+Returns:
+Output filename if conversion is successful.
+Return type:
+str
+Custom document file IO handler for Telegram API.
+
+FileHandler
+jarvis.modules.telegram.file_handler._list_files() → Dict[str, str]
+Get all YAML files from fileio and all log files from logs directory.
+
+Returns:
+Dictionary of files that can be downloaded or uploaded.
+Return type:
+Dict[str, List[str]]
+jarvis.modules.telegram.file_handler.list_files() → str
+List all downloadable files.
+
+Returns:
+Returns response as a string.
+Return type:
+str
+jarvis.modules.telegram.file_handler.get_file(filename: str) → Dict
+Download a particular YAML file from fileio or log file from logs directory.
+
+Parameters:
+filename – Name of the file that has to be downloaded.
+Returns:
+Returns the Response object to further process send document via API.
+Return type:
+Response
+jarvis.modules.telegram.file_handler.put_file(filename: str, file_content: bytes) → str
+Upload a particular YAML file to the fileio directory.
+
+Parameters:
+filename – Name of the file.
+file_content – Content of the file.
+Returns:
+Response to the user.
+Return type:
+str
+Telegram settings with different types of objects and members as received in the payload.
+
+class jarvis.modules.telegram.settings.Chat(*, message_id: int, message_type: str = None, date: int, first_name: str, last_name: str, id: int, type: str, username: str, is_bot: bool, language_code: str)
+Base class for Message model.
+
+message_id: int
+message_type: str
+date: int
+first_name: str
+last_name: str
+id: int
+type: str
+username: str
+is_bot: bool
+language_code: str
+class jarvis.modules.telegram.settings.Text(*, text: str)
+Base class for Text model.
+
+text: str
+class jarvis.modules.telegram.settings.PhotoFragment(*, file_id: str, file_size: int, file_unique_id: str, height: int, width: int)
+Base class for PhotoFragment model.
+
+file_id: str
+file_size: int
+file_unique_id: str
+height: int
+width: int
+class jarvis.modules.telegram.settings.Audio(*, duration: int, file_id: str, file_name: str, file_size: int, file_unique_id: str, mime_type: str)
+Base class for Audio model.
+
+duration: int
+file_id: str
+file_name: str
+file_size: int
+file_unique_id: str
+mime_type: str
+class jarvis.modules.telegram.settings.Voice(*, duration: int, file_id: str, file_size: int, file_unique_id: str, mime_type: str)
+Base class for Voice model.
+
+duration: int
+file_id: str
+file_size: int
+file_unique_id: str
+mime_type: str
+class jarvis.modules.telegram.settings.Document(*, file_id: str, file_name: str, file_size: int, file_unique_id: str, mime_type: str)
+Base class for Document model.
+
+file_id: str
+file_name: str
+file_size: int
+file_unique_id: str
+mime_type: str
+class jarvis.modules.telegram.settings.Video(*, duration: int, file_id: str, file_name: str, file_size: int, file_unique_id: str, height: int, mime_type: str, width: int)
+Base class for Video model.
+
+duration: int
+file_id: str
+file_name: str
+file_size: int
+file_unique_id: str
+height: int
+mime_type: str
+width: int
+class Thumb(*, file_id: str, file_size: int, file_unique_id: str, height: int, width: int)
+Nested class for Thumb model.
+
+file_id: str
+file_size: int
+file_unique_id: str
+height: int
+width: int
+class Thumbnail(*, file_id: str, file_size: int, file_unique_id: str, height: int, width: int)
+Nested class for Thumbnail model.
+
+file_id: str
+file_size: int
+file_unique_id: str
+height: int
+width: int
+jarvis.modules.telegram.webhook.get_webhook(base_url: str, logger: Logger)
+Get webhook information.
+
+References
+
+https://core.telegram.org/bots/api#getwebhookinfo
+jarvis.modules.telegram.webhook.delete_webhook(base_url: str | pydantic.networks.HttpUrl, logger: Logger)
+Delete webhook.
+
+References
+
+https://core.telegram.org/bots/api#deletewebhook
+jarvis.modules.telegram.webhook.set_webhook(base_url: pydantic.networks.HttpUrl | str, webhook: pydantic.networks.HttpUrl | str, logger: Logger)
+Set webhook.
+
+References
+
+https://core.telegram.org/bots/api#setwebhook
+Temperature
+Convert common temperature values used in the main module.
+
+Temperature
+jarvis.modules.temperature.temperature.c2f(arg: float) → float
+Converts Celcius to Farenheit.
+
+Parameters:
+arg – Takes Celcius value as argument.
+Returns:
+Converted Farenheit value.
+Return type:
+float
+jarvis.modules.temperature.temperature.f2c(arg: float) → float
+Converts Farenheit to Celcius.
+
+Parameters:
+arg – Takes Farenheit value as argument.
+Returns:
+Converted Celcius value.
+Return type:
+float
+jarvis.modules.temperature.temperature.c2k(arg: float) → float
+Converts Celcius to Kelvin.
+
+Parameters:
+arg – Takes Celcius value as argument.
+Returns:
+Converted Kelvin value.
+Return type:
+float
+jarvis.modules.temperature.temperature.k2c(arg: float) → float
+Converts Kelvin to Celcius.
+
+Parameters:
+arg – Takes Kelvin value as argument.
+Returns:
+Converted Celcius value.
+Return type:
+float
+jarvis.modules.temperature.temperature.k2f(arg: float) → float
+Converts Kelvin to Celcius.
+
+Parameters:
+arg – Takes Kelvin value as argument.
+Returns:
+Converted Farenheit value.
+Return type:
+float
+jarvis.modules.temperature.temperature.f2k(arg: float) → float
+Converts Farenheit to Kelvin.
+
+Parameters:
+arg – Taken Farenheit value as argument.
+Returns:
+Converted Kelvin value.
+Return type:
+float
+Templates
+Module to read all HTML templates and store as members of an object.
+
+AudioHandler
+class jarvis.modules.templates.templates.EmailTemplates
+HTML templates used to send outbound email.
+
+EmailTemplates
+class jarvis.modules.templates.templates.EndpointTemplates
+HTML templates used for hosting endpoints.
+
+EndpointTemplates
+class jarvis.modules.templates.templates.GenericTemplates
+HTML templates used for generic purposes.
+
+GenericTemplates
+class jarvis.modules.templates.templates.Llama
+Modelfile template for ollama SDK.
+
+Llama
+class jarvis.modules.templates.templates.ListenerSpectrum
+Load template paths for listener spectrum functionality.
+
+ListenerSpectrum
+html = '/Users/vicky/Desktop/git/Jarvis/jarvis/modules/templates/listener_spectrum.html'
+javascript = '/Users/vicky/Desktop/git/Jarvis/jarvis/modules/templates/siriwave.umd.min.js'
+jarvis.modules.templates.templates.email
+alias of EmailTemplates
+jarvis.modules.templates.templates.generic
+alias of GenericTemplates
+jarvis.modules.templates.templates.endpoint
+alias of EndpointTemplates
+jarvis.modules.templates.templates.llama
+alias of Llama
+jarvis.modules.templates.templates.listener_spectrum
+alias of ListenerSpectrum
+Timeout
+Module that can be used to set timeout for a function.
+
+Timeout
+jarvis.modules.timeout.timeout.timeout(seconds: Union[int, float], function: Callable, args: Union[List, Tuple] = None, kwargs: Dict = None, logger: Logger = None) → bool
+Run the given function and kill it if exceeds the set timeout.
+
+Parameters:
+seconds – Timeout after which the said function has to be terminated.
+function – Function to run and timeout.
+args – Args to be passed to the function.
+kwargs – Keyword args to be passed to the function.
+logger – Logger to optionally log the timeout events.
+Returns:
+Boolean flag to indicate if the function completed within the set timeout.
+Return type:
+bool
+Transformer
+Generative Pre-trained Transformer with Ollama API client.
+
+Warning
+This module uses a pre-trained transformer to generate predictive responses.
+Although this feature is enabled by default, please note that machine learning models are memory beasts.
+Please refer the following minimum requirements before choosing the right model.
+This feature can be disabled by setting the env var ollama=False in the env_file
+Notes
+
+There are quite a few parameters that can be adjusted, to customize the model usage and interaction with Jarvis.
+
+Params for Jarvis
+Params for Ollama API (Modelfile)
+RAM Requirements
+8 GB to run the 7B models
+16 GB to run the 13B models
+32 GB to run the 33B models
+References
+
+Model Artifactory: https://ollama.com/library
+Alternatives: https://huggingface.co/meta-llama
+Supported Models: https://github.com/ollama/ollama/blob/main/README.md#model-library
+See also Future Plans
+jarvis.modules.transformer.gpt.dump_history(request: str, response: str) → None
+Dump responses from GPT into a yaml file for future response.
+
+Parameters:
+request – Request from user.
+response – Response from GPT.
+jarvis.modules.transformer.gpt.existing_response(request: str) → str | None
+Return existing response if new request closely matches historical requests.
+
+Parameters:
+request – Request from user.
+See also
+Reusing responses is not enabled by default.
+To enable reusing responses, set the env var OLLAMA_REUSE_THRESHOLD to a value between 0.5 and 0.9
+This value will choose how close the request should match with a historic request before reusing the response.
+Warning
+This can be a problem for phrases like:
+what is the height of Mount Everest
+what is the height of Mount Rushmore
+To get around this, refer env-variables section of the wiki page about OLLAMA_REUSE_THRESHOLD
+Returns:
+Returns the closest matching response stored in historical transactions.
+Return type:
+str
+jarvis.modules.transformer.gpt.create_model_file() → None
+Creates Modelfile if not found.
+jarvis.modules.transformer.gpt.customize_model() → None
+Uses the CLI to customize the model.
+class jarvis.modules.transformer.gpt.Ollama
+Wrapper for Ollama client that initiates the private AI.
+
+Ollama
+request_model(request: str) → Generator[str]
+Interacts with the model with a request and yields the response.
+
+Parameters:
+request
+Yields:
+Streaming response from the model.
+generator(phrase: str) → List[str]
+Returns the streaming response from the model in a list.
+query(phrase: str) → None
+Queries the Ollama api with the request and speaks the response.
+
+See also This plugin can fetch responses from a mapping file for, reusability when requests are identical.
+Parameters:
+phrase – Takes the phrase spoken as an argument.
+TV Connector
+Module for LG tv operations.
+
+LG
+class jarvis.modules.tv.lg.LGWebOS(ip_address: str, client_key: str, nickname: str, key: str)
+Wrapper for LGWebOS TVs that insitates the WebOSClient to collect to the TV.
+
+LGWebOS
+Parameters:
+ip_address – IP address of the TV.
+client_key – Client Key to authenticate connection.
+nickname – Identifier name for the TV as stored in the yaml file.
+Raises:
+TVError –
+- If unable to connect to the TV. –
+- If no TV was found in the IP range. –
+- If a connection timeout occurs (usually because of unstable internet or multiple connection types) –
+_reconnect = False
+_init_status = False
+increase_volume() → None
+Increases the volume by 10 units.
+decrease_volume() → None
+Decreases the volume by 10 units.
+get_volume() → int
+Get volume status.
+
+Returns:
+Volume level.
+Return type:
+int
+get_state() → bool
+Get current state of the TV.
+
+Notes
+
+Since LGWebOS module doesn’t have a status call, get the current volume to check if TV is powered on.
+
+Returns:
+True if powered on.
+Return type:
+bool
+set_volume(target: int) → None
+The argument is an integer from 1 to 100.
+
+Parameters:
+target – Takes an integer as argument to set the volume.
+mute() → None
+Mutes the TV.
+play() → None
+Plays the paused content on the TV.
+pause() → None
+Pauses the playing content on TV.
+stop() → None
+Stop the playing content on TV.
+rewind() → None
+Rewinds the playing content on TV.
+forward() → None
+Forwards the playing content on TV.
+get_apps() → Generator[str]
+Checks the applications installed on the TV.
+
+Yields:
+str – Yields available apps on the TV.
+launch_app(app_name: str) → None
+Launches an application.
+
+Parameters:
+app_name – Takes the application name as argument.
+close_app(app_name: str) → None
+Closes a particular app using the launch_info received from launch_app method.
+
+Parameters:
+app_name – Application name that has to be closed.
+get_sources() → Generator[str]
+Checks for the input sources on the TV.
+
+Yields:
+str – Yields InputSource instance.
+set_source(val: str) → None
+Sets an InputSource instance.
+
+Parameters:
+val – Takes the input source instance value as argument.
+current_app() → str
+Scans the current application running in foreground.
+
+Returns:
+Title of the current app that is running
+Return type:
+str
+audio_output() → AudioOutputSource
+Returns the currently used audio output source as AudioOutputSource instance.
+
+Returns:
+Returns the audio output source as an object.
+Return type:
+AudioOutputSource
+audio_output_source() → List[AudioOutputSource]
+Checks the list of audio output sources available.
+
+Returns:
+List of AudioOutputSource instances.
+Return type:
+list
+set_audio_output_source() → None
+Sets to a particular AudioOutputSource instance.
+shutdown() → None
+Notifies the TV about shutdown and shuts down after 3 seconds.
+Module for Roku tv operations.
+
+Roku
+class jarvis.modules.tv.roku.RokuECP(ip_address: str)
+Wrapper for RokuECP TVs that connects to the device via HTTP requests.
+
+RokuECP
+Parameters:
+ip_address – IP address of the TV.
+References
+
+https://developer.roku.com/docs/developer-program/debugging/external-control-api.md
+
+PORT: int = 8060
+SESSION: Session = <requests.sessions.Session object>
+make_call(path: str, method: str) → Response
+Makes a session call using the path and method provided.
+
+Parameters:
+path – URL path to make the call.
+method – Method using which the call has to be made.
+Returns:
+Response from the session call.
+Return type:
+requests.Response
+get_state() → bool
+Gets the TV state to determine whether it is powered on or off.
+
+Returns:
+True if powered on.
+Return type:
+bool
+startup() → None
+Powers on the TV and launches Home screen.
+shutdown() → None
+Turns off the TV is it is powered on.
+increase_volume(limit: int = 10) → None
+Increases the volume on the TV.
+
+Parameters:
+limit – Number of iterations to increase the volume.
+decrease_volume(limit: int = 10) → None
+Decreases the volume on the TV.
+
+Parameters:
+limit – Number of iterations to decrease the volume.
+mute() → None
+Mutes the TV.
+stop() → None
+Sends a keypress to stop content on TV.
+pause() → None
+Sends a keypress to pause content on TV.
+play() → None
+Sends a keypress to play content on TV.
+forward() → None
+Sends a keypress to forward content on TV.
+rewind() → None
+Sends a keypress to rewind content on TV.
+get_sources() → Generator[str]
+Returns a list of predetermined sources.
+
+Yields:
+str – Yields preset source’s name.
+set_source(val: str) → None
+Set input source on TV.
+
+Parameters:
+val – Source name.
+_set_vol_executor(target: int) → None
+Executed in thread to set volume to a specific level.
+
+With the lack of a better option, volume is decreased to zero and then increased to the required level.
+
+Parameters:
+target – Volume in percentage.
+set_volume(target: int) → None
+Initiates threaded volume setter.
+
+Parameters:
+target – Volume in percentage.
+current_app() → str | None
+Find current app running on the TV.
+
+Returns:
+Name of the application.
+Return type:
+str
+static get_volume() → str
+Placeholder method as there is no call to get this information at the time of development.
+launch_app(app_name: str) → None
+Launches an application on the TV.
+
+Parameters:
+app_name – Name of the application to launch.
+get_apps(raw: bool = False) → Generator[Union[Dict[str, str], str]]
+Get list of applications installed on the TV.
+
+Parameters:
+raw – Takes a boolean flag if the entire dictionary has to be returned.
+Yields:
+Generator[Dict[str, str] | str] – Yields of app name or information dict if requested as raw.
+WakeOnLAN
+Module for powering on supported devices.
+
+WakeOnLan
+class jarvis.modules.wakeonlan.wakeonlan.WakeOnLan
+Initiates WakeOnLan object to create and send bytes to turn on a device.
+
+WakeOnLan
+BROADCAST_IP = '255.255.255.255'
+DEFAULT_PORT = 9
+classmethod create_packet(macaddress: str) → bytes
+Create a magic packet.
+
+A magic packet is a packet that can be used with the for wake on lan protocol to wake up a computer. The packet is constructed from the mac address given as a parameter.
+
+Parameters:
+macaddress – the mac address that should be parsed into a magic packet.
+Raises:
+InvalidArgument –
+If the argument macaddress is invalid. –
+send_packet(*mac_addresses: str, ip_address: str = '255.255.255.255', port: int = 9, interface: str = None) → None
+Wake up devices using mac addresses.
+
+Notes
+
+Wake on lan must be enabled on the host device.
+
+Parameters:
+mac_addresses – One or more mac addresses of machines to wake.
+ip_address – IP address of the host to send the magic packet to.
+port – Port of the host to send the magic packet to.
+interface – IP address of the network adapter to route the packets through.
+———-Test Cases———-
+TestAPI
+tests.api_test.server()
+Run pytest on APIServer which runs in a thread.
+TestListener
+class tests.listener_test.TestListener(methodName='runTest')
+TestCase object for testing listener module.
+
+TestListener
+test_listen(mock_support: MagicMock, mock_playsound: MagicMock, mock_recognizer: MagicMock, mock_microphone: MagicMock)
+Test the listen function.
+
+Mock the return values and set up necessary mocks to simulate the behavior of the listen function. Ensure that the listen function is called with the correct arguments. Ensure that the playsound function is not called when sound=False is passed.
+
+Parameters:
+mock_support – Mocked support module.
+mock_playsound – Mocked playsound function.
+mock_recognizer – Mocked recognizer module.
+mock_microphone – Mocked microphone module.
+_classSetupFailed = False
+_class_cleanups = []
+TestMain
+class tests.main_test.TestActivator(methodName='runTest')
+Test cases for the Activator class.
+
+setUp()
+Set up the Activator instance for testing.
+test_init_activator(mock_audio_open: MagicMock, mock_pvporcupine_create: MagicMock) → None
+Test whether the Activator is initialized correctly.
+
+Mock the return values of the create function.
+
+Parameters:
+mock_audio_open – Patched audio_engine.open from jarvis.main.py.
+mock_pvporcupine_create – Patched pvporcupine.create from jarvis.main.py.
+test_executor(mock_audio_close: MagicMock, mock_speak: MagicMock, mock_initiator: MagicMock, mock_listen: MagicMock) → None
+Test the executor method of Activator.
+
+Mock return values of the listen function and set up necessary mocks.
+
+Parameters:
+mock_audio_close – Patched audio_engine.close from jarvis.main.py.
+mock_speak – Patched speaker.speak from jarvis.modules.audio.
+mock_initiator – Patched commander.initiator from jarvis.executors.
+mock_listen – Patched listener.listen from jarvis.modules.audio.
+_classSetupFailed = False
+_class_cleanups = []
+TestSpeaker
+class tests.speaker_test.TestSpeak(methodName='runTest')
+TestCase object for testing the speaker module.
+
+TestSpeak
+test_speech_synthesis_usage(mock_playsound: MagicMock, mock_speech_synthesizer: MagicMock) → None
+Test speech synthesis usage.
+
+Parameters:
+mock_playsound – Mock object for playsound module.
+mock_speech_synthesizer – Mock object for speaker.speech_synthesizer function.
+test_audio_driver_usage(mock_playsound: MagicMock, mock_speaker: MagicMock, mock_speech_synthesizer: MagicMock) → None
+Test audio driver usage.
+
+Parameters:
+mock_playsound – Mock object for playsound module.
+mock_speaker – Mock object for speaker.speak function.
+mock_speech_synthesizer – Mock object for speaker.speech_synthesizer function.
+test_no_text_input(mock_write_screen: MagicMock) → None
+Test speak function with no text input.
+
+Parameters:
+mock_write_screen – Mock object for support.write_screen function.
+test_text_input_and_run(mock_write_screen: MagicMock) → None
+Test speak function with text input and run flag.
+
+Parameters:
+mock_write_screen – Mock object for support.write_screen function.
+test_offline_mode(mock_playsound: MagicMock, mock_speech_synthesizer: MagicMock) → None
+Test speak function in offline mode.
+
+Parameters:
+mock_playsound – Mock object for playsound module.
+mock_speech_synthesizer – Mock object for speaker.speech_synthesizer function.
+_classSetupFailed = False
+_class_cleanups = []
+TestSpeechSynthesis
+class tests.speech_synthesis_test.TestSpeechSynthesizer(methodName='runTest')
+TestSpeechSynthesizer object for testing speech synthesis module.
+
+TestSpeechSynthesizer
+test_successful_synthesis(mock_post: MagicMock) → None
+Test successful speech synthesis.
+
+This method tests the behavior of the speech_synthesizer function when a successful response is mocked from the post request call.
+
+Parameters:
+mock_post – Mock of the requests.post function.
+test_unsuccessful_synthesis(mock_post: MagicMock) → None
+Test unsuccessful speech synthesis.
+
+This method tests the behavior of the speech_synthesizer function when an unsuccessful response is mocked from the post request call.
+
+Parameters:
+mock_post – Mock of the requests.post function.
+test_unicode_error_handling(mock_post: MagicMock) → None
+Test UnicodeError handling in speech synthesis.
+
+This method tests the handling of UnicodeError within the speech_synthesizer function.
+
+Parameters:
+mock_post – Mock of the requests.post function with side effect.
+test_egress_error_handling(mock_post: MagicMock) → None
+Test EgressErrors handling in speech synthesis.
+
+This method tests the handling of EgressErrors within the speech_synthesizer function.
+
+Parameters:
+mock_post – Mock of the requests.post function with side effect.
+_classSetupFailed = False
+_class_cleanups = []
+Indices and tables
