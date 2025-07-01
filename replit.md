@@ -115,6 +115,12 @@ jarvis/
 - **Containerized Deployment**: Docker support for isolated environments
 
 ## Changelog
+- July 01, 2025: Fixed critical command injection security vulnerability in tv.py
+  - Replaced unsafe os.system() call with secure subprocess.call() implementation at line 50
+  - Fixed vulnerability in jarvis/executors/tv.py that allowed command injection via IP addresses
+  - Changed from os.system(f-string) to subprocess.call() with list arguments for safe command execution
+  - Vulnerability allowed potential arbitrary command execution through malicious IP addresses in TV configuration
+  - Added proper error handling for subprocess execution failures
 - July 01, 2025: Fixed critical command injection security vulnerability in camera.py (subprocess.Popen)
   - Replaced unsafe subprocess.Popen() call with shell=True to use shell=False implementation at line 80-85
   - Fixed vulnerability in jarvis/modules/camera/camera.py that allowed command injection via shell execution

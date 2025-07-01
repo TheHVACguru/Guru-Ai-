@@ -1,4 +1,5 @@
 import os
+import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
@@ -42,17 +43,25 @@ def tv_status(tv_ip_list: List[str], attempt: int = 0) -> str:
         str:
         Returns the reachable IP address from the list.
     """
-    if models.settings.os == enums.SupportedPlatforms.windows:
-        command = "ping -c 1 -t 2 {IP_ADDRESS} > NUL"
-    else:
-        command = "ping -c 1 -t 2 {IP_ADDRESS} >/dev/null 2>&1"
     for ip in tv_ip_list:
-        if tv_stat := os.system(command=command.format(IP_ADDRESS=ip)):
-            logger.error(
-                "Connection timed out on %s. Ping result: %s", ip, tv_stat
-            ) if not attempt else None
+        # Construct ping command safely using list arguments
+        if models.settings.os == enums.SupportedPlatforms.windows:
+            ping_cmd = ["ping", "-n", "1", "-w", "2000", ip]
         else:
-            return ip
+            ping_cmd = ["ping", "-c", "1", "-W", "2", ip]
+        
+        try:
+            # Use subprocess.call with shell=False for safe execution
+            tv_stat = subprocess.call(ping_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if tv_stat != 0:
+                logger.error(
+                    "Connection timed out on %s. Ping result: %s", ip, tv_stat
+                ) if not attempt else None
+            else:
+                return ip
+        except (subprocess.SubprocessError, FileNotFoundError) as e:
+            logger.error("Failed to execute ping command for %s: %s", ip, e)
+            continue
 
 
 def television(phrase: str) -> None:
