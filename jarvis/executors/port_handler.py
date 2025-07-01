@@ -1,4 +1,5 @@
 import os
+import shlex
 import signal
 import socket
 import subprocess
@@ -42,8 +43,15 @@ def kill_port_pid(port: int, protocol: str = "tcp") -> bool | None:
         Flag to indicate whether the process was terminated successfully.
     """
     try:
+        # Validate protocol to prevent command injection
+        if not protocol.isalnum():
+            logger.error("Invalid protocol format: %s", protocol)
+            return False
+        
+        # Use shlex.quote to safely escape the command arguments
+        command = f"lsof -i {shlex.quote(protocol)}:{port}"
         active_sessions = (
-            subprocess.check_output(f"lsof -i {protocol}:{port}", shell=True)
+            subprocess.check_output(command, shell=True)
             .decode("utf-8")
             .splitlines()
         )

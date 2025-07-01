@@ -115,6 +115,11 @@ jarvis/
 - **Containerized Deployment**: Docker support for isolated environments
 
 ## Changelog
+- July 01, 2025: Fixed critical command injection security vulnerability
+  - Patched subprocess.check_output in port_handler.py to prevent command injection
+  - Added input validation and shlex.quote() for safe command execution
+  - Vulnerability was in kill_port_pid() function where protocol parameter could be exploited
+  - Fixed allows safe execution of lsof commands without security risk
 - July 01, 2025: Fixed deployment configuration and health endpoints
   - Configured proper run command: `python main.py` for deployment
   - Added HEAD request support to both root (/) and /health endpoints
