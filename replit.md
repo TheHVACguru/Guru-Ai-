@@ -115,6 +115,12 @@ jarvis/
 - **Containerized Deployment**: Docker support for isolated environments
 
 ## Changelog
+- July 01, 2025: Fixed critical command injection security vulnerability in camera.py
+  - Replaced unsafe subprocess.check_output() calls with shell=True to use shell=False implementation
+  - Fixed vulnerability in jarvis/modules/camera/camera.py lines 103 and 118 that allowed command injection via device names
+  - Changed from f-string shell commands to list arguments for safe command execution
+  - Replaced shell pipe operations with Python string processing to eliminate shell injection risk
+  - Vulnerability allowed potential arbitrary command execution on Linux systems through malicious device names
 - July 01, 2025: Fixed critical command injection security vulnerability in others.py (photo function)
   - Replaced unsafe os.system() call with secure subprocess.call() implementation at line 485
   - Fixed vulnerability in photo capture function that allowed command injection via filename manipulation

@@ -100,7 +100,7 @@ class Camera:
         for cam in self.output:
             if cam.strip().startswith("/dev/video"):
                 result = subprocess.check_output(
-                    f"v4l2-ctl --device={cam.strip()} --all", shell=True
+                    ["v4l2-ctl", f"--device={cam.strip()}", "--all"], shell=False
                 )
                 yield result.decode(encoding="UTF-8")
 
@@ -114,10 +114,16 @@ class Camera:
         for cam in self.output:
             if cam.strip().startswith("/dev/video"):
                 try:
-                    result = subprocess.check_output(
-                        f"v4l2-ctl --device={cam.strip()} --all | grep Name", shell=True
+                    # Get camera info first
+                    v4l2_result = subprocess.check_output(
+                        ["v4l2-ctl", f"--device={cam.strip()}", "--all"], shell=False
                     )
-                    yield result.decode(encoding="UTF-8").replace(
+                    # Filter for Name using Python instead of shell pipe
+                    lines = v4l2_result.decode(encoding="UTF-8").splitlines()
+                    name_lines = [line for line in lines if "Name" in line]
+                    if name_lines:
+                        result = name_lines[0].encode()
+                        yield result.decode(encoding="UTF-8").replace(
                         "Name", ""
                     ).strip().lstrip(":").strip()
                 except subprocess.CalledProcessError:
