@@ -40,25 +40,65 @@ app.add_middleware(
 
 # Pydantic models
 class CommandRequest(BaseModel):
-    command: str
-    source: str = "api"
-    user_id: Optional[str] = None
+    """Request model for processing voice commands"""
+    command: str  # The voice command to process
+    source: str = "api"  # Source of the command (api, voice, etc.)
+    user_id: Optional[str] = None  # Optional user identifier for tracking
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "command": "what time is it?",
+                "source": "api",
+                "user_id": "user123"
+            }
+        }
 
 class CommandResponse(BaseModel):
-    success: bool
-    response: str
-    command: str
-    timestamp: datetime
-    processing_time_ms: Optional[float] = None
-    log_id: Optional[int] = None
+    """Response model for processed voice commands"""
+    success: bool  # Whether the command was processed successfully
+    response: str  # The assistant's response to the command
+    command: str   # The original command that was processed
+    timestamp: datetime  # When the command was processed
+    processing_time_ms: float = 0.0  # Processing time in milliseconds, defaults to 0 if unknown
+    log_id: Optional[int] = None  # Database log ID if successfully stored, None if logging failed
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "success": True,
+                "response": "The current time is 10:30 AM on July 01, 2025",
+                "command": "what time is it?",
+                "timestamp": "2025-07-01T10:30:00.123456",
+                "processing_time_ms": 15.5,
+                "log_id": 123
+            }
+        }
 
 class StatusResponse(BaseModel):
-    status: str
-    version: str
-    features: Dict[str, bool]
-    uptime_seconds: float
-    total_commands: int
-    database_status: str
+    """System status and capabilities response"""
+    status: str  # Current system status
+    version: str  # API version
+    features: Dict[str, bool]  # Available features and their status
+    uptime_seconds: float  # Server uptime in seconds
+    total_commands: int  # Total commands processed
+    database_status: str  # Database connection status
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "status": "running",
+                "version": "1.0.0",
+                "features": {
+                    "text_processing": True,
+                    "database_logging": True,
+                    "voice_synthesis": False
+                },
+                "uptime_seconds": 3600.5,
+                "total_commands": 42,
+                "database_status": "connected"
+            }
+        }
 
 class CommandHistoryResponse(BaseModel):
     id: int
@@ -66,14 +106,26 @@ class CommandHistoryResponse(BaseModel):
     response: str
     success: bool
     timestamp: datetime
-    processing_time_ms: Optional[float]
+    processing_time_ms: float = 0.0  # Always provide processing time, default to 0 if not recorded
 
 class DatabaseStatsResponse(BaseModel):
-    total_commands: int
-    successful_commands: int
-    failed_commands: int
-    average_processing_time_ms: Optional[float]
-    most_recent_command: Optional[datetime]
+    """Database analytics and statistics response"""
+    total_commands: int  # Total number of commands processed
+    successful_commands: int  # Number of successfully processed commands
+    failed_commands: int  # Number of failed commands
+    average_processing_time_ms: float = 0.0  # Average processing time, defaults to 0 if no data
+    most_recent_command: Optional[datetime] = None  # Timestamp of most recent command, None if database is empty
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "total_commands": 150,
+                "successful_commands": 147,
+                "failed_commands": 3,
+                "average_processing_time_ms": 12.5,
+                "most_recent_command": "2025-07-01T10:30:00.123456"
+            }
+        }
 
 # Global state
 start_time = datetime.now()
@@ -338,7 +390,7 @@ For advanced features like weather, news, email, and smart home control, additio
         response=response,
         command=request.command,
         timestamp=datetime.now(),
-        processing_time_ms=processing_time,
+        processing_time_ms=processing_time if processing_time is not None else 0.0,
         log_id=log_id
     )
 
@@ -354,7 +406,7 @@ async def get_command_history(limit: int = 50, offset: int = 0, db: Session = De
                 response=cmd.response,
                 success=cmd.success,
                 timestamp=cmd.timestamp,
-                processing_time_ms=cmd.processing_time_ms
+                processing_time_ms=cmd.processing_time_ms if cmd.processing_time_ms is not None else 0.0
             ) for cmd in commands
         ]
     except Exception as e:
@@ -381,7 +433,7 @@ async def get_database_stats(db: Session = Depends(get_db)):
             total_commands=total_commands,
             successful_commands=successful_commands,
             failed_commands=failed_commands,
-            average_processing_time_ms=avg_processing_time,
+            average_processing_time_ms=avg_processing_time if avg_processing_time is not None else 0.0,
             most_recent_command=most_recent
         )
     except Exception as e:
