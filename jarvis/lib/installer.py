@@ -18,6 +18,7 @@ import logging
 import os
 import platform
 import re
+import shlex
 import shutil
 import string
 import subprocess
@@ -265,10 +266,17 @@ def run_subprocess(command: str) -> None:
             - Enter kill -l to list signal codes
             - Enter man signal for more information
     """
+    # Parse command string safely to prevent command injection
+    try:
+        command_args = shlex.split(command)
+    except ValueError as e:
+        logger.error(f"Failed to parse command {command!r}: {e}")
+        raise
+    
     process = subprocess.Popen(
-        command,
+        command_args,
         text=True,
-        shell=True,
+        shell=False,
         env={k: v for k, v in {**os.environ, **env_vars}.items() if k and v},
         universal_newlines=True,
         stdout=subprocess.PIPE,
