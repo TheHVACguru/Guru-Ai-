@@ -31,14 +31,17 @@ def executor(statement: str, log_file: str = None, process_name: str = None) -> 
     if not process_name:
         process_name = "crontab_executor"
     process_name = "_".join(process_name.split())
-    # Escape the statement to prevent command injection
-    escaped_statement = shlex.quote(statement)
-    command = f"export PROCESS_NAME={shlex.quote(process_name)} && {escaped_statement}"
-    logger.debug("Executing '%s' as '%s'", statement, command)
+    # Set environment variable safely without shell injection risk
+    env = os.environ.copy()
+    env["PROCESS_NAME"] = process_name
+    
+    logger.debug("Executing '%s' with PROCESS_NAME='%s'", statement, process_name)
     with open(log_file, "a") as file:
         file.write("\n")
         try:
-            subprocess.call(command, shell=True, stdout=file, stderr=file)
+            # Split command into list and use shell=False to prevent injection
+            command_args = shlex.split(statement)
+            subprocess.call(command_args, shell=False, stdout=file, stderr=file, env=env)
         except Exception as error:
             if isinstance(error, subprocess.CalledProcessError):
                 result = error.output.decode(encoding="UTF-8").strip()
