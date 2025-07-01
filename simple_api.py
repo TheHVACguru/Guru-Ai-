@@ -778,16 +778,40 @@ async def root():
                 updateStatus('JARVIS READY');
                 updateVoiceStatus('PRESS TO TALK');
                 updateReadoutValue('voiceStatus', 'ONLINE');
-                updateReadoutValue('speechStatus', 'READY');
+                updateReadoutValue('speechStatus', 'CHECKING...');
                 updateReadoutValue('apiStatus', 'CONNECTED');
                 updateReadoutValue('commandCount', '0');
                 
                 console.log('Arc Reactor Interface Online - JARVIS Systems Activated');
                 
+                // Check speech recognition availability
+                checkSpeechRecognitionAvailability();
+                
                 // Start with a system initialization message
                 setTimeout(() => {
-                    showSystemMessage('All systems online. Voice interface ready.');
+                    showSystemMessage('Arc Reactor interface initialized. All systems operational.');
                 }, 1000);
+            }
+
+            function checkSpeechRecognitionAvailability() {
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                    updateReadoutValue('speechStatus', 'NOT SUPPORTED');
+                    updateVoiceStatus('TEXT INPUT ONLY');
+                    document.getElementById('voiceCommand').textContent = 'Speech unavailable';
+                    showSystemMessage('Speech recognition not available. Use text input below.');
+                    return false;
+                }
+                
+                if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                    updateReadoutValue('speechStatus', 'REQUIRES HTTPS');
+                    updateVoiceStatus('TEXT INPUT ONLY');
+                    document.getElementById('voiceCommand').textContent = 'HTTPS required';
+                    showSystemMessage('Voice input requires HTTPS connection. Use text input below.');
+                    return false;
+                }
+                
+                updateReadoutValue('speechStatus', 'READY');
+                return true;
             }
 
             function updateStatus(message) {
@@ -847,9 +871,13 @@ async def root():
                 try {
                     // Check if browser supports speech recognition
                     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                        updateStatus('SPEECH RECOGNITION NOT SUPPORTED');
-                        updateVoiceStatus('BROWSER ERROR');
-                        showSystemMessage('Speech recognition not supported in this browser');
+                        handleSpeechError('Speech recognition not supported in this browser');
+                        return;
+                    }
+
+                    // Check if we're on HTTPS or localhost (required for speech recognition)
+                    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                        handleSpeechError('Speech recognition requires HTTPS connection');
                         return;
                     }
 
@@ -869,17 +897,35 @@ async def root():
                     recognition.onresult = function(event) {
                         const transcript = event.results[0][0].transcript;
                         document.getElementById('commandInput').value = transcript;
-                        updateVoiceStatus('PROCESSING');
+                        updateVoiceStatus('VOICE CAPTURED');
                         sendCommand(transcript);
                     };
 
                     recognition.onerror = function(event) {
                         console.error('Speech recognition error:', event.error);
-                        updateStatus('SPEECH ERROR: ' + event.error.toUpperCase());
-                        updateVoiceStatus('ERROR');
-                        updateReadoutValue('speechStatus', 'ERROR');
-                        showSystemMessage('Speech recognition error: ' + event.error);
-                        resetInterface();
+                        
+                        let errorMessage = '';
+                        switch(event.error) {
+                            case 'service-not-allowed':
+                                errorMessage = 'Microphone access denied. Please enable microphone permissions.';
+                                break;
+                            case 'not-allowed':
+                                errorMessage = 'Microphone permission required. Please allow microphone access.';
+                                break;
+                            case 'network':
+                                errorMessage = 'Network error. Please check your internet connection.';
+                                break;
+                            case 'no-speech':
+                                errorMessage = 'No speech detected. Please try again.';
+                                break;
+                            case 'aborted':
+                                errorMessage = 'Speech recognition aborted.';
+                                break;
+                            default:
+                                errorMessage = `Speech recognition error: ${event.error}`;
+                        }
+                        
+                        handleSpeechError(errorMessage);
                     };
 
                     recognition.onend = function() {
@@ -892,12 +938,22 @@ async def root():
 
                 } catch (error) {
                     console.error('Error starting speech recognition:', error);
-                    updateStatus('VOICE ERROR');
-                    updateVoiceStatus('SYSTEM ERROR');
-                    updateReadoutValue('speechStatus', 'OFFLINE');
-                    showSystemMessage('Error starting voice recognition: ' + error.message);
-                    resetInterface();
+                    handleSpeechError(`Voice system error: ${error.message}`);
                 }
+            }
+
+            function handleSpeechError(message) {
+                updateStatus('VOICE INPUT UNAVAILABLE');
+                updateVoiceStatus('USE TEXT INPUT');
+                updateReadoutValue('speechStatus', 'DISABLED');
+                showSystemMessage(message);
+                
+                // Focus on text input as fallback
+                const textInput = document.getElementById('commandInput');
+                textInput.focus();
+                textInput.placeholder = 'Voice unavailable - type command here...';
+                
+                resetInterface();
             }
 
             function stopListening() {
@@ -918,7 +974,8 @@ async def root():
                 
                 if (!command) {
                     updateStatus('NO COMMAND ENTERED');
-                    updateVoiceStatus('WAITING');
+                    updateVoiceStatus('WAITING FOR INPUT');
+                    showSystemMessage('Please enter a command');
                     return;
                 }
 
@@ -928,6 +985,8 @@ async def root():
                 updateReadoutValue('apiStatus', 'TRANSMITTING');
                 
                 try {
+                    const startTime = performance.now();
+                    
                     const response = await fetch('/command', {
                         method: 'POST',
                         headers: {
@@ -935,12 +994,15 @@ async def root():
                         },
                         body: JSON.stringify({
                             command: command,
-                            source: 'arc_reactor_interface'
+                            source: 'arc_reactor_interface',
+                            user_id: 'jarvis_user_' + Date.now()
                         })
                     });
                     
+                    const processingTime = Math.round(performance.now() - startTime);
+                    
                     if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        throw new Error(`Server error ${response.status}: ${response.statusText}`);
                     }
                     
                     const data = await response.json();
@@ -954,49 +1016,71 @@ async def root():
                     const responseText = document.getElementById('responseText');
                     
                     if (data.success) {
-                        responseText.textContent = data.response;
+                        responseText.innerHTML = `
+                            <strong>Command:</strong> "${command}"<br>
+                            <strong>Response:</strong> ${data.response}<br>
+                            <strong>Processing Time:</strong> ${processingTime}ms<br>
+                            <strong>Timestamp:</strong> ${new Date().toLocaleTimeString()}
+                        `;
                         updateStatus('COMMAND EXECUTED');
-                        updateVoiceStatus('COMPLETE');
+                        updateVoiceStatus('OPERATION COMPLETE');
                         updateReadoutValue('apiStatus', 'SUCCESS');
-                        showSystemMessage('Command executed successfully');
+                        showSystemMessage(`Command executed in ${processingTime}ms`);
+                        
+                        // Clear the input field
+                        document.getElementById('commandInput').value = '';
                     } else {
-                        responseText.textContent = 'JARVIS ERROR: ' + (data.response || 'Unknown system error');
+                        responseText.innerHTML = `
+                            <strong>Command:</strong> "${command}"<br>
+                            <strong>Error:</strong> ${data.response || 'Unknown system error'}<br>
+                            <strong>Processing Time:</strong> ${processingTime}ms<br>
+                            <strong>Status:</strong> Failed
+                        `;
                         updateStatus('EXECUTION FAILED');
-                        updateVoiceStatus('ERROR');
+                        updateVoiceStatus('COMMAND ERROR');
                         updateReadoutValue('apiStatus', 'FAILED');
                         showSystemMessage('Command execution failed');
                     }
                     
                     responseContainer.style.display = 'block';
                     
-                    // Auto-hide response after 10 seconds
+                    // Auto-hide response after 15 seconds
                     setTimeout(() => {
-                        responseContainer.style.display = 'none';
-                    }, 10000);
+                        if (responseContainer.style.display === 'block') {
+                            responseContainer.style.display = 'none';
+                        }
+                    }, 15000);
                     
                 } catch (error) {
                     console.error('Error sending command:', error);
                     const responseContainer = document.getElementById('responseContainer');
                     const responseText = document.getElementById('responseText');
                     
-                    responseText.textContent = 'NETWORK ERROR: ' + error.message;
+                    responseText.innerHTML = `
+                        <strong>Command:</strong> "${command}"<br>
+                        <strong>Network Error:</strong> ${error.message}<br>
+                        <strong>Status:</strong> Connection Failed<br>
+                        <strong>Time:</strong> ${new Date().toLocaleTimeString()}
+                    `;
                     responseContainer.style.display = 'block';
                     updateStatus('CONNECTION FAILED');
-                    updateVoiceStatus('OFFLINE');
+                    updateVoiceStatus('NETWORK ERROR');
                     updateReadoutValue('apiStatus', 'DISCONNECTED');
-                    showSystemMessage('Network connection error');
+                    showSystemMessage('Network connection error - check server status');
                     
-                    // Auto-hide error after 10 seconds
+                    // Auto-hide error after 15 seconds
                     setTimeout(() => {
-                        responseContainer.style.display = 'none';
-                    }, 10000);
+                        if (responseContainer.style.display === 'block') {
+                            responseContainer.style.display = 'none';
+                        }
+                    }, 15000);
                 }
                 
-                // Reset after 2 seconds
+                // Reset interface after 3 seconds
                 setTimeout(() => {
                     resetInterface();
                     updateReadoutValue('apiStatus', 'CONNECTED');
-                }, 2000);
+                }, 3000);
             }
 
             function sendTextCommand() {
@@ -1188,12 +1272,46 @@ async def process_command(request: CommandRequest, db: Session = Depends(get_db)
             except:
                 response = "I can help with simple math. Try saying something like '5 + 3'"
                 
+        elif any(phrase in command for phrase in ["joke", "tell me a joke", "funny"]):
+            jokes = [
+                "Why don't scientists trust atoms? Because they make up everything!",
+                "I told my wife she was drawing her eyebrows too high. She looked surprised.",
+                "Why did the scarecrow win an award? He was outstanding in his field!",
+                "I'm reading a book about anti-gravity. It's impossible to put down!",
+                "Why don't eggs tell jokes? They'd crack each other up!"
+            ]
+            import random
+            response = random.choice(jokes)
+            
+        elif any(phrase in command for phrase in ["system", "status", "diagnostics"]):
+            response = "All systems operational. Arc reactor at optimal efficiency. No errors detected."
+            
+        elif any(phrase in command for phrase in ["shutdown", "power off", "turn off"]):
+            response = "I cannot shut down core systems. Voice interface will remain active for your safety."
+            
+        elif any(phrase in command for phrase in ["who are you", "what are you", "introduce yourself"]):
+            response = "I am JARVIS, your advanced AI assistant. I'm here to help with various tasks and answer your questions."
+            
+        elif any(phrase in command for phrase in ["thank you", "thanks", "appreciate"]):
+            response = "You're welcome! I'm always here to help whenever you need assistance."
+            
+        elif any(phrase in command for phrase in ["good morning", "good afternoon", "good evening"]):
+            hour = datetime.now().hour
+            if hour < 12:
+                response = "Good morning! I hope you have a productive day ahead."
+            elif hour < 17:
+                response = "Good afternoon! How may I assist you today?"
+            else:
+                response = "Good evening! What can I help you with this evening?"
+                
         elif any(phrase in command for phrase in ["help", "what can you do", "commands"]):
             response = """I can help you with:
 • Time and date queries
 • Simple math calculations  
 • Basic greetings and conversation
 • System status information
+• Tell jokes and have casual conversations
+• Weather and news (requires API configuration)
 • Command history and analytics
 
 For advanced features like weather, news, email, and smart home control, additional API keys and configurations are needed."""
