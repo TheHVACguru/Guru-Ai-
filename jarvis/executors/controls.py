@@ -53,7 +53,13 @@ def restart(ask: bool = True) -> None:
             os.system("shutdown /r /t 1")
         else:
             if models.env.root_password:
-                os.system(f"echo {models.env.root_password} | sudo -S reboot")
+                # Use subprocess with stdin to safely pass password without shell injection
+                process = subprocess.Popen(
+                    ["sudo", "-S", "reboot"],
+                    stdin=subprocess.PIPE,
+                    text=True
+                )
+                process.communicate(input=f"{models.env.root_password}\n")
             else:
                 support.no_env_vars()
                 return
@@ -248,7 +254,13 @@ def shutdown(*args, proceed: bool = False) -> None:
             os.system("shutdown /s /t 1")
         else:
             if models.env.root_password:
-                os.system(f"echo {models.env.root_password} | sudo -S shutdown -P now")
+                # Use subprocess with stdin to safely pass password without shell injection
+                process = subprocess.Popen(
+                    ["sudo", "-S", "shutdown", "-P", "now"],
+                    stdin=subprocess.PIPE,
+                    text=True
+                )
+                process.communicate(input=f"{models.env.root_password}\n")
             else:
                 support.no_env_vars()
                 return
