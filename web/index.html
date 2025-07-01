@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Assistant - Control Panel</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-microphone-alt me-2"></i>
+                Voice Assistant
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#voice">Voice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#devices">Devices</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#settings">Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Status Bar -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="status-indicator me-3" id="statusIndicator">
+                                        <div class="status-dot"></div>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">System Status</h6>
+                                        <small class="text-muted" id="statusText">Connecting...</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <i class="fas fa-microphone text-primary"></i>
+                                    <div>
+                                        <small class="text-muted">Wake Word</small>
+                                        <div id="wakeWord" class="fw-bold">assistant</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <i class="fas fa-volume-up text-success"></i>
+                                    <div>
+                                        <small class="text-muted">Voice</small>
+                                        <div id="voiceStatus" class="fw-bold">Ready</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <i class="fas fa-brain text-info"></i>
+                                    <div>
+                                        <small class="text-muted">AI</small>
+                                        <div id="aiStatus" class="fw-bold">Available</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Tabs -->
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="voice-tab" data-bs-toggle="tab" data-bs-target="#voice" type="button">
+                            <i class="fas fa-microphone me-2"></i>Voice Control
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="devices-tab" data-bs-toggle="tab" data-bs-target="#devices" type="button">
+                            <i class="fas fa-cogs me-2"></i>Devices
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="smart-home-tab" data-bs-toggle="tab" data-bs-target="#smart-home" type="button">
+                            <i class="fas fa-home me-2"></i>Smart Home
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button">
+                            <i class="fas fa-cog me-2"></i>Settings
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-4" id="mainTabContent">
+                    <!-- Dashboard Tab -->
+                    <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                        <div class="row">
+                            <!-- Quick Actions -->
+                            <div class="col-lg-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-bolt me-2"></i>Quick Actions
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            <div class="col-6">
+                                                <button class="btn btn-primary w-100" onclick="quickAction('weather')">
+                                                    <i class="fas fa-cloud-sun mb-2"></i><br>Weather
+                                                </button>
+                                            </div>
+                                            <div class="col-6">
+                                                <button class="btn btn-success w-100" onclick="quickAction('news')">
+                                                    <i class="fas fa-newspaper mb-2"></i><br>News
+                                                </button>
+                                            </div>
+                                            <div class="col-6">
+                                                <button class="btn btn-info w-100" onclick="quickAction('time')">
+                                                    <i class="fas fa-clock mb-2"></i><br>Time
+                                                </button>
+                                            </div>
+                                            <div class="col-6">
+                                                <button class="btn btn-warning w-100" onclick="quickAction('calendar')">
+                                                    <i class="fas fa-calendar mb-2"></i><br>Calendar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Activity -->
+                            <div class="col-lg-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-history me-2"></i>Recent Activity
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="recentActivity" class="activity-list">
+                                            <div class="activity-item">
+                                                <i class="fas fa-microphone text-primary"></i>
+                                                <span>Voice Assistant started</span>
+                                                <small class="text-muted">Just now</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- System Information -->
+                            <div class="col-12 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-info-circle me-2"></i>System Information
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row" id="systemInfo">
+                                            <div class="col-md-3">
+                                                <div class="info-item">
+                                                    <label>Version</label>
+                                                    <div class="info-value">1.0.0</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="info-item">
+                                                    <label>Uptime</label>
+                                                    <div class="info-value" id="uptime">--</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="info-item">
+                                                    <label>Commands</label>
+                                                    <div class="info-value" id="commandCount">0</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="info-item">
+                                                    <label>API Status</label>
+                                                    <div class="info-value" id="apiStatus">Active</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Voice Control Tab -->
+                    <div class="tab-pane fade" id="voice" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-microphone me-2"></i>Voice Commands
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="voice-control-panel">
+                                            <div class="voice-visualizer mb-4">
+                                                <canvas id="voiceCanvas" width="400" height="100"></canvas>
+                                            </div>
+                                            
+                                            <div class="text-center mb-4">
+                                                <button id="listenBtn" class="btn btn-primary btn-lg rounded-circle" style="width: 80px; height: 80px;">
+                                                    <i class="fas fa-microphone fa-2x"></i>
+                                                </button>
+                                                <div class="mt-2">
+                                                    <small class="text-muted">Click to start listening</small>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="commandInput" class="form-label">Text Command</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="commandInput" placeholder="Type a command or use voice...">
+                                                    <button class="btn btn-outline-primary" onclick="sendTextCommand()">
+                                                        <i class="fas fa-paper-plane"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div id="commandResponse" class="alert alert-info d-none">
+                                                <h6>Response:</h6>
+                                                <div id="responseText"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-list me-2"></i>Available Commands
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="accordion" id="commandAccordion">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#systemCommands">
+                                                        System Commands
+                                                    </button>
+                                                </h2>
+                                                <div id="systemCommands" class="accordion-collapse collapse show">
+                                                    <div class="accordion-body">
+                                                        <ul class="list-unstyled">
+                                                            <li><code>What time is it?</code></li>
+                                                            <li><code>What's the date?</code></li>
+                                                            <li><code>Turn volume up/down</code></li>
+                                                            <li><code>Increase brightness</code></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#infoCommands">
+                                                        Information Commands
+                                                    </button>
+                                                </h2>
+                                                <div id="infoCommands" class="accordion-collapse collapse">
+                                                    <div class="accordion-body">
+                                                        <ul class="list-unstyled">
+                                                            <li><code>What's the weather?</code></li>
+                                                            <li><code>Tell me the news</code></li>
+                                                            <li><code>Check stock prices</code></li>
+                                                            <li><code>Calculate 2 + 2</code></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#smartHomeCommands">
+                                                        Smart Home Commands
+                                                    </button>
+                                                </h2>
+                                                <div id="smartHomeCommands" class="accordion-collapse collapse">
+                                                    <div class="accordion-body">
+                                                        <ul class="list-unstyled">
+                                                            <li><code>Turn lights on/off</code></li>
+                                                            <li><code>Dim the lights</code></li>
+                                                            <li><code>Turn TV on/off</code></li>
+                                                            <li><code>Change to channel 5</code></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Devices Tab -->
+                    <div class="tab-pane fade" id="devices" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-microphone-alt me-2"></i>Audio Devices
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Microphone</label>
+                                            <select class="form-select" id="microphoneSelect">
+                                                <option>Loading...</option>
+                                            </select>
+                                            <button class="btn btn-sm btn-outline-primary mt-2" onclick="testMicrophone()">
+                                                <i class="fas fa-play me-1"></i>Test Microphone
+                                            </button>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Speaker</label>
+                                            <select class="form-select" id="speakerSelect">
+                                                <option>Loading...</option>
+                                            </select>
+                                            <button class="btn btn-sm btn-outline-primary mt-2" onclick="testSpeaker()">
+                                                <i class="fas fa-volume-up me-1"></i>Test Speaker
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-camera me-2"></i>Camera
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Camera Device</label>
+                                            <select class="form-select" id="cameraSelect">
+                                                <option>Loading...</option>
+                                            </select>
+                                        </div>
+                                        <div class="camera-preview mb-3">
+                                            <img id="cameraPreview" class="img-fluid" style="max-height: 200px;" alt="Camera preview">
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-outline-primary" onclick="startCameraPreview()">
+                                                <i class="fas fa-play me-1"></i>Preview
+                                            </button>
+                                            <button class="btn btn-outline-success" onclick="takePhoto()">
+                                                <i class="fas fa-camera me-1"></i>Take Photo
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-voice me-2"></i>Voice Settings
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Voice</label>
+                                                <select class="form-select" id="voiceSelect">
+                                                    <option>Loading...</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Speed</label>
+                                                <input type="range" class="form-range" id="voiceSpeed" min="50" max="300" value="200">
+                                                <small class="text-muted">200 WPM</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Volume</label>
+                                                <input type="range" class="form-range" id="voiceVolume" min="0" max="100" value="80">
+                                                <small class="text-muted">80%</small>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <button class="btn btn-primary" onclick="testVoice()">
+                                                <i class="fas fa-play me-1"></i>Test Voice
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Smart Home Tab -->
+                    <div class="tab-pane fade" id="smart-home" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-4 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-lightbulb me-2"></i>Lights
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="lightDevices" class="device-list">
+                                            <div class="device-item">
+                                                <div class="device-info">
+                                                    <strong>Living Room</strong>
+                                                    <small class="text-muted d-block">MagicHome Light</small>
+                                                </div>
+                                                <div class="device-controls">
+                                                    <button class="btn btn-sm btn-outline-primary" onclick="toggleLight('living-room')">
+                                                        <i class="fas fa-power-off"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-outline-secondary btn-sm mt-2" onclick="discoverLights()">
+                                            <i class="fas fa-search me-1"></i>Discover Devices
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-tv me-2"></i>Entertainment
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="entertainmentDevices" class="device-list">
+                                            <div class="device-item">
+                                                <div class="device-info">
+                                                    <strong>Living Room TV</strong>
+                                                    <small class="text-muted d-block">LG WebOS</small>
+                                                </div>
+                                                <div class="device-controls">
+                                                    <button class="btn btn-sm btn-outline-primary" onclick="toggleTV()">
+                                                        <i class="fas fa-power-off"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-magic me-2"></i>Scenes
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-outline-primary" onclick="activateScene('movie-time')">
+                                                <i class="fas fa-film me-2"></i>Movie Time
+                                            </button>
+                                            <button class="btn btn-outline-secondary" onclick="activateScene('bedtime')">
+                                                <i class="fas fa-moon me-2"></i>Bedtime
+                                            </button>
+                                            <button class="btn btn-outline-warning" onclick="activateScene('morning')">
+                                                <i class="fas fa-sun me-2"></i>Morning
+                                            </button>
+                                            <button class="btn btn-outline-info" onclick="activateScene('work')">
+                                                <i class="fas fa-laptop me-2"></i>Work
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div class="tab-pane fade" id="settings" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-cog me-2"></i>General Settings
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Wake Word</label>
+                                            <input type="text" class="form-control" id="wakeWordInput" value="assistant">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Language</label>
+                                            <select class="form-select" id="languageSelect">
+                                                <option value="en-US">English (US)</option>
+                                                <option value="en-GB">English (UK)</option>
+                                                <option value="es-ES">Spanish</option>
+                                                <option value="fr-FR">French</option>
+                                                <option value="de-DE">German</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Sensitivity</label>
+                                            <input type="range" class="form-range" id="sensitivityRange" min="0.1" max="1.0" step="0.1" value="0.5">
+                                            <small class="text-muted">0.5</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-key me-2"></i>API Configuration
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">OpenAI API Key</label>
+                                            <input type="password" class="form-control" id="openaiKey" placeholder="sk-...">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Weather API Key</label>
+                                            <input type="password" class="form-control" id="weatherKey" placeholder="Enter OpenWeatherMap API key">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">News API Key</label>
+                                            <input type="password" class="form-control" id="newsKey" placeholder="Enter NewsAPI key">
+                                        </div>
+                                        <button class="btn btn-primary" onclick="saveApiKeys()">
+                                            <i class="fas fa-save me-1"></i>Save API Keys
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-shield-alt me-2"></i>Privacy & Security
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-check form-switch mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="enableFaceRecognition">
+                                                    <label class="form-check-label" for="enableFaceRecognition">
+                                                        Enable Face Recognition
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-switch mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="enableSmartHome" checked>
+                                                    <label class="form-check-label" for="enableSmartHome">
+                                                        Enable Smart Home Control
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-switch mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="enableTelegram">
+                                                    <label class="form-check-label" for="enableTelegram">
+                                                        Enable Telegram Bot
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-check form-switch mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="enableLogging" checked>
+                                                    <label class="form-check-label" for="enableLogging">
+                                                        Enable Command Logging
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-switch mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="enableOfflineMode">
+                                                    <label class="form-check-label" for="enableOfflineMode">
+                                                        Offline Mode (when possible)
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-switch mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="enableDebugMode">
+                                                    <label class="form-check-label" for="enableDebugMode">
+                                                        Debug Mode
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Visualizer Modal -->
+    <div class="modal fade" id="audioVisualizerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-wave-square me-2"></i>Audio Visualizer
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <canvas id="audioVisualizerCanvas" width="600" height="300"></canvas>
+                    <div class="mt-3 text-center">
+                        <button class="btn btn-primary" onclick="startAudioVisualization()">
+                            <i class="fas fa-play me-1"></i>Start Visualization
+                        </button>
+                        <button class="btn btn-secondary" onclick="stopAudioVisualization()">
+                            <i class="fas fa-stop me-1"></i>Stop
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="fas fa-info-circle text-primary me-2"></i>
+                <strong class="me-auto">Voice Assistant</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                <!-- Toast message will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
