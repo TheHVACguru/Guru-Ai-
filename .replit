@@ -22,7 +22,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python simple_api.py"
+args = "python main.py"
 waitForPort = 5000
 
 [[ports]]

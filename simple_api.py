@@ -159,6 +159,7 @@ async def startup_event():
             db.close()
 
 @app.get("/", response_class=HTMLResponse)
+@app.head("/")
 async def root():
     """Root endpoint with a simple web interface."""
     html_content = """
@@ -259,8 +260,8 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint."""
-    return {"status": "healthy", "service": "voice-assistant-api", "version": "1.0.0"}
+    """Health check endpoint - returns 200 OK for deployment health checks."""
+    return {"status": "healthy", "service": "voice-assistant-api", "version": "1.0.0", "ready": True}
 
 @app.get("/status", response_model=StatusResponse)
 async def get_status(db: Session = Depends(get_db)):
@@ -455,5 +456,10 @@ async def clear_command_history(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Error clearing command history")
 
 if __name__ == "__main__":
-    logger.info("Starting Voice Assistant API server...")
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    import os
+    
+    # Get port from environment (Cloud Run sets PORT automatically)
+    port = int(os.environ.get("PORT", 5000))
+    
+    logger.info(f"Starting Voice Assistant API server on port {port}...")
+    uvicorn.run(app, host="0.0.0.0", port=port)

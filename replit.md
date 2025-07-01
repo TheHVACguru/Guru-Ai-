@@ -115,6 +115,12 @@ jarvis/
 - **Containerized Deployment**: Docker support for isolated environments
 
 ## Changelog
+- July 01, 2025: Fixed OpenAPI specification and deployment configuration
+  - Resolved required vs nullable field contradictions in API schemas
+  - Added comprehensive JSON schema examples and documentation
+  - Created proper deployment configuration with main.py entry point
+  - Fixed health endpoints to support HEAD requests for Cloud Run
+  - Added Dockerfile and deployment scripts for containerization
 - July 01, 2025: Added PostgreSQL database integration with SQLite fallback
   - Implemented command logging and analytics
   - Added database endpoints for history and statistics
