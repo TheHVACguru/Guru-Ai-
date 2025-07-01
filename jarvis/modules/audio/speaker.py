@@ -61,7 +61,7 @@ def speech_synthesizer(
             headers={"Content-Type": "text/plain"},
             params={"voice": voice, "vocoder": quality},
             data=text,
-            verify=False,
+            verify=True,
             timeout=timeout
             or models.env.speech_synthesis_timeout,  # set timeout here as speak() sets it on demand
         )
