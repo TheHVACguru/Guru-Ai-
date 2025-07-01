@@ -115,6 +115,11 @@ jarvis/
 - **Containerized Deployment**: Docker support for isolated environments
 
 ## Changelog
+- July 01, 2025: Fixed critical command injection security vulnerability in alarm.py
+  - Patched os.system() call in jarvis/executors/alarm.py line 382 to prevent command injection
+  - Replaced os.system(f"start wmplayer {models.indicators.alarm}") with subprocess.call(["cmd", "/c", "start", "wmplayer", models.indicators.alarm])
+  - Vulnerability allowed potential arbitrary command execution on Windows systems
+  - Fixed ensures safe execution of media player commands without security risk
 - July 01, 2025: Fixed critical command injection security vulnerability
   - Patched subprocess.check_output in port_handler.py to prevent command injection
   - Added strict input validation and removed shell=True for safe command execution

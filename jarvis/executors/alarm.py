@@ -379,6 +379,6 @@ def executor() -> None:
     if models.settings.os != enums.SupportedPlatforms.windows:
         subprocess.call(["open", models.indicators.alarm])
     else:
-        os.system(f"start wmplayer {models.indicators.alarm}")
+        subprocess.call(["cmd", "/c", "start", "wmplayer", models.indicators.alarm])
     time.sleep(200)
     pyvolume.custom(models.env.volume, logger)
