@@ -1,0 +1,26 @@
+modules = ["python-3.11"]
+
+[nix]
+channel = "stable-24_05"
+packages = ["cairo", "cargo", "espeak-ng", "ffmpeg-full", "freetype", "ghostscript", "gobject-introspection", "gtk3", "libGL", "libGLU", "libiconv", "libxcrypt", "libyaml", "openssl", "pkg-config", "portaudio", "qhull", "rustc", "tcl", "tk"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Voice Assistant API"
+
+[[workflows.workflow]]
+name = "Voice Assistant API"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python simple_api.py"
+waitForPort = 5000
