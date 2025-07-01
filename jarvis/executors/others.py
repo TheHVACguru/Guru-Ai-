@@ -147,7 +147,7 @@ def music(phrase: str = None) -> None:
             google_home(device=phrase, file=chosen)
         else:
             if models.settings.os == enums.SupportedPlatforms.windows:
-                os.system(f'start wmplayer "{chosen}"')
+                subprocess.call(["cmd", "/c", "start", "wmplayer", chosen])
             else:
                 subprocess.call(["open", chosen])
             support.flush_screen()
