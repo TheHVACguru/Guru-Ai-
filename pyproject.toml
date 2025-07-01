@@ -79,6 +79,8 @@ dependencies = [
     "webull>=0.6.1",
     "yfinance>=0.2.64",
     "pyhtcc>=0.1.57",
+    "psycopg2-binary>=2.9.10",
+    "sqlalchemy>=2.0.41",
 ]
 
 [tool.setuptools]

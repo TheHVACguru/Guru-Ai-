@@ -5,14 +5,18 @@ A minimal FastAPI server that provides essential voice assistant functionality.
 """
 
 import logging
+import time
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 import uvicorn
+
+from models import create_tables, get_db, CommandLog, SystemMetric, UserPreference
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -38,21 +42,69 @@ app.add_middleware(
 class CommandRequest(BaseModel):
     command: str
     source: str = "api"
+    user_id: Optional[str] = None
 
 class CommandResponse(BaseModel):
     success: bool
     response: str
     command: str
     timestamp: datetime
+    processing_time_ms: Optional[float] = None
+    log_id: Optional[int] = None
 
 class StatusResponse(BaseModel):
     status: str
     version: str
     features: Dict[str, bool]
     uptime_seconds: float
+    total_commands: int
+    database_status: str
+
+class CommandHistoryResponse(BaseModel):
+    id: int
+    command: str
+    response: str
+    success: bool
+    timestamp: datetime
+    processing_time_ms: Optional[float]
+
+class DatabaseStatsResponse(BaseModel):
+    total_commands: int
+    successful_commands: int
+    failed_commands: int
+    average_processing_time_ms: Optional[float]
+    most_recent_command: Optional[datetime]
 
 # Global state
 start_time = datetime.now()
+
+# Initialize database on startup
+try:
+    create_tables()
+    logger.info("Database tables created successfully")
+except Exception as e:
+    logger.error(f"Error creating database tables: {e}")
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database and log startup"""
+    db = None
+    try:
+        # Create a system metric for startup
+        db = next(get_db())
+        metric = SystemMetric(
+            metric_name="server_startup",
+            metric_value=1.0,
+            metric_unit="count"
+        )
+        db.add(metric)
+        db.commit()
+        logger.info("Startup metric logged to database")
+    except Exception as e:
+        logger.error(f"Error logging startup metric: {e}")
+    finally:
+        if db:
+            db.close()
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -110,6 +162,16 @@ async def root():
             </div>
             
             <div class="endpoint">
+                <span class="method">GET</span> <strong>/commands/history</strong><br>
+                View command history from database
+            </div>
+            
+            <div class="endpoint">
+                <span class="method">GET</span> <strong>/commands/stats</strong><br>
+                Get database analytics and statistics
+            </div>
+            
+            <div class="endpoint">
                 <span class="method">GET</span> <strong>/docs</strong><br>
                 Interactive API documentation
             </div>
@@ -149,9 +211,18 @@ async def health_check():
     return {"status": "healthy", "service": "voice-assistant-api", "version": "1.0.0"}
 
 @app.get("/status", response_model=StatusResponse)
-async def get_status():
+async def get_status(db: Session = Depends(get_db)):
     """Get system status and capabilities."""
     uptime = (datetime.now() - start_time).total_seconds()
+    
+    # Get total commands from database
+    try:
+        total_commands = db.query(CommandLog).count()
+        database_status = "connected"
+    except Exception as e:
+        logger.error(f"Database error: {e}")
+        total_commands = 0
+        database_status = "error"
     
     return StatusResponse(
         status="running",
@@ -160,6 +231,9 @@ async def get_status():
             "text_processing": True,
             "time_queries": True,
             "basic_math": True,
+            "database_logging": database_status == "connected",
+            "command_history": database_status == "connected",
+            "analytics": database_status == "connected",
             "weather": False,  # Would need API key
             "news": False,     # Would need API key
             "email": False,    # Would need credentials
@@ -167,13 +241,18 @@ async def get_status():
             "voice_recognition": False,  # Audio not available
             "smart_home": False,  # Would need device integrations
         },
-        uptime_seconds=uptime
+        uptime_seconds=uptime,
+        total_commands=total_commands,
+        database_status=database_status
     )
 
 @app.post("/command", response_model=CommandResponse)
-async def process_command(request: CommandRequest):
+async def process_command(request: CommandRequest, db: Session = Depends(get_db)):
     """Process a voice command and return a response."""
+    start_time = time.time()
     command = request.command.lower().strip()
+    success = True
+    log_id = None
     
     try:
         # Simple command processing
@@ -221,27 +300,107 @@ async def process_command(request: CommandRequest):
 • Simple math calculations  
 • Basic greetings and conversation
 • System status information
+• Command history and analytics
 
 For advanced features like weather, news, email, and smart home control, additional API keys and configurations are needed."""
             
         else:
             response = f"I heard you say: '{request.command}'. I'm a basic assistant right now. Try asking about the time, date, or say 'help' to see what I can do."
         
-        return CommandResponse(
-            success=True,
-            response=response,
-            command=request.command,
-            timestamp=datetime.now()
-        )
-        
     except Exception as e:
         logger.error(f"Error processing command '{command}': {e}")
-        return CommandResponse(
-            success=False,
-            response=f"Sorry, I encountered an error processing your command: {str(e)}",
+        response = f"Sorry, I encountered an error processing your command: {str(e)}"
+        success = False
+    
+    # Calculate processing time
+    processing_time = (time.time() - start_time) * 1000  # Convert to milliseconds
+    
+    # Log to database
+    try:
+        command_log = CommandLog(
             command=request.command,
-            timestamp=datetime.now()
+            response=response,
+            source=request.source,
+            success=success,
+            processing_time_ms=processing_time,
+            user_id=request.user_id
         )
+        db.add(command_log)
+        db.commit()
+        db.refresh(command_log)
+        log_id = command_log.id
+        logger.info(f"Command logged to database with ID: {log_id}")
+    except Exception as e:
+        logger.error(f"Error logging command to database: {e}")
+    
+    return CommandResponse(
+        success=success,
+        response=response,
+        command=request.command,
+        timestamp=datetime.now(),
+        processing_time_ms=processing_time,
+        log_id=log_id
+    )
+
+@app.get("/commands/history", response_model=List[CommandHistoryResponse])
+async def get_command_history(limit: int = 50, offset: int = 0, db: Session = Depends(get_db)):
+    """Get command history from the database"""
+    try:
+        commands = db.query(CommandLog).order_by(CommandLog.timestamp.desc()).offset(offset).limit(limit).all()
+        return [
+            CommandHistoryResponse(
+                id=cmd.id,
+                command=cmd.command,
+                response=cmd.response,
+                success=cmd.success,
+                timestamp=cmd.timestamp,
+                processing_time_ms=cmd.processing_time_ms
+            ) for cmd in commands
+        ]
+    except Exception as e:
+        logger.error(f"Error fetching command history: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching command history")
+
+@app.get("/commands/stats", response_model=DatabaseStatsResponse)
+async def get_database_stats(db: Session = Depends(get_db)):
+    """Get database statistics and analytics"""
+    try:
+        from sqlalchemy import func
+        
+        total_commands = db.query(CommandLog).count()
+        successful_commands = db.query(CommandLog).filter(CommandLog.success == True).count()
+        failed_commands = total_commands - successful_commands
+        
+        # Get average processing time
+        avg_processing_time = db.query(func.avg(CommandLog.processing_time_ms)).scalar()
+        
+        # Get most recent command timestamp
+        most_recent = db.query(func.max(CommandLog.timestamp)).scalar()
+        
+        return DatabaseStatsResponse(
+            total_commands=total_commands,
+            successful_commands=successful_commands,
+            failed_commands=failed_commands,
+            average_processing_time_ms=avg_processing_time,
+            most_recent_command=most_recent
+        )
+    except Exception as e:
+        logger.error(f"Error fetching database stats: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching database statistics")
+
+@app.delete("/commands/clear")
+async def clear_command_history(db: Session = Depends(get_db)):
+    """Clear all command history (use with caution)"""
+    try:
+        deleted_count = db.query(CommandLog).count()
+        db.query(CommandLog).delete()
+        db.commit()
+        logger.info(f"Cleared {deleted_count} commands from history")
+        return {"message": f"Successfully cleared {deleted_count} commands from history"}
+    except Exception as e:
+        logger.error(f"Error clearing command history: {e}")
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Error clearing command history")
 
 if __name__ == "__main__":
     logger.info("Starting Voice Assistant API server...")

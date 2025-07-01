@@ -10,7 +10,7 @@ Jarvis is a comprehensive voice-activated virtual assistant built in Python. It 
 - **Voice Processing Engine**: Uses PvPorcupine for wake word detection and speech recognition for voice input processing
 - **Command Processing Pipeline**: Modular executor system that routes voice commands to appropriate handlers
 - **FastAPI Web Server**: RESTful API interface for web-based interactions and remote control
-- **Database Layer**: SQLite for local data storage (alarms, reminders, configurations)
+- **Database Layer**: PostgreSQL with SQLite fallback for data persistence (command logs, analytics, user preferences)
 - **Audio Engine**: Text-to-speech synthesis and audio playback capabilities
 
 ### Application Structure
@@ -115,7 +115,11 @@ jarvis/
 - **Containerized Deployment**: Docker support for isolated environments
 
 ## Changelog
-- July 01, 2025. Initial setup
+- July 01, 2025: Added PostgreSQL database integration with SQLite fallback
+  - Implemented command logging and analytics
+  - Added database endpoints for history and statistics
+  - Created models for CommandLog, UserPreference, SystemMetric, and ApiKey
+- July 01, 2025: Initial setup
 
 ## User Preferences
 
