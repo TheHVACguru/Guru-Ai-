@@ -860,6 +860,11 @@ async def root():
             }
 
             async function toggleListening() {
+                // Prevent multiple rapid clicks
+                if (document.getElementById('reactorCore').classList.contains('processing')) {
+                    return;
+                }
+                
                 if (!isListening) {
                     startListening();
                 } else {
@@ -950,10 +955,15 @@ async def root():
                 
                 // Focus on text input as fallback
                 const textInput = document.getElementById('commandInput');
-                textInput.focus();
-                textInput.placeholder = 'Voice unavailable - type command here...';
+                setTimeout(() => {
+                    textInput.focus();
+                    textInput.placeholder = 'Voice unavailable - type command here...';
+                }, 100);
                 
-                resetInterface();
+                // Don't reset interface immediately to show the error state
+                setTimeout(() => {
+                    resetInterface();
+                }, 2000);
             }
 
             function stopListening() {
@@ -972,10 +982,16 @@ async def root():
             async function sendCommand(commandText) {
                 const command = commandText || document.getElementById('commandInput').value.trim();
                 
-                if (!command) {
+                if (!command || command.length < 1) {
                     updateStatus('NO COMMAND ENTERED');
                     updateVoiceStatus('WAITING FOR INPUT');
-                    showSystemMessage('Please enter a command');
+                    
+                    // Only show message if user actually tried to send empty command
+                    if (commandText === '' || document.getElementById('commandInput').value === '') {
+                        showSystemMessage('Please enter a command first');
+                        // Focus on input field
+                        document.getElementById('commandInput').focus();
+                    }
                     return;
                 }
 
@@ -1076,20 +1092,29 @@ async def root():
                     }, 15000);
                 }
                 
-                // Reset interface after 3 seconds
+                // Reset interface after response is complete
                 setTimeout(() => {
-                    resetInterface();
-                    updateReadoutValue('apiStatus', 'CONNECTED');
-                }, 3000);
+                    if (!isListening) {
+                        resetInterface();
+                        updateReadoutValue('apiStatus', 'CONNECTED');
+                    }
+                }, 2500);
             }
 
             function sendTextCommand() {
-                sendCommand();
+                const command = document.getElementById('commandInput').value.trim();
+                if (command) {
+                    sendCommand(command);
+                } else {
+                    showSystemMessage('Please type a command first');
+                    document.getElementById('commandInput').focus();
+                }
             }
 
             function handleKeyPress(event) {
                 if (event.key === 'Enter') {
-                    sendCommand();
+                    event.preventDefault();
+                    sendTextCommand();
                 }
             }
 
@@ -1167,13 +1192,20 @@ async def root():
                 }, 3000);
             }
 
-            // Hide response when starting new input
+            // Hide response when starting new input and prevent accidental empty commands
             document.addEventListener('click', function(event) {
                 if (event.target.id === 'commandInput') {
                     const responseContainer = document.getElementById('responseContainer');
                     if (responseContainer.style.display === 'block') {
                         responseContainer.style.display = 'none';
                     }
+                }
+            });
+
+            // Add input event listener to clear any lingering status messages
+            document.getElementById('commandInput').addEventListener('input', function() {
+                if (this.value.trim().length > 0) {
+                    updateVoiceStatus('READY TO SEND');
                 }
             });
         </script>
