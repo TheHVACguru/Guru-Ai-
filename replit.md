@@ -115,6 +115,11 @@ jarvis/
 - **Containerized Deployment**: Docker support for isolated environments
 
 ## Changelog
+- July 01, 2025: Fixed SQL injection security vulnerabilities
+  - Patched SQL string concatenation in jarvis/modules/database/database.py lines 123-126
+  - Fixed SQL injection in jarvis/api/squire/stockmonitor_squire.py in cleanup_stock_userdata() and insert_stock_userdata()
+  - Replaced f-string SQL concatenation with parameterized queries using hardcoded column names
+  - Changed random column selection to use conditional statements instead of dynamic SQL
 - July 01, 2025: Fixed critical command injection security vulnerability
   - Patched subprocess.check_output in port_handler.py to prevent command injection
   - Added input validation and shlex.quote() for safe command execution

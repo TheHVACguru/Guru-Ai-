@@ -120,10 +120,12 @@ class __TestDatabase:
         self.db.create_table(table_name="TestDatabase", columns=["row", "column"])
         with self.db.connection as connection:
             cursor_ = connection.cursor()
-            cursor_.execute(
-                f"INSERT INTO TestDatabase ({random.choice(['row', 'column'])}) VALUES (?);",
-                (True,),
-            )
+            # Use parameterized column selection to avoid SQL injection
+            column_name = random.choice(['row', 'column'])
+            if column_name == 'row':
+                cursor_.execute("INSERT INTO TestDatabase (row) VALUES (?);", (True,))
+            else:
+                cursor_.execute("INSERT INTO TestDatabase (column) VALUES (?);", (True,))
             connection.commit()
             if (
                 row := cursor_.execute("SELECT row FROM TestDatabase").fetchone()

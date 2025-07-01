@@ -23,10 +23,10 @@ def cleanup_stock_userdata() -> None:
             cursor = connection.cursor()
             cursor.execute("DELETE FROM stock")
             for params in cleaned:
-                query = (
-                    f"INSERT or REPLACE INTO stock {settings.stock_monitor.user_info} "
-                    f"VALUES {settings.stock_monitor.values};"
-                )
+                # Use safe column names and parameterized query
+                columns = "(ticker, email, max, min, correction, repeat)"
+                placeholders = "(?, ?, ?, ?, ?, ?)"
+                query = f"INSERT or REPLACE INTO stock {columns} VALUES {placeholders};"
                 cursor.execute(query, params)
             connection.commit()
 
@@ -41,10 +41,10 @@ def insert_stock_userdata(
     """
     with stock_db.connection as connection:
         cursor = connection.cursor()
-        query = (
-            f"INSERT or REPLACE INTO stock {settings.stock_monitor.user_info} "
-            f"VALUES {settings.stock_monitor.values};"
-        )
+        # Use safe column names and parameterized query
+        columns = "(ticker, email, max, min, correction, repeat)"
+        placeholders = "(?, ?, ?, ?, ?, ?)"
+        query = f"INSERT or REPLACE INTO stock {columns} VALUES {placeholders};"
         cursor.execute(query, params)
         connection.commit()
 
