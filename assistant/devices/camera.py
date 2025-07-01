@@ -2,14 +2,25 @@
 Camera device integration for face recognition and detection.
 """
 
-import cv2
 import numpy as np
 from typing import Optional, List, Dict, Any, Generator
-import face_recognition
 import threading
 import time
 from pathlib import Path
 from assistant.utils.logger import setup_logger
+
+# Try to import camera dependencies
+try:
+    import cv2
+    CV2_AVAILABLE = True
+except ImportError:
+    CV2_AVAILABLE = False
+
+try:
+    import face_recognition
+    FACE_RECOGNITION_AVAILABLE = True
+except ImportError:
+    FACE_RECOGNITION_AVAILABLE = False
 
 logger = setup_logger(__name__)
 

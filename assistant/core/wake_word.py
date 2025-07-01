@@ -6,9 +6,20 @@ import asyncio
 import struct
 import threading
 from typing import Optional
-import pyaudio
-import pvporcupine
 from assistant.utils.logger import setup_logger
+
+# Try to import audio dependencies
+try:
+    import pyaudio
+    PYAUDIO_AVAILABLE = True
+except ImportError:
+    PYAUDIO_AVAILABLE = False
+
+try:
+    import pvporcupine
+    PORCUPINE_AVAILABLE = True
+except ImportError:
+    PORCUPINE_AVAILABLE = False
 
 logger = setup_logger(__name__)
 
@@ -22,10 +33,18 @@ class WakeWordDetector:
         self.audio_stream = None
         self.pa = None
         self.running = False
-        self._setup_porcupine()
+        self.available = PYAUDIO_AVAILABLE and PORCUPINE_AVAILABLE
+        
+        if self.available:
+            self._setup_porcupine()
+        else:
+            logger.warning("Wake word detection disabled: missing audio dependencies (pyaudio or pvporcupine)")
         
     def _setup_porcupine(self):
         """Setup Porcupine wake word detection."""
+        if not self.available:
+            return
+            
         try:
             # Get available wake word models
             keywords = ["alexa", "bumblebee", "computer", "hey google", "hey siri", "jarvis", "picovoice", "porcupine", "terminator"]
@@ -36,9 +55,10 @@ class WakeWordDetector:
                 logger.warning(f"Wake word '{keyword}' not available in built-in models. Using 'porcupine'")
                 keyword = "porcupine"
             
+            # Note: pvporcupine requires an access key for some versions
+            # For now, we'll use a basic setup without key
             self.porcupine = pvporcupine.create(
-                keywords=[keyword],
-                sensitivities=[self.config.sensitivity]
+                keywords=[keyword]
             )
             
             self.pa = pyaudio.PyAudio()
@@ -47,10 +67,13 @@ class WakeWordDetector:
             
         except Exception as e:
             logger.error(f"Failed to initialize wake word detector: {e}")
-            raise
+            self.available = False
     
     def _audio_callback(self, in_data, frame_count, time_info, status):
         """Audio callback for wake word detection."""
+        if not self.available or not PYAUDIO_AVAILABLE:
+            return (None, None)
+            
         try:
             if self.porcupine is None:
                 return (None, pyaudio.paComplete)
@@ -70,8 +93,8 @@ class WakeWordDetector:
     
     async def listen(self) -> bool:
         """Listen for wake word. Returns True when detected."""
-        if not self.porcupine:
-            logger.error("Wake word detector not initialized")
+        if not self.available or not self.porcupine:
+            logger.warning("Wake word detector not available or not initialized")
             return False
             
         try:

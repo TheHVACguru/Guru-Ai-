@@ -8,13 +8,35 @@ __author__ = "Open Source Community"
 __license__ = "MIT"
 
 from assistant.config import Config
-from assistant.core.wake_word import WakeWordDetector
-from assistant.core.listener import VoiceListener
-from assistant.core.speaker import VoiceSpeaker
+
+# Try to import voice components conditionally
+try:
+    from assistant.core.wake_word import WakeWordDetector
+    WAKE_WORD_AVAILABLE = True
+except ImportError:
+    WakeWordDetector = None
+    WAKE_WORD_AVAILABLE = False
+
+try:
+    from assistant.core.listener import VoiceListener
+    VOICE_LISTENER_AVAILABLE = True
+except ImportError:
+    VoiceListener = None
+    VOICE_LISTENER_AVAILABLE = False
+
+try:
+    from assistant.core.speaker import VoiceSpeaker
+    VOICE_SPEAKER_AVAILABLE = True
+except ImportError:
+    VoiceSpeaker = None
+    VOICE_SPEAKER_AVAILABLE = False
 
 __all__ = [
     "Config",
     "WakeWordDetector", 
     "VoiceListener",
-    "VoiceSpeaker"
+    "VoiceSpeaker",
+    "WAKE_WORD_AVAILABLE",
+    "VOICE_LISTENER_AVAILABLE", 
+    "VOICE_SPEAKER_AVAILABLE"
 ]

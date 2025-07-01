@@ -16,13 +16,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from assistant.config import Config
-from assistant.core.wake_word import WakeWordDetector
-from assistant.core.listener import VoiceListener
-from assistant.core.speaker import VoiceSpeaker
-from assistant.commands import CommandProcessor
 from assistant.api.app import create_app
 from assistant.utils.logger import setup_logger
-from assistant.utils.permissions import check_permissions
+
+# Voice components will be imported conditionally when needed
+WakeWordDetector = None
+VoiceListener = None
+VoiceSpeaker = None
+CommandProcessor = None
 
 # Initialize logger
 logger = setup_logger(__name__)

@@ -3,7 +3,7 @@ Weather information integration using OpenWeatherMap API.
 """
 
 import asyncio
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import aiohttp
 from assistant.utils.logger import setup_logger
 

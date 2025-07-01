@@ -2,14 +2,25 @@
 Audio device management for microphone and speaker operations.
 """
 
-import pyaudio
-import sounddevice as sd
 import numpy as np
 import wave
 import threading
 import time
 from typing import Optional, List, Dict, Any, Callable
 from assistant.utils.logger import setup_logger
+
+# Try to import audio dependencies
+try:
+    import pyaudio
+    PYAUDIO_AVAILABLE = True
+except ImportError:
+    PYAUDIO_AVAILABLE = False
+
+try:
+    import sounddevice as sd
+    SOUNDDEVICE_AVAILABLE = True
+except (ImportError, OSError):
+    SOUNDDEVICE_AVAILABLE = False
 
 logger = setup_logger(__name__)
 
@@ -19,14 +30,24 @@ class AudioDevice:
     def __init__(self, config):
         """Initialize audio device manager."""
         self.config = config
-        self.pa = pyaudio.PyAudio()
+        self.available = PYAUDIO_AVAILABLE and SOUNDDEVICE_AVAILABLE
+        self.pa = None
         self.recording_stream = None
         self.playback_stream = None
         self.is_recording = False
         self.is_playing = False
         
-        # Audio settings
-        self.sample_rate = config.sample_rate
+        if not self.available:
+            logger.warning("Audio device disabled: missing audio dependencies")
+            return
+            
+        try:
+            self.pa = pyaudio.PyAudio()
+            # Audio settings
+            self.sample_rate = config.sample_rate
+        except Exception as e:
+            logger.error(f"Failed to initialize audio device: {e}")
+            self.available = False
         self.chunk_size = config.chunk_size
         self.channels = 1  # Mono for voice
         self.format = pyaudio.paInt16

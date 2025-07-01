@@ -6,11 +6,27 @@ import asyncio
 import io
 import threading
 from typing import Optional, List, Dict, Any
-import speech_recognition as sr
-import pyttsx3
-import pyaudio
 import wave
 from assistant.utils.logger import setup_logger
+
+# Try to import audio dependencies
+try:
+    import speech_recognition as sr
+    SPEECH_RECOGNITION_AVAILABLE = True
+except ImportError:
+    SPEECH_RECOGNITION_AVAILABLE = False
+
+try:
+    import pyttsx3
+    PYTTSX3_AVAILABLE = True
+except ImportError:
+    PYTTSX3_AVAILABLE = False
+
+try:
+    import pyaudio
+    PYAUDIO_AVAILABLE = True
+except ImportError:
+    PYAUDIO_AVAILABLE = False
 
 logger = setup_logger(__name__)
 
@@ -20,16 +36,26 @@ class SpeechRecognizer:
     def __init__(self, config):
         """Initialize speech recognizer."""
         self.config = config
-        self.recognizer = sr.Recognizer()
-        self.microphone = sr.Microphone(device_index=config.microphone_index)
+        self.available = SPEECH_RECOGNITION_AVAILABLE and PYAUDIO_AVAILABLE
         
-        # Adjust for ambient noise
+        if not self.available:
+            logger.warning("Speech recognition disabled: missing audio dependencies")
+            return
+            
         try:
-            with self.microphone as source:
-                self.recognizer.adjust_for_ambient_noise(source, duration=1)
-                logger.info("Microphone calibrated for ambient noise")
+            self.recognizer = sr.Recognizer()
+            self.microphone = sr.Microphone(device_index=config.microphone_index)
+            
+            # Adjust for ambient noise
+            try:
+                with self.microphone as source:
+                    self.recognizer.adjust_for_ambient_noise(source, duration=1)
+                    logger.info("Microphone calibrated for ambient noise")
+            except Exception as e:
+                logger.warning(f"Could not calibrate microphone: {e}")
         except Exception as e:
-            logger.warning(f"Could not calibrate microphone: {e}")
+            logger.error(f"Failed to initialize speech recognizer: {e}")
+            self.available = False
     
     async def listen_and_recognize(self, timeout: Optional[float] = None, phrase_limit: Optional[float] = None) -> Optional[str]:
         """Listen for speech and return recognized text."""

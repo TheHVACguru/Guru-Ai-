@@ -2,7 +2,7 @@ modules = ["python-3.11"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["cairo", "espeak-ng", "ffmpeg-full", "freetype", "ghostscript", "gobject-introspection", "gtk3", "libGL", "libGLU", "libxcrypt", "libyaml", "pkg-config", "portaudio", "qhull", "tcl", "tk"]
+packages = ["cairo", "espeak-ng", "ffmpeg-full", "freetype", "ghostscript", "gobject-introspection", "gtk3", "lcms2", "libGL", "libGLU", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "libyaml", "openjpeg", "pkg-config", "portaudio", "qhull", "tcl", "tk", "zlib"]
 
 [workflows]
 runButton = "Project"
@@ -24,3 +24,7 @@ author = "agent"
 task = "shell.exec"
 args = "python main.py --api-only"
 waitForPort = 5000
+
+[[ports]]
+localPort = 5000
+externalPort = 80
