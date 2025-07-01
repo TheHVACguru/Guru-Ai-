@@ -161,79 +161,365 @@ async def startup_event():
 @app.get("/", response_class=HTMLResponse)
 @app.head("/")
 async def root():
-    """Root endpoint with a simple web interface."""
+    """Root endpoint with a modern voice assistant interface."""
     html_content = """
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Voice Assistant API</title>
+        <title>Jarvis - Voice Assistant</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-            body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
-            .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-            h1 { color: #333; text-align: center; }
-            .status { background: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0; }
-            .endpoint { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #007bff; }
-            .method { background: #007bff; color: white; padding: 4px 8px; border-radius: 3px; font-size: 12px; }
-            input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; }
-            button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
-            button:hover { background: #0056b3; }
-            .response { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; white-space: pre-wrap; }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                overflow-x: hidden;
+            }
+
+            .container {
+                text-align: center;
+                max-width: 500px;
+                width: 90%;
+                padding: 20px;
+            }
+
+            .title {
+                font-size: 2.5rem;
+                font-weight: 300;
+                margin-bottom: 10px;
+                background: linear-gradient(45deg, #fff, #e0e0e0);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+                opacity: 0.8;
+                margin-bottom: 60px;
+                font-weight: 300;
+            }
+
+            .voice-container {
+                position: relative;
+                margin: 40px 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .talk-button {
+                width: 200px;
+                height: 200px;
+                border-radius: 50%;
+                background: linear-gradient(145deg, #ffffff, #f0f0f0);
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                box-shadow: 
+                    0 20px 40px rgba(0,0,0,0.1),
+                    inset 0 -5px 10px rgba(0,0,0,0.1),
+                    inset 0 5px 10px rgba(255,255,255,0.8);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .talk-button:hover {
+                transform: translateY(-5px);
+                box-shadow: 
+                    0 25px 50px rgba(0,0,0,0.15),
+                    inset 0 -5px 10px rgba(0,0,0,0.1),
+                    inset 0 5px 10px rgba(255,255,255,0.8);
+            }
+
+            .talk-button:active {
+                transform: translateY(-2px);
+                box-shadow: 
+                    0 15px 30px rgba(0,0,0,0.2),
+                    inset 0 5px 15px rgba(0,0,0,0.2);
+            }
+
+            .talk-button.listening {
+                background: linear-gradient(145deg, #ff6b6b, #ee5a52);
+                animation: pulse 1.5s infinite;
+            }
+
+            .talk-button.processing {
+                background: linear-gradient(145deg, #4ecdc4, #44a08d);
+                animation: spin 2s linear infinite;
+            }
+
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .microphone-icon {
+                font-size: 3rem;
+                color: #667eea;
+                transition: color 0.3s ease;
+            }
+
+            .talk-button.listening .microphone-icon {
+                color: white;
+            }
+
+            .talk-button.processing .microphone-icon {
+                color: white;
+            }
+
+            .status-text {
+                margin-top: 30px;
+                font-size: 1.2rem;
+                font-weight: 300;
+                opacity: 0.9;
+                min-height: 30px;
+            }
+
+            .text-input-container {
+                margin: 40px 0;
+                width: 100%;
+            }
+
+            .text-input {
+                width: 100%;
+                padding: 15px 20px;
+                border: 2px solid rgba(255,255,255,0.3);
+                border-radius: 25px;
+                background: rgba(255,255,255,0.1);
+                color: white;
+                font-size: 1rem;
+                outline: none;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+            }
+
+            .text-input::placeholder {
+                color: rgba(255,255,255,0.7);
+            }
+
+            .text-input:focus {
+                border-color: rgba(255,255,255,0.6);
+                background: rgba(255,255,255,0.15);
+            }
+
+            .send-button {
+                margin-top: 15px;
+                padding: 12px 30px;
+                background: rgba(255,255,255,0.2);
+                border: 2px solid rgba(255,255,255,0.3);
+                border-radius: 25px;
+                color: white;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+            }
+
+            .send-button:hover {
+                background: rgba(255,255,255,0.3);
+                border-color: rgba(255,255,255,0.5);
+            }
+
+            .response-container {
+                margin-top: 30px;
+                padding: 20px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 15px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.2);
+                max-width: 100%;
+                word-wrap: break-word;
+                display: none;
+            }
+
+            .response-text {
+                font-size: 1.1rem;
+                line-height: 1.6;
+                color: white;
+            }
+
+            .api-link {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                font-size: 0.9rem;
+                padding: 8px 15px;
+                border: 1px solid rgba(255,255,255,0.3);
+                border-radius: 20px;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+            }
+
+            .api-link:hover {
+                color: white;
+                border-color: rgba(255,255,255,0.6);
+                background: rgba(255,255,255,0.1);
+            }
+
+            @media (max-width: 600px) {
+                .title {
+                    font-size: 2rem;
+                }
+                
+                .talk-button {
+                    width: 150px;
+                    height: 150px;
+                }
+                
+                .microphone-icon {
+                    font-size: 2.5rem;
+                }
+            }
         </style>
     </head>
     <body>
+        <a href="/docs" class="api-link">API Docs</a>
+        
         <div class="container">
-            <h1>🤖 Voice Assistant API</h1>
+            <h1 class="title">Jarvis</h1>
+            <p class="subtitle">Your AI Voice Assistant</p>
             
-            <div class="status">
-                <strong>Status:</strong> ✅ Running and Ready<br>
-                <strong>Version:</strong> 1.0.0<br>
-                <strong>API Documentation:</strong> <a href="/docs">/docs</a>
+            <div class="voice-container">
+                <button class="talk-button" id="talkButton" onclick="toggleListening()">
+                    <div class="microphone-icon">🎤</div>
+                </button>
+                <div class="status-text" id="statusText">Press to talk</div>
             </div>
 
-            <h2>Quick Test</h2>
-            <div>
-                <input type="text" id="command" placeholder="Enter a command (e.g., 'what time is it?')" value="what time is it?">
-                <button onclick="sendCommand()">Send Command</button>
-                <div id="response" class="response" style="display:none;"></div>
+            <div class="text-input-container">
+                <input type="text" 
+                       class="text-input" 
+                       id="commandInput" 
+                       placeholder="Or type your command here..."
+                       onkeypress="handleKeyPress(event)">
+                <button class="send-button" onclick="sendTextCommand()">Send</button>
             </div>
 
-            <h2>Available Endpoints</h2>
-            
-            <div class="endpoint">
-                <span class="method">GET</span> <strong>/health</strong><br>
-                Health check endpoint
-            </div>
-            
-            <div class="endpoint">
-                <span class="method">GET</span> <strong>/status</strong><br>
-                Get system status and capabilities
-            </div>
-            
-            <div class="endpoint">
-                <span class="method">POST</span> <strong>/command</strong><br>
-                Process voice commands
-            </div>
-            
-            <div class="endpoint">
-                <span class="method">GET</span> <strong>/commands/history</strong><br>
-                View command history from database
-            </div>
-            
-            <div class="endpoint">
-                <span class="method">GET</span> <strong>/commands/stats</strong><br>
-                Get database analytics and statistics
-            </div>
-            
-            <div class="endpoint">
-                <span class="method">GET</span> <strong>/docs</strong><br>
-                Interactive API documentation
+            <div class="response-container" id="responseContainer">
+                <div class="response-text" id="responseText"></div>
             </div>
         </div>
 
         <script>
-            async function sendCommand() {
-                const command = document.getElementById('command').value;
-                const responseDiv = document.getElementById('response');
+            let isListening = false;
+            let mediaRecorder = null;
+            let audioChunks = [];
+
+            // Initialize the interface
+            document.addEventListener('DOMContentLoaded', function() {
+                updateStatus('Press to talk');
+            });
+
+            function updateStatus(message) {
+                document.getElementById('statusText').textContent = message;
+            }
+
+            function updateTalkButton(state) {
+                const button = document.getElementById('talkButton');
+                button.className = 'talk-button';
+                
+                if (state === 'listening') {
+                    button.classList.add('listening');
+                } else if (state === 'processing') {
+                    button.classList.add('processing');
+                }
+            }
+
+            async function toggleListening() {
+                if (!isListening) {
+                    startListening();
+                } else {
+                    stopListening();
+                }
+            }
+
+            async function startListening() {
+                try {
+                    // Check if browser supports speech recognition
+                    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                        updateStatus('Speech recognition not supported in this browser');
+                        return;
+                    }
+
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    const recognition = new SpeechRecognition();
+                    
+                    recognition.continuous = false;
+                    recognition.interimResults = false;
+                    recognition.lang = 'en-US';
+
+                    isListening = true;
+                    updateTalkButton('listening');
+                    updateStatus('Listening...');
+
+                    recognition.onresult = function(event) {
+                        const transcript = event.results[0][0].transcript;
+                        document.getElementById('commandInput').value = transcript;
+                        sendCommand(transcript);
+                    };
+
+                    recognition.onerror = function(event) {
+                        console.error('Speech recognition error:', event.error);
+                        updateStatus('Error: ' + event.error);
+                        resetInterface();
+                    };
+
+                    recognition.onend = function() {
+                        resetInterface();
+                    };
+
+                    recognition.start();
+
+                } catch (error) {
+                    console.error('Error starting speech recognition:', error);
+                    updateStatus('Error starting voice recognition');
+                    resetInterface();
+                }
+            }
+
+            function stopListening() {
+                isListening = false;
+                resetInterface();
+            }
+
+            function resetInterface() {
+                isListening = false;
+                updateTalkButton('default');
+                updateStatus('Press to talk');
+            }
+
+            async function sendCommand(commandText) {
+                const command = commandText || document.getElementById('commandInput').value.trim();
+                
+                if (!command) {
+                    updateStatus('Please enter a command');
+                    return;
+                }
+
+                updateTalkButton('processing');
+                updateStatus('Processing...');
                 
                 try {
                     const response = await fetch('/command', {
@@ -241,17 +527,62 @@ async def root():
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({command: command})
+                        body: JSON.stringify({
+                            command: command,
+                            source: 'web_interface'
+                        })
                     });
                     
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
                     const data = await response.json();
-                    responseDiv.innerHTML = JSON.stringify(data, null, 2);
-                    responseDiv.style.display = 'block';
+                    
+                    // Display the response
+                    const responseContainer = document.getElementById('responseContainer');
+                    const responseText = document.getElementById('responseText');
+                    
+                    if (data.success) {
+                        responseText.textContent = data.response;
+                        updateStatus('Response received');
+                    } else {
+                        responseText.textContent = 'Error: ' + (data.response || 'Unknown error');
+                        updateStatus('Error processing command');
+                    }
+                    
+                    responseContainer.style.display = 'block';
+                    
                 } catch (error) {
-                    responseDiv.innerHTML = 'Error: ' + error.message;
-                    responseDiv.style.display = 'block';
+                    console.error('Error sending command:', error);
+                    const responseContainer = document.getElementById('responseContainer');
+                    const responseText = document.getElementById('responseText');
+                    
+                    responseText.textContent = 'Connection error: ' + error.message;
+                    responseContainer.style.display = 'block';
+                    updateStatus('Connection error');
+                }
+                
+                resetInterface();
+            }
+
+            function sendTextCommand() {
+                sendCommand();
+            }
+
+            function handleKeyPress(event) {
+                if (event.key === 'Enter') {
+                    sendCommand();
                 }
             }
+
+            // Hide response when starting new input
+            document.getElementById('commandInput').addEventListener('focus', function() {
+                const responseContainer = document.getElementById('responseContainer');
+                if (responseContainer.style.display === 'block') {
+                    responseContainer.style.display = 'none';
+                }
+            });
         </script>
     </body>
     </html>
